@@ -4,7 +4,7 @@ import morgan from "morgan";
 const app = express();
 const port = 5001;
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
