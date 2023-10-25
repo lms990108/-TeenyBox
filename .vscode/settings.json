@@ -1,0 +1,16 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  //formatter
+  "editor.formatOnSave": true, //저장 시 자동 수정
+  "editor.formatOnPaste": true, //복붙 시 자동 수정
+  "editor.formatOnType": true
+}
