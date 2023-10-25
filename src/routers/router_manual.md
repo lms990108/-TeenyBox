@@ -1,0 +1,4 @@
+## Router
+
+- 라우팅 정의
+- router.get('/', testController) 같이 컨트롤러를 불러와서 사용
