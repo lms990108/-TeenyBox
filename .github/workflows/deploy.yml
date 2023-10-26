@@ -23,5 +23,6 @@ jobs:
           script: |
             cd EliceStudy2nd_BE
             git pull origin dev
+            npm i
             npm run dev
             
