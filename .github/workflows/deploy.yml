@@ -1,0 +1,27 @@
+name: deploy
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{secrets.DEV_HOST}}
+          username: ${{secrets.DEV_USER}}
+          key: ${{ secrets.DEV_KEY }}
+          port: ${{ secrets.DEV_PORT }}
+          script: |
+            cd EliceStudy2nd_BE
+            git pull origin dev
+            npm run dev
+            
