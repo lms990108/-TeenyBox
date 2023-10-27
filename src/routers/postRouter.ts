@@ -1,11 +1,17 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import asyncHandler from "../utils/asyncHandler";
 import * as PostController from "../controllers/postController";
+import { validationMiddleware } from "../middlewares/validationMiddleware";
+import * as postDto from "../dtos/postDto";
 
 const router = express.Router();
 
 // 생성: 새로운 게시물을 추가합니다.
-router.post("/", asyncHandler(PostController.createPost));
+router.post(
+  "/",
+  validationMiddleware(postDto.CreatePostDTO),
+  asyncHandler(PostController.createPost),
+);
 
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put("/:postId", asyncHandler(PostController.updatePost));

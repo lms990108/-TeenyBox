@@ -3,8 +3,6 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IPost extends Document {
   post_number: number;
   user_id: string; // 일단 string으로 생성 후 나중에 user 로직 끝나면 ref
-  type: number;
-  photo_url: string;
   title: string;
   content: string;
   createdAt?: Date;

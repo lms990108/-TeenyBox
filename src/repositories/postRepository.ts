@@ -4,6 +4,15 @@ import { CreatePostDTO, UpdatePostDTO } from "../dtos/postDto";
 class PostRepository {
   // 게시글 생성
   async create(postData: CreatePostDTO): Promise<IPost> {
+    // 최신 게시글의 post_number 조회
+    const latestPost = await PostModel.findOne().sort({ post_number: -1 });
+
+    // 최신 게시글의 post_number가 있다면 그 값에 1을 더하고, 없다면 1로 설정
+    const nextPostNumber =
+      latestPost && latestPost.post_number ? latestPost.post_number + 1 : 1;
+
+    postData.post_number = nextPostNumber;
+
     const post = new PostModel(postData);
     return await post.save();
   }

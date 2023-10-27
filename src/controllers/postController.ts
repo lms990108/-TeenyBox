@@ -1,9 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import PostService from "../services/postService";
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response> => {
   const post = await PostService.create(req.body);
-  res.status(201).json(post);
+  return res.status(201).json(post);
 };
 
 export const updatePost = async (req: Request, res: Response) => {
