@@ -31,9 +31,9 @@ class PostRepository {
     );
   }
 
-  // 게시글 전체 조회
-  async findAll(): Promise<IPost[]> {
-    return await PostModel.find();
+  // 게시글 전체 조회 & 페이징
+  async findAll(skip: number, limit: number): Promise<IPost[]> {
+    return await PostModel.find().skip(skip).limit(limit).exec();
   }
 
   // 게시글 번호로 조회

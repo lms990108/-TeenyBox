@@ -20,9 +20,10 @@ class PostService {
     return updatedPost;
   }
 
-  // 게시글 전체 조회
-  async findAll(): Promise<IPost[]> {
-    return await PostRepository.findAll();
+  // 게시글 전체 조회 & 페이징
+  async findAll(page: number, limit: number): Promise<IPost[]> {
+    const skip = (page - 1) * limit;
+    return await PostRepository.findAll(skip, limit);
   }
 
   // 게시글 번호로 조회
