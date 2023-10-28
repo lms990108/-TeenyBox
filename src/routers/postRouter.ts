@@ -8,7 +8,7 @@ const router = express.Router();
 
 // 생성: 새로운 게시물을 추가합니다.
 router.post(
-  "/",
+  "/add_post",
   validationMiddleware(postDto.CreatePostDTO),
   asyncHandler(PostController.createPost),
 );
