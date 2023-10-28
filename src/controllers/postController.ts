@@ -11,7 +11,8 @@ export const createPost = async (
 };
 
 export const updatePost = async (req: Request, res: Response) => {
-  const post = await PostService.update(req.params.postId, req.body);
+  const postNumber = Number(req.params.post_number);
+  const post = await PostService.update(postNumber, req.body);
   res.status(200).json(post);
 };
 

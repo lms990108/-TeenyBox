@@ -10,10 +10,10 @@ class PostService {
 
   // 게시글 수정
   async update(
-    postId: string,
+    post_number: number,
     updateData: UpdatePostDTO,
   ): Promise<IPost | null> {
-    const updatedPost = await PostRepository.update(postId, updateData);
+    const updatedPost = await PostRepository.update(post_number, updateData);
     if (!updatedPost) {
       throw new Error("Post not found");
     }

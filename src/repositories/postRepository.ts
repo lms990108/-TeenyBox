@@ -19,10 +19,16 @@ class PostRepository {
 
   // 게시글 수정
   async update(
-    postId: string,
+    post_number: number,
     updateData: UpdatePostDTO,
   ): Promise<IPost | null> {
-    return await PostModel.findByIdAndUpdate(postId, updateData, { new: true });
+    return await PostModel.findOneAndUpdate(
+      { post_number: post_number },
+      updateData,
+      {
+        new: true,
+      },
+    );
   }
 
   // 게시글 전체 조회

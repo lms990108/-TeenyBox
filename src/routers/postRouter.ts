@@ -14,7 +14,11 @@ router.post(
 );
 
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
-router.put("/:postId", asyncHandler(PostController.updatePost));
+router.put(
+  "/update_post/:post_number",
+  validationMiddleware(postDto.UpdatePostDTO),
+  asyncHandler(PostController.updatePost),
+);
 
 // 조회: 모든 게시물을 가져옵니다.
 router.get("/", asyncHandler(PostController.getAllPosts));
