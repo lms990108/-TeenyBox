@@ -36,8 +36,13 @@ class PostService {
   }
 
   // userId로 게시글들 조회
-  async findPostsByUserId(userId: string): Promise<IPost[]> {
-    return await PostRepository.findPostsByUserId(userId);
+  async findPostsByUserId(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<IPost[]> {
+    const skip = (page - 1) * limit;
+    return await PostRepository.findPostsByUserId(userId, skip, limit);
   }
 
   // 게시글 삭제 (postNumber를 기반으로)

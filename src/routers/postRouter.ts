@@ -31,7 +31,7 @@ router.get("/user/:userId", asyncHandler(PostController.getPostsByUserId));
 
 // 삭제: 게시물 번호를 기준으로 특정 게시물을 삭제합니다.
 router.delete(
-  "/number/:postNumber",
+  "/delete_post/:postNumber",
   asyncHandler(PostController.deletePostByNumber),
 );
 
