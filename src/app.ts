@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import postRouter from "./routers/postRouter";
+import promotionRouter from "./routers/promotionRouter";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/board", postRouter);
+app.use("/api/promotion", promotionRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
