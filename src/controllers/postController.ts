@@ -50,5 +50,4 @@ class PostController {
   }
 }
 
-const postControllerInstance = new PostController();
-export default postControllerInstance;
+export default new PostController();
