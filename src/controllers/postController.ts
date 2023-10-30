@@ -1,12 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import PostService from "../services/postService";
 
 class PostController {
-  async createPost(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<Response> {
+  async createPost(req: Request, res: Response): Promise<Response> {
     const post = await PostService.create(req.body);
     return res.status(201).json(post);
   }
