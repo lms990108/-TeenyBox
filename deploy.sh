@@ -4,11 +4,6 @@ REPOSITORY=/home/ec2-user/EliceStudy2nd_BE
 
 echo "> 배포 시작"
 
-echo "> WAS가 동작하고 있는지 확인"
-
-# 동작하고 있는지 확인
-IS_RUNNING=$(ps aux | grep app.js)
-
 echo "> 프로젝트 폴더로 이동"
 
 cd ${REPOSITORY}
@@ -23,17 +18,21 @@ npm install
 
 echo "> npm build"
 
-npm build
+npm run build
 
-echo "> 프로세스가 실행중이면 restart"
+echo "> WAS 실행 여부 확인"
+
+# 동작하고 있는지 확인
+IS_RUNNING=$(ps aux | grep app.js)
 
 if [ -n $"IS_RUNNING" ] ; then
+	echo "> WAS가 실행 중이면 restart"
 	pm2 restart ecosystem.config.js --only dev --env dev
 fi
 
-echo "> 아니라면 start"
-
 if [ -z $"IS_RUNNING" ] ; then
+	echo "> WAS가 꺼져 있다면 start"
 	pm2 start ecosystem.config.js --only dev --env dev
 fi
 
+exit 0
