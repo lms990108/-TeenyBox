@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from "../utils/asyncHandler";
-import * as PostController from "../controllers/postController";
+import postControllerInstance from "../controllers/postController"; // 여기 수정
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import * as postDto from "../dtos/postDto";
 
@@ -10,29 +10,35 @@ const router = express.Router();
 router.post(
   "/add_post",
   validationMiddleware(postDto.CreatePostDTO),
-  asyncHandler(PostController.createPost),
+  asyncHandler(postControllerInstance.createPost),
 );
 
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put(
   "/update_post/:post_number",
   validationMiddleware(postDto.UpdatePostDTO),
-  asyncHandler(PostController.updatePost),
+  asyncHandler(postControllerInstance.updatePost),
 );
 
 // 조회: 모든 게시물을 가져옵니다.
-router.get("/", asyncHandler(PostController.getAllPosts));
+router.get("/", asyncHandler(postControllerInstance.getAllPosts));
 
 // 조회: 게시물 번호를 기준으로 특정 게시물을 가져옵니다.
-router.get("/number/:postNumber", asyncHandler(PostController.getPostByNumber));
+router.get(
+  "/number/:postNumber",
+  asyncHandler(postControllerInstance.getPostByNumber),
+);
 
 // 조회: 사용자 ID를 기준으로 해당 사용자의 모든 게시물을 가져옵니다.
-router.get("/user/:userId", asyncHandler(PostController.getPostsByUserId));
+router.get(
+  "/user/:userId",
+  asyncHandler(postControllerInstance.getPostsByUserId),
+);
 
 // 삭제: 게시물 번호를 기준으로 특정 게시물을 삭제합니다.
 router.delete(
   "/delete_post/:postNumber",
-  asyncHandler(PostController.deletePostByNumber),
+  asyncHandler(postControllerInstance.deletePostByNumber),
 );
 
 export default router;
