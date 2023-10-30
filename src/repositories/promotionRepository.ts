@@ -41,7 +41,7 @@ class promotionRepository {
   }
 
   // 게시글 번호로 조회
-  async findBypromotionNumber(
+  async findByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
     // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
@@ -49,7 +49,7 @@ class promotionRepository {
   }
 
   // userId로 게시글들 조회
-  async findpromotionsByUserId(
+  async findPromotionsByUserId(
     userId: string,
     skip: number,
     limit: number,
@@ -61,7 +61,7 @@ class promotionRepository {
   }
 
   // 게시글 삭제 (promotionNumber를 기반으로)
-  async deleteBypromotionNumber(
+  async deleteByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
     // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
