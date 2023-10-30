@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import postRouter from "./routers/postRouter";
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(morgan("dev")); // morgan: 로그를 찍어주는 미들웨어, 서버�
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello world!");
 });
+
+app.use("/api/board", postRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
