@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsInt, MaxLength } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 // 게시글 생성을 위한 DTO
 
