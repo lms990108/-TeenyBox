@@ -1,0 +1,40 @@
+name: 'lint'
+
+on: push
+jobs:
+  test:
+    name: lint, tsc, build
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - name: Checkout
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      # node_modules 캐싱
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: node_modules
+          
+      
+      # 위에서 node_modules가 변했다면 npm install 실행
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      # if always -> lint에서 에러가 있더라도 뒤에 과정 다 실행
+      - name: lint test
+        run: npm run lint
+        if: ${{ always() }}
+
+      - name: tsc build
+        run: npm run build
+        if: ${{ always() }}
