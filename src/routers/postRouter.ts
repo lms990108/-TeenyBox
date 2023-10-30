@@ -15,7 +15,7 @@ router.post(
 
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put(
-  "/update_post/:post_number",
+  "/update_post/:postNumber",
   validationMiddleware(postDto.UpdatePostDTO),
   asyncHandler(postController.updatePost),
 );

@@ -8,14 +8,14 @@ const router = express.Router();
 
 // 생성: 새로운 게시물을 추가합니다.
 router.post(
-  "/add_post",
+  "/add_promotion",
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
 
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put(
-  "/update_post/:post_number",
+  "/update_promotion/:promotionNumber",
   validationMiddleware(promotionDto.UpdatePromotionDTO),
   asyncHandler(promotionController.updatePromotion),
 );
@@ -37,7 +37,7 @@ router.get(
 
 // 삭제: 게시물 번호를 기준으로 특정 게시물을 삭제합니다.
 router.delete(
-  "/delete_post/:promotionNumber",
+  "/delete_promotion/:promotionNumber",
   asyncHandler(promotionController.deletePromotionByNumber),
 );
 

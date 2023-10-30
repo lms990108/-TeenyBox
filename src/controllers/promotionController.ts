@@ -8,7 +8,7 @@ class PromotionController {
   }
 
   async updatePromotion(req: Request, res: Response): Promise<void> {
-    const promotionNumber = Number(req.params.Promotion_number);
+    const promotionNumber = Number(req.params.promotionNumber);
     const promotion = await PromotionService.update(promotionNumber, req.body);
     res.status(200).json(promotion);
   }
@@ -22,7 +22,7 @@ class PromotionController {
 
   async getPromotionByNumber(req: Request, res: Response): Promise<void> {
     const promotion = await PromotionService.findByPromotionNumber(
-      Number(req.params.Promotion_number),
+      Number(req.params.promotionNumber),
     );
     res.status(200).json(promotion);
   }

@@ -10,11 +10,11 @@ class PromotionService {
 
   // 게시글 수정
   async update(
-    promotion_number: number,
+    promotionNumber: number,
     updateData: UpdatePromotionDTO,
   ): Promise<IPromotion | null> {
     const updatedPromotion = await PromotionRepository.update(
-      promotion_number,
+      promotionNumber,
       updateData,
     );
     if (!updatedPromotion) {
