@@ -16,6 +16,7 @@ const postSchema = new Schema<IPost>(
       type: Number,
       required: true,
       unique: true,
+      index: true,
     },
     user_id: {
       type: String,
@@ -37,7 +38,7 @@ const postSchema = new Schema<IPost>(
     ],
   },
   {
-    timestamps: true, // This will create the createdAt and updatedAt fields
+    timestamps: true,
   },
 );
 
