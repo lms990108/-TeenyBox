@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IPost extends Document {
+export interface IPromotion extends Document {
   promotion_number: number;
   user_id: string; // 일단 string으로 생성 후 나중에 user 로직 끝나면 ref
   title: string;
@@ -11,7 +11,7 @@ export interface IPost extends Document {
   comments: (typeof mongoose.Schema.Types.ObjectId)[];
 }
 
-const promotionSchema = new Schema<IPost>(
+const promotionSchema = new Schema<IPromotion>(
   {
     promotion_number: {
       type: Number,
@@ -47,6 +47,6 @@ const promotionSchema = new Schema<IPost>(
   },
 );
 
-const PromotionModel = mongoose.model<IPost>("Promotion", promotionSchema);
+const PromotionModel = mongoose.model<IPromotion>("Promotion", promotionSchema);
 
 export default PromotionModel;

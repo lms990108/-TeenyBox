@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsInt, MaxLength } from "class-validator";
 // 게시글 생성을 위한 DTO
 
 export class CreatePromotionDTO {
-  post_number?: number;
+  promotion_number?: number;
 
   @IsString()
   @IsNotEmpty()
