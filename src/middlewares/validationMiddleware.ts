@@ -2,6 +2,7 @@ import { plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validationMiddleware(type: any): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     const dto = plainToInstance(type, req.body);
