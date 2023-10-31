@@ -2,8 +2,8 @@ import { CreateCommentDTO, UpdateCommentDTO } from "../dtos/commentDto";
 import CommentRepository from "../repositories/commentRepository";
 import PostModel from "../models/postModel";
 import PromotionModel from "../models/promotionModel";
-import NotFoundError from "../error/NotFoundError";
-import InternalServerError from "../error/InternalServerError";
+import NotFoundError from "../common/error/NotFoundError";
+import InternalServerError from "../common/error/InternalServerError";
 
 class CommentService {
   // 댓글 생성
