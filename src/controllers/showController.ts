@@ -3,23 +3,28 @@ import { plainToClass } from "class-transformer";
 
 import showService from "../services/showService";
 import { SearchShowDTO } from "../dtos/showDto";
+import NotFoundError from "../common/error/NotFoundError";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
     const searchShowDTO = plainToClass(SearchShowDTO, req.query);
     const shows = await showService.findShows(searchShowDTO);
+    if (shows.length === 0)
+      throw new NotFoundError("공연이 존재하지 않습니다.");
     return res.status(200).json(shows);
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
     const showId = Number(req.params.showId);
     const show = await showService.findShowByShowId(showId);
+    if (!show) throw new NotFoundError("공연이 존재하지 않습니다.");
     return res.status(200).json(show);
   }
 
   async findShowByTitle(req: Request, res: Response): Promise<Response> {
     const { title } = req.params;
     const show = await showService.findShowByTitle(title);
+    if (!show) throw new NotFoundError("공연이 존재하지 않습니다.");
     return res.status(200).json(show);
   }
 
