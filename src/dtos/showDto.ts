@@ -1,6 +1,6 @@
 import { IsEnum, IsString } from "class-validator";
-import { STATUS, REGION } from "../enum/enum";
-import { Union } from "../enum/CustomUnion";
+import { STATUS, REGION } from "../common/enum/enum";
+import { Union } from "../common/enum/CustomUnion";
 
 type Status = Union<typeof STATUS>;
 type Region = Union<typeof REGION>;
