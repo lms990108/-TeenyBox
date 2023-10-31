@@ -29,10 +29,6 @@ class showService {
   async deleteByShowId(showId: number) {
     return await showRepository.deleteByShowId(showId);
   }
-
-  async deleteByTitle(title: string) {
-    return await showRepository.deleteByTitle(title);
-  }
 }
 
 export default new showService();

@@ -4,7 +4,7 @@ import { plainToClass } from "class-transformer";
 import showService from "../services/showService";
 import { SearchShowDTO } from "../dtos/showDto";
 
-class showController {
+class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
     const searchShowDTO = plainToClass(SearchShowDTO, req.query);
     const shows = await showService.findShows(searchShowDTO);
@@ -46,12 +46,6 @@ class showController {
     const show = await showService.deleteByShowId(showId);
     return res.status(200).json(show);
   }
-
-  async deleteByTitle(req: Request, res: Response): Promise<Response> {
-    const { title } = req.params;
-    const show = await showService.deleteByTitle(title);
-    return res.status(200).json(show);
-  }
 }
 
-export default showController;
+export default new ShowController();

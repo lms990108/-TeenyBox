@@ -74,10 +74,6 @@ class showRepository {
   async deleteByShowId(showId: number) {
     return await ShowModel.findOneAndDelete({ show_id: showId });
   }
-
-  async deleteByTitle(title: string) {
-    return await ShowModel.findOneAndDelete({ title: title });
-  }
 }
 
 export default new showRepository();
