@@ -1,33 +1,31 @@
-import { IsNotEmpty, IsString, IsInt, MaxLength } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 // 게시글 생성을 위한 DTO
-
 export class CreatePostDTO {
   post_number?: number;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: "user_id는 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "user_id는 반드시 입력되어야 합니다." })
   user_id!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(30)
+  @IsString({ message: "제목은 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "제목은 반드시 입력되어야 합니다." })
+  @MaxLength(30, { message: "제목은 30자를 초과할 수 없습니다." })
   title!: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: "내용은 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
 }
 
 // 게시글 수정을 위한 DTO
 export class UpdatePostDTO {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(30)
+  @IsString({ message: "제목은 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "제목은 반드시 입력되어야 합니다." })
+  @MaxLength(30, { message: "제목은 30자를 초과할 수 없습니다." })
   title!: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: "내용은 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
 }
-// ... 나머지 DTO들도 필요에 따라 추가적으로 정의
