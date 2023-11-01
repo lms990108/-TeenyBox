@@ -1,6 +1,7 @@
 import PromotionRepository from "../repositories/promotionRepository";
 import { CreatePromotionDTO, UpdatePromotionDTO } from "../dtos/promotionDto";
 import { IPromotion } from "../models/promotionModel";
+import NotFoundError from "../common/error/NotFoundError";
 
 class PromotionService {
   // 게시글 생성
@@ -18,7 +19,7 @@ class PromotionService {
       updateData,
     );
     if (!updatedPromotion) {
-      throw new Error("Promotion not found");
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
     return updatedPromotion;
   }
@@ -30,13 +31,13 @@ class PromotionService {
   }
 
   // 게시글 번호로 조회
-  async findByPromotionNumber(PromotionNumber: number): Promise<IPromotion> {
-    const Promotion =
-      await PromotionRepository.findByPromotionNumber(PromotionNumber);
-    if (!Promotion) {
-      throw new Error("Promotion not found");
+  async findByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
-    return Promotion;
+    return promotion;
   }
 
   // userId로 게시글들 조회
@@ -58,7 +59,7 @@ class PromotionService {
     const deletedPromotion =
       await PromotionRepository.deleteByPromotionNumber(promotionNumber);
     if (!deletedPromotion) {
-      throw new Error("Promotion not found");
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
     return deletedPromotion;
   }

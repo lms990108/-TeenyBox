@@ -1,6 +1,7 @@
 import PostRepository from "../repositories/postRepository";
 import { CreatePostDTO, UpdatePostDTO } from "../dtos/postDto";
 import { IPost } from "../models/postModel";
+import NotFoundError from "../common/error/NotFoundError";
 
 class PostService {
   // 게시글 생성
@@ -15,7 +16,7 @@ class PostService {
   ): Promise<IPost | null> {
     const updatedPost = await PostRepository.update(post_number, updateData);
     if (!updatedPost) {
-      throw new Error("Post not found");
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
     return updatedPost;
   }
@@ -30,7 +31,7 @@ class PostService {
   async findByPostNumber(postNumber: number): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
     if (!post) {
-      throw new Error("Post not found");
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
     return post;
   }
@@ -49,7 +50,7 @@ class PostService {
   async deleteByPostNumber(postNumber: number): Promise<IPost> {
     const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
     if (!deletedPost) {
-      throw new Error("Post not found");
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
     return deletedPost;
   }
