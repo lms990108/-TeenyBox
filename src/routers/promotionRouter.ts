@@ -1,5 +1,5 @@
 import express from "express";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../common/utils/asyncHandler";
 import promotionController from "../controllers/promotionController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import * as promotionDto from "../dtos/promotionDto";
