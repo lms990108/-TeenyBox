@@ -23,3 +23,13 @@ export const REGION = {
   제주: 50,
   강원: 51,
 } as const;
+
+export const ROLE = {
+  USER: "user",
+  ADMIN: "admin",
+} as const;
+
+export const STATE = {
+  JOINED: "가입",
+  WITHDRAWN: "탈퇴",
+} as const;
