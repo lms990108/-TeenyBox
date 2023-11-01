@@ -19,8 +19,8 @@ const mongoURI: string = process.env.MONGO_DB_PATH;
 
 mongoose
   .connect(mongoURI as string)
-  .then(() => console.log("mongoose connected"))
-  .catch((err: Error) => console.error("DB connection fail", err));
+  .then(() => logger.info("mongoose connected"))
+  .catch((err: Error) => logger.error("DB connection fail", err));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
