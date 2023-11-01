@@ -1,8 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   user_id: string;
-  alias: string;
+  social_provider: string;
+  nickname: string;
   profile_url: string;
   interested_area: string;
   dibs: mongoose.Types.ObjectId | null;
@@ -10,7 +11,7 @@ interface IUser extends Document {
   state: string;
 }
 
-const UserSchema: Schema = new Schema({
+const UserSchema: Schema = new Schema<IUser>({
   user_id: {
     type: String,
     required: true,
@@ -21,7 +22,7 @@ const UserSchema: Schema = new Schema({
     required: true,
     enum: ["kakao", "naver", "google"],
   },
-  alias: {
+  nickname: {
     type: String,
     required: true,
     unique: true,
@@ -54,6 +55,4 @@ const UserSchema: Schema = new Schema({
   },
 });
 
-const UserModel = mongoose.model<IUser>("User", UserSchema);
-
-export default UserModel;
+export const UserModel = mongoose.model<IUser>("User", UserSchema);
