@@ -26,7 +26,6 @@ class CommentService {
       if (!post) {
         throw new NotFoundError("게시글을 찾을 수 없습니다.");
       }
-
       // 게시글에 연결된 댓글을 조회
       const comments = await CommentRepository.findByPostId(postId);
       return comments;
@@ -40,10 +39,16 @@ class CommentService {
   // 홍보 게시글에 따른 댓글 조회
   async getCommentsByPromotionId(promotionId: string) {
     try {
-      return await CommentRepository.findByPromotionId(promotionId);
+      const promotion = await PromotionModel.findById(promotionId);
+      if (!promotion) {
+        throw new NotFoundError("게시글을 찾을 수 없습니다.");
+      }
+      // 게시글에 연결된 댓글을 조회
+      const comments = await CommentRepository.findByPromotionId(promotionId);
+      return comments;
     } catch (error) {
-      throw new Error(
-        `Failed to fetch comments for promotion ${promotionId}: ${error.message}`,
+      throw new InternalServerError(
+        `게시글 ${promotionId}에 대한 댓글을 가져오는데 실패했습니다: ${error.message}`,
       );
     }
   }
@@ -53,8 +58,8 @@ class CommentService {
     try {
       return await CommentRepository.findByUserId(userId);
     } catch (error) {
-      throw new Error(
-        `Failed to fetch comments for user ${userId}: ${error.message}`,
+      throw new InternalServerError(
+        `사용자 ${userId}에 대한 댓글을 가져오는데 실패했습니다: ${error.message}`,
       );
     }
   }
@@ -64,11 +69,13 @@ class CommentService {
     try {
       const updatedComment = await CommentRepository.update(id, dto);
       if (!updatedComment) {
-        throw new Error("Comment not found");
+        throw new NotFoundError("댓글을 찾을 수 없습니다.");
       }
       return updatedComment;
     } catch (error) {
-      throw new Error(`Failed to update comment ${id}: ${error.message}`);
+      throw new InternalServerError(
+        `댓글 ${id}를 수정하는데 실패했습니다: ${error.message}`,
+      );
     }
   }
 
@@ -77,11 +84,13 @@ class CommentService {
     try {
       const deletedComment = await CommentRepository.delete(id);
       if (!deletedComment) {
-        throw new Error("Comment not found");
+        throw new NotFoundError("댓글을 찾을 수 없습니다.");
       }
       return deletedComment;
     } catch (error) {
-      throw new Error(`Failed to delete comment ${id}: ${error.message}`);
+      throw new InternalServerError(
+        `댓글 ${id}를 삭제하는데 실패했습니다: ${error.message}`,
+      );
     }
   }
 }
