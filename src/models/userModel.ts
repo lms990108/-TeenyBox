@@ -6,9 +6,13 @@ export interface IUser extends Document {
   nickname: string;
   profile_url: string;
   interested_area: string;
-  dibs: mongoose.Types.ObjectId | null;
   role: string;
   state: string;
+  dibs: mongoose.Types.ObjectId | null;
+  post: mongoose.Types.ObjectId | null;
+  promotion: mongoose.Types.ObjectId | null;
+  comment: mongoose.Types.ObjectId | null;
+  review: mongoose.Types.ObjectId | null;
 }
 
 const UserSchema: Schema = new Schema<IUser>({
@@ -35,12 +39,6 @@ const UserSchema: Schema = new Schema<IUser>({
     type: String,
     required: true,
   },
-  dibs: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Show",
-    },
-  ],
   role: {
     type: String,
     enum: ["user", "admin"],
@@ -53,6 +51,36 @@ const UserSchema: Schema = new Schema<IUser>({
     required: true,
     default: "가입",
   },
+  dibs: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "ShowModel",
+    },
+  ],
+  post: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "PostModel",
+    },
+  ],
+  promotion: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "PromotionModel",
+    },
+  ],
+  comment: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "CommentModel",
+    },
+  ],
+  review: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "ReviewModel",
+    },
+  ],
 });
 
 export const UserModel = mongoose.model<IUser>("User", UserSchema);
