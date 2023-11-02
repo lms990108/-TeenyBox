@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import pingRouter from "./routers/pingRouter";
 import postRouter from "./routers/postRouter";
 import promotionRouter from "./routers/promotionRouter";
+import commentRouter from "./routers/commentRouter";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(morgan("dev")); // morgan: 로그를 찍어주는 미들웨어, 서버�
 app.use("/api/ping", pingRouter);
 app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
+app.use("/api/comment", commentRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

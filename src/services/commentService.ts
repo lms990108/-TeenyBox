@@ -18,16 +18,23 @@ class CommentService {
     }
   }
 
-  // 자유게시판 게시글에 따른 댓글 조회
-  async getCommentsByPostId(postId: string) {
+  // 자유게시판 게시글에 따른 댓글 조회 (페이징 처리 추가)
+  async getCommentsByPostId(
+    postId: string,
+    page: number = 1,
+    pageSize: number = 20,
+  ) {
     try {
-      // 먼저 해당 게시글이 존재하는지 확인
       const post = await PostModel.findById(postId);
       if (!post) {
         throw new NotFoundError("게시글을 찾을 수 없습니다.");
       }
-      // 게시글에 연결된 댓글을 조회
-      const comments = await CommentRepository.findByPostId(postId);
+      const skip = (page - 1) * pageSize;
+      const comments = await CommentRepository.findByPostId(
+        postId,
+        skip,
+        pageSize,
+      );
       return comments;
     } catch (error) {
       throw new InternalServerError(
@@ -36,27 +43,40 @@ class CommentService {
     }
   }
 
-  // 홍보 게시글에 따른 댓글 조회
-  async getCommentsByPromotionId(promotionId: string) {
+  // 홍보 게시글에 따른 댓글 조회 (페이징 처리 추가)
+  async getCommentsByPromotionId(
+    promotionId: string,
+    page: number = 1,
+    pageSize: number = 20,
+  ) {
     try {
       const promotion = await PromotionModel.findById(promotionId);
       if (!promotion) {
-        throw new NotFoundError("게시글을 찾을 수 없습니다.");
+        throw new NotFoundError("홍보 게시글을 찾을 수 없습니다.");
       }
-      // 게시글에 연결된 댓글을 조회
-      const comments = await CommentRepository.findByPromotionId(promotionId);
+      const skip = (page - 1) * pageSize;
+      const comments = await CommentRepository.findByPromotionId(
+        promotionId,
+        skip,
+        pageSize,
+      );
       return comments;
     } catch (error) {
       throw new InternalServerError(
-        `게시글 ${promotionId}에 대한 댓글을 가져오는데 실패했습니다: ${error.message}`,
+        `홍보 게시글 ${promotionId}에 대한 댓글을 가져오는데 실패했습니다: ${error.message}`,
       );
     }
   }
 
-  // 사용자 ID에 따른 댓글 조회
-  async getCommentsByUserId(userId: string) {
+  // 사용자 ID에 따른 댓글 조회 (페이징 처리 추가)
+  async getCommentsByUserId(
+    userId: string,
+    page: number = 1,
+    pageSize: number = 20,
+  ) {
     try {
-      return await CommentRepository.findByUserId(userId);
+      const skip = (page - 1) * pageSize;
+      return await CommentRepository.findByUserId(userId, skip, pageSize);
     } catch (error) {
       throw new InternalServerError(
         `사용자 ${userId}에 대한 댓글을 가져오는데 실패했습니다: ${error.message}`,
