@@ -30,12 +30,6 @@ const postSchema = new Schema<IPost>(
       type: String,
       required: true,
     },
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment", // This should match the model name you use for comments
-      },
-    ],
   },
   {
     timestamps: true,

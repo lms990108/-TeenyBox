@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import pingRouter from "./routers/pingRouter";
 import postRouter from "./routers/postRouter";
 import promotionRouter from "./routers/promotionRouter";
+import commentRouter from "./routers/commentRouter";
 import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
 
@@ -50,6 +51,7 @@ if (process.env.NODE_ENV === "production") {
 app.use("/api/ping", pingRouter);
 app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
+app.use("/api/comment", commentRouter);
 app.use("/api/show", showRouter);
 app.use("/api/user", userRouter);
 

@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import PostService from "../services/postService";
 
 class PostController {
-  async createPost(req: Request, res: Response): Promise<Response> {
+  async createPost(req: Request, res: Response): Promise<void> {
     const post = await PostService.create(req.body);
-    return res.status(201).json(post);
+    res.status(201).json(post);
   }
 
   async updatePost(req: Request, res: Response): Promise<void> {
