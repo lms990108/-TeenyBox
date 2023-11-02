@@ -8,11 +8,11 @@ export interface IUser extends Document {
   interested_area: string;
   role: string;
   state: string;
-  dibs: mongoose.Types.ObjectId | null;
-  post: mongoose.Types.ObjectId | null;
-  promotion: mongoose.Types.ObjectId | null;
-  comment: mongoose.Types.ObjectId | null;
-  review: mongoose.Types.ObjectId | null;
+  dibs: mongoose.Types.ObjectId[] | null;
+  post: mongoose.Types.ObjectId[] | null;
+  promotion: mongoose.Types.ObjectId[] | null;
+  comment: mongoose.Types.ObjectId[] | null;
+  review: mongoose.Types.ObjectId[] | null;
 }
 
 const UserSchema: Schema = new Schema<IUser>({

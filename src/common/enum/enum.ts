@@ -33,3 +33,9 @@ export const STATE = {
   JOINED: "가입",
   WITHDRAWN: "탈퇴",
 } as const;
+
+export const SOCIAL = {
+  KAKAO: "kakao",
+  NAVER: "naver",
+  GOOGLE: "google",
+} as const;

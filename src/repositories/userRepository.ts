@@ -11,9 +11,46 @@ class UserRepository {
     interested_area: string;
     role: string;
     state: string;
-  }): Promise<IUser> {
-    const user = new UserModel(userData);
-    return await user.save();
+  }): Promise<UserResponseDTO> {
+    const existingUser = await UserModel.findOne({ user_id: userData.user_id });
+    if (existingUser) {
+      existingUser.social_provider = userData.social_provider;
+      existingUser.nickname = userData.nickname;
+      existingUser.profile_url = userData.profile_url;
+      existingUser.interested_area = userData.interested_area;
+      existingUser.role = userData.role;
+      existingUser.state = userData.state;
+      const createdUser = await existingUser.save();
+      const userResponse: UserResponseDTO = {
+        user_id: createdUser.user_id,
+        social_provider: createdUser.social_provider as
+          | "kakao"
+          | "naver"
+          | "google",
+        nickname: createdUser.nickname,
+        profile_url: createdUser.profile_url,
+        interested_area: createdUser.interested_area,
+        role: createdUser.role as "admin" | "user",
+        state: createdUser.state as "가입" | "탈퇴",
+      };
+      return userResponse;
+    } else {
+      const user = new UserModel(userData);
+      const createdUser = await user.save();
+      const userResponse: UserResponseDTO = {
+        user_id: createdUser.user_id,
+        social_provider: createdUser.social_provider as
+          | "kakao"
+          | "naver"
+          | "google",
+        nickname: createdUser.nickname,
+        profile_url: createdUser.profile_url,
+        interested_area: createdUser.interested_area,
+        role: createdUser.role as "admin" | "user",
+        state: createdUser.state as "가입" | "탈퇴",
+      };
+      return userResponse;
+    }
   }
 
   // 닉네임 중복 확인
@@ -53,7 +90,7 @@ class UserRepository {
 
     const userResponseDTOs = users.map((user) => ({
       user_id: user.user_id,
-      social_provider: user.social_provider,
+      social_provider: user.social_provider as "kakao" | "naver" | "google",
       nickname: user.nickname,
       profile_url: user.profile_url,
       interested_area: user.interested_area,

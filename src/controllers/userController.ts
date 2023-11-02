@@ -1,25 +1,12 @@
 import { Request, Response } from "express";
-import { UserModel } from "../models/userModel";
 import * as UserDto from "./../dtos/userDto";
 import UserService from "../services/userService";
-import {
-  generateToken,
-  generateRefreshToken,
-} from "../common/utils/tokenUtils";
 import { AuthRequest } from "../middlewares/authUserMiddlewares";
 
 class UserController {
   async RegisterUser(req: Request, res: Response) {
-    const { id, profileUrl, nickname } = JSON.parse(req.query.data as string);
-    const socialProvider = req.query.provider as string;
     const createUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    const user = await UserService.register({
-      createUserRequestDTO,
-      id,
-      profileUrl,
-      nickname,
-      socialProvider,
-    });
+    const user = await UserService.register(createUserRequestDTO);
     return res
       .status(201)
       .json({ message: "회원가입이 완료되었습니다.", user });
@@ -31,18 +18,11 @@ class UserController {
     return res.status(200).json({ message: "사용 가능한 닉네임입니다." });
   }
 
-  // 수정 필요
   async kakaoLogin(req: Request, res: Response) {
     const { authorizationCode } = req.body;
-    const accessToken = await UserService.getKakaoToken(
-      authorizationCode,
-      process.env.KAKAO_REST_API_KEY,
-    );
-    const kakaoUserData = await UserService.getKakaoUserData(accessToken);
-    const user = await UserModel.findOne({ user_id: kakaoUserData.id });
+    const { user, token, refreshToken, kakaoUserData } =
+      await UserService.kakaoLogin(authorizationCode);
     if (user) {
-      const token = await generateToken(user);
-      const refreshToken = await generateRefreshToken(user);
       res.cookie("token", token, {
         httpOnly: true,
         secure: true,
@@ -55,16 +35,14 @@ class UserController {
       });
       return res.status(200).json({ message: "로그인 되었습니다.", user });
     } else {
-      return res
-        .status(302)
-        .json({ message: "회원가입이 필요합니다." })
-        .redirect(
-          `/register?data=${JSON.stringify(kakaoUserData)}&provider=kakao`,
-        );
+      return res.status(302).json({
+        message: "회원가입이 필요합니다.",
+        kakaoUserData,
+        social_provider: "kakao",
+      });
     }
   }
 
-  // 수정 필요
   async logout(req: Request, res: Response) {
     res.clearCookie("token"); // 쿠키 삭제
     res.clearCookie("refreshToken");
