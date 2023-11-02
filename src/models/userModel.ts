@@ -54,31 +54,31 @@ const UserSchema: Schema = new Schema<IUser>({
   dibs: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "ShowModel",
+      ref: "Show",
     },
   ],
   post: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "PostModel",
+      ref: "Post",
     },
   ],
   promotion: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "PromotionModel",
+      ref: "Promotion",
     },
   ],
   comment: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "CommentModel",
+      ref: "Comment",
     },
   ],
   review: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "ReviewModel",
+      ref: "Review",
     },
   ],
 });
