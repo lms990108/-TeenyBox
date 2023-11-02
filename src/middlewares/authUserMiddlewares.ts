@@ -19,13 +19,13 @@ export const checkLoginStatus = async (
   try {
     const accessToken = req.cookies.token as string;
     if (!accessToken) {
-      req.isLoggedIn = false;
+      res.status(200).json({ isLoggedIn: false });
       next();
       return;
     }
     const { foundUser, error } = await findByToken(accessToken);
     if (error) {
-      req.isLoggedIn = false;
+      res.status(200).json({ isLoggedIn: false });
       next();
       return;
     }

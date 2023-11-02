@@ -67,6 +67,8 @@ class UserController {
   async deleteUser(req: AuthRequest, res: Response) {
     const userId = req.user.user_id;
     await UserService.deleteUser(userId);
+    res.clearCookie("token");
+    res.clearCookie("refreshToken");
     return res.status(200).json({ message: "회원 탈퇴가 완료되었습니다." });
   }
 
