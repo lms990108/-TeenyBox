@@ -5,11 +5,13 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import logger from "./batch/logger";
+import cookieParser from "cookie-parser";
 
 import pingRouter from "./routers/pingRouter";
 import postRouter from "./routers/postRouter";
 import promotionRouter from "./routers/promotionRouter";
 import showRouter from "./routers/showRouter";
+import userRouter from "./routers/userRouter";
 
 dotenv.config();
 
@@ -24,6 +26,7 @@ mongoose
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // log directory check
 const logDir = path.join(__dirname, "logs");
@@ -48,6 +51,7 @@ app.use("/api/ping", pingRouter);
 app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
 app.use("/api/show", showRouter);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
   logger.info(`server is running on ${port}`);
