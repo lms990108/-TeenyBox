@@ -7,42 +7,29 @@ import {
 import UserRepository from "../repositories/userRepository";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
+import {
+  generateToken,
+  generateRefreshToken,
+} from "../common/utils/tokenUtils";
 
 class UserService {
   // 회원가입
-  async register({
-    createUserRequestDTO,
-    id,
-    profileUrl,
-    nickname,
-    socialProvider,
-  }: {
-    id: string;
-    profileUrl: string;
+  async register(createUserRequestDTO: {
+    user_id: string;
+    social_provider: string;
     nickname: string;
-    socialProvider: string;
-    createUserRequestDTO: {
-      nickname: string;
-      profile_url: string;
-      interested_area: string;
-    };
+    profile_url: string;
+    interested_area: string;
   }) {
-    const finalProfileUrl =
-      profileUrl !== createUserRequestDTO.profile_url
-        ? createUserRequestDTO.profile_url
-        : profileUrl;
-
-    const finalNickname =
-      nickname !== createUserRequestDTO.nickname
-        ? createUserRequestDTO.nickname
-        : nickname;
+    const { user_id, social_provider, nickname, profile_url, interested_area } =
+      createUserRequestDTO;
 
     const userData = {
-      user_id: id,
-      social_provider: socialProvider,
-      nickname: finalNickname,
-      profile_url: finalProfileUrl,
-      interested_area: createUserRequestDTO.interested_area,
+      user_id,
+      social_provider,
+      nickname,
+      profile_url,
+      interested_area,
       role: "user",
       state: "가입",
     };
@@ -56,14 +43,46 @@ class UserService {
   async checkNickname(nickname: string) {
     const user = await UserRepository.getUserByNickname(nickname);
 
-    if (user) {
+    if (user && user.state !== "탈퇴") {
       throw new BadRequestError("중복된 닉네임입니다.");
     }
 
     return true;
   }
 
-  // kakao(get token)
+  // 카카오 로그인
+  async kakaoLogin(authorizationCode: string) {
+    const accessToken = await this.getKakaoToken(
+      authorizationCode,
+      process.env.KAKAO_REST_API_KEY,
+    );
+    const kakaoUserData = await this.getKakaoUserData(accessToken);
+    const user = await UserRepository.getUserById(kakaoUserData.id);
+
+    if (user) {
+      if (user.state === "탈퇴") {
+        return {
+          user: null,
+          token: null,
+          refreshToken: null,
+          kakaoUserData: kakaoUserData,
+        };
+      }
+      const token = generateToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      return { user, token, refreshToken, kakaoUserData };
+    } else {
+      return {
+        user: null,
+        token: null,
+        refreshToken: null,
+        kakaoUserData: kakaoUserData,
+      };
+    }
+  }
+
+  // 카카오 로그인 (get token)
   async getKakaoToken(code: string, client_id: string): Promise<string> {
     const data = new URLSearchParams();
     data.append("grant_type", "authorization_code");
@@ -83,7 +102,7 @@ class UserService {
     return response.data.access_token;
   }
 
-  // kakao(get user info)
+  // 카카오 로그인 (get user info)
   async getKakaoUserData(accessToken: string): Promise<KakaoUserDataDTO> {
     const headers = {
       Authorization: `Bearer ${accessToken}`,

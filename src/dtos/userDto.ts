@@ -1,11 +1,22 @@
 import { IsString, IsNotEmpty, IsEnum } from "class-validator";
-import { ROLE, STATE } from "../common/enum/enum";
+import { ROLE, STATE, SOCIAL } from "../common/enum/enum";
 import { Union } from "../common/enum/CustomUnion";
 
 type Role = Union<typeof ROLE>;
 type State = Union<typeof STATE>;
+type Social = Union<typeof SOCIAL>;
 
 export class UserRequestDTO {
+  @IsString({ message: "고유 아이디는 문자열이어야 합니다." })
+  @IsNotEmpty({ message: "고유 아이디는 반드시 입력되어야 합니다." })
+  user_id: string;
+
+  @IsEnum(SOCIAL, {
+    message: "소셜 정보는 kakao, naver, google 중 하나로 입력되어야 합니다.",
+  })
+  @IsNotEmpty({ message: "소셜 정보는 반드시 입력되어야 합니다." })
+  social_provider: Social;
+
   @IsString({ message: "닉네임은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "닉네임은 반드시 입력되어야 합니다." })
   nickname: string;
@@ -24,9 +35,9 @@ export class UserResponseDTO {
   @IsNotEmpty()
   user_id: string;
 
-  @IsString()
+  @IsEnum(SOCIAL)
   @IsNotEmpty()
-  social_provider: string;
+  social_provider: Social;
 
   @IsString()
   @IsNotEmpty()

@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { generateToken, findByToken } from "../common/utils/tokenUtils";
-import { IUser } from "../models/userModel";
+import { UserResponseDTO } from "../dtos/userDto";
 import ForbiddenError from "../common/error/ForbiddenError";
 import UnauthorizedError from "../common/error/UnauthorizedError";
 
 // 사용자 정의 속성을 추가한 요청 객체 타입 확장
 export interface AuthRequest extends Request {
   isLoggedIn: boolean;
-  user: IUser | null;
+  user: UserResponseDTO | null;
 }
 
 // 로그인 상태 확인 미들웨어
@@ -19,13 +19,13 @@ export const checkLoginStatus = async (
   try {
     const accessToken = req.cookies.token as string;
     if (!accessToken) {
-      req.isLoggedIn = false;
+      res.status(200).json({ isLoggedIn: false });
       next();
       return;
     }
     const { foundUser, error } = await findByToken(accessToken);
     if (error) {
-      req.isLoggedIn = false;
+      res.status(200).json({ isLoggedIn: false });
       next();
       return;
     }
@@ -68,7 +68,7 @@ export const authenticateUser = async (
         throw new ForbiddenError("새로 로그인해야 합니다.");
       }
       // 새로운 액세스 토큰 생성 후 쿠키에 저장
-      const newAccessToken = await generateToken(refreshUser);
+      const newAccessToken = generateToken(refreshUser);
       res.cookie("token", newAccessToken, {
         httpOnly: true,
         secure: true,
@@ -111,7 +111,7 @@ export const authenticateAdmin = async (
         throw new ForbiddenError("새로 로그인해야 합니다.");
       }
       // 새로운 액세스 토큰 생성 후 쿠키에 저장
-      const newAccessToken = await generateToken(refreshUser);
+      const newAccessToken = generateToken(refreshUser);
       res.cookie("token", newAccessToken, {
         httpOnly: true,
         secure: true,
