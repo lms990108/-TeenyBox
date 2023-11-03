@@ -5,10 +5,16 @@ import {
   authenticateUser,
   authenticateAdmin,
 } from "../middlewares/authUserMiddlewares";
+import { UserRequestDTO } from "../dtos/userDto";
+import { validationMiddleware } from "../middlewares/validationMiddleware";
 
 const router = express.Router();
 
-router.post("/register", UserController.RegisterUser);
+router.post(
+  "/register",
+  validationMiddleware(UserRequestDTO),
+  UserController.RegisterUser,
+);
 router.post("/check-nickname", UserController.checkNickname);
 router.post("/kakao-login", UserController.kakaoLogin);
 router.post("/logout", UserController.logout);
