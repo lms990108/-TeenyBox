@@ -2,7 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import logger from "./common/utils/logger";
+import fs from "fs";
+import path from "path";
+import logger from "./batch/logger";
 import cookieParser from "cookie-parser";
 
 import pingRouter from "./routers/pingRouter";
@@ -10,7 +12,6 @@ import postRouter from "./routers/postRouter";
 import promotionRouter from "./routers/promotionRouter";
 import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
-import { errorMiddleware } from "./middlewares/errorMiddleware";
 
 dotenv.config();
 
@@ -26,6 +27,13 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// log directory check
+const logDir = path.join(__dirname, "logs");
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
 
 const morganStream = {
   write: (message: string) => {
@@ -44,8 +52,6 @@ app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
 app.use("/api/show", showRouter);
 app.use("/api/user", userRouter);
-
-app.use(errorMiddleware);
 
 app.listen(port, () => {
   logger.info(`server is running on ${port}`);

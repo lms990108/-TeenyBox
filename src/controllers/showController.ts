@@ -1,51 +1,55 @@
 import { Request, Response } from "express";
+import { plainToClass } from "class-transformer";
+
 import showService from "../services/showService";
-import { StatusType, RegionType } from "../common/enum/enum";
+import { SearchShowDTO } from "../dtos/showDto";
+import NotFoundError from "../common/error/NotFoundError";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
-    const page = parseInt(req.query.query as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
-
-    const shows = await showService.findShows(page, limit);
-    return res.status(200).json({ shows });
+    const searchShowDTO = plainToClass(SearchShowDTO, req.query);
+    const shows = await showService.findShows(searchShowDTO);
+    if (shows.length === 0)
+      throw new NotFoundError("공연이 존재하지 않습니다.");
+    return res.status(200).json(shows);
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
-    const showId = req.params.showId as string;
-
+    const showId = Number(req.params.showId);
     const show = await showService.findShowByShowId(showId);
+    if (!show) throw new NotFoundError("공연이 존재하지 않습니다.");
     return res.status(200).json(show);
   }
 
   async findShowByTitle(req: Request, res: Response): Promise<Response> {
-    const title = req.query.title as string;
-
+    const { title } = req.params;
     const show = await showService.findShowByTitle(title);
+    if (!show) throw new NotFoundError("공연이 존재하지 않습니다.");
     return res.status(200).json(show);
   }
 
-  async search(req: Request, res: Response): Promise<Response> {
-    const title = req.query.title as string;
-    const status = req.query.status as StatusType;
-    const region = req.query.region as RegionType;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+  async searchByTitle(req: Request, res: Response): Promise<Response> {
+    const searchShowDTO = plainToClass(SearchShowDTO, req.query);
+    const shows = await showService.searchByTitle(searchShowDTO);
+    return res.status(200).json(shows);
+  }
 
-    const shows = await showService.search({
-      title,
-      status,
-      region,
-      page,
-      limit,
-    });
+  async searchByStatus(req: Request, res: Response): Promise<Response> {
+    const searchShowDTO = plainToClass(SearchShowDTO, req.query);
+    const shows = await showService.searchByStatus(searchShowDTO);
+    return res.status(200).json(shows);
+  }
+
+  async searchByRegion(req: Request, res: Response): Promise<Response> {
+    const searchShowDTO = plainToClass(SearchShowDTO, req.query);
+    const shows = await showService.searchByRegion(searchShowDTO);
     return res.status(200).json(shows);
   }
 
   async deleteByShowId(req: Request, res: Response): Promise<Response> {
-    const showId = req.params.showId as string;
-    await showService.deleteByShowId(showId);
-    return res.status(200).json({ showId, message: "삭제되었습니다." });
+    const showId = Number(req.params.showId);
+    const show = await showService.deleteByShowId(showId);
+    return res.status(200).json(show);
   }
 }
 
