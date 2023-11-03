@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { createLogger, format, transports } from "winston";
 
 interface TransformableInfo {
@@ -8,19 +10,26 @@ interface TransformableInfo {
   [key: string]: unknown;
 }
 
+// log directory check
+const logDir = path.join(__dirname, "../../../logs");
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+
 const logger = createLogger({
   level: "info",
   format: format.json(),
   transports: [
     // Save error logs to error.log file
     new transports.File({
-      filename: "logs/error.log",
+      filename: path.join(logDir, "error.log"),
       level: "error",
       format: format.combine(format.timestamp(), format.json()),
     }),
     // Save combined logs to combined.log file
     new transports.File({
-      filename: "logs/combined.log",
+      filename: path.join(logDir, "combined.log"),
       format: format.combine(format.timestamp(), format.json()),
     }),
     // Print logs to console
