@@ -1,3 +1,4 @@
+import { RegionType, StatusType } from "../common/enum/enum";
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IShow extends Document {
@@ -5,7 +6,7 @@ export interface IShow extends Document {
   title: string;
   start_date: Date;
   end_date: Date;
-  region: string;
+  region: RegionType;
   location?: string;
   cast?: string[];
   creator?: string;
@@ -14,7 +15,7 @@ export interface IShow extends Document {
   company?: string;
   price?: string;
   description?: string;
-  state?: string;
+  state?: StatusType;
   schedule?: string;
   poster?: string;
   detail_images?: string[];

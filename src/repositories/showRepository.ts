@@ -1,5 +1,5 @@
 import { ShowModel, IShow } from "../models/showModel";
-import { CreateShowDTO, SearchShowDTO } from "../dtos/showDto";
+import { CreateShowDTO } from "../dtos/showDto";
 
 class showRepository {
   async createShow(showDetail: CreateShowDTO): Promise<IShow> {
@@ -26,23 +26,20 @@ class showRepository {
   }
 
   async findShowByShowId(showId: string) {
-    return await ShowModel.findOne({ showId });
+    return (await ShowModel.findOne({ showId })).populated("reviews");
   }
 
   async findShowByTitle(title: string) {
     return await ShowModel.findOne({ title: title }).populate("reviews");
   }
 
-  async search(searchShowDTO: SearchShowDTO) {
-    const { title, status, region, page, limit } = searchShowDTO;
-    return await ShowModel.find({
-      title: { $regex: title, $options: "i" },
-      status,
-      region,
-    })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
+  async search(query, page: number, limit: number) {
+    return await ShowModel.aggregate([
+      { $match: query },
+      { $sort: { updated_at: -1 } },
+      { $limit: limit },
+      { $skip: (page - 1) * limit },
+    ]);
   }
 
   async deleteByShowId(showId: string) {

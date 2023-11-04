@@ -1,11 +1,3 @@
-import { IsEnum, IsString } from "class-validator";
-import {
-  STATUS,
-  REGION_NAME,
-  StatusType,
-  RegionType,
-} from "../common/enum/enum";
-
 export interface ShowDetailDTO {
   showId: string;
   region: string;
@@ -32,17 +24,9 @@ export class CreateShowDTO {
 }
 
 export class SearchShowDTO {
-  @IsString()
-  public title?: string;
-
-  @IsString()
-  @IsEnum(STATUS)
-  public status?: StatusType;
-
-  @IsString()
-  @IsEnum(REGION_NAME)
-  public region?: RegionType;
-
+  public title: string = "";
+  public status: string = "";
+  public region: string = "";
   public page: number = 1;
   public limit: number = 20;
 }

@@ -3,7 +3,7 @@ import logger from "../logger";
 import { XMLParser } from "fast-xml-parser";
 import { KOPIS_API_KEY } from "../../config/secret";
 import { ShowDetailDTO } from "../../../dtos/showDto";
-import ShowListParams from "../../@types/ShowListParams";
+import ShowListParams from "../../types/ShowListParams";
 import { REGION } from "../../../common/enum/enum";
 
 function handleRegion(regionName: string): string {

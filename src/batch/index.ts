@@ -4,7 +4,7 @@ import { MONGO_DB_PATH } from "./config/secret";
 import { getShowListJob } from "./common/jobs/getShowListJob";
 import getShowDetailJob from "./common/jobs/getShowDetailJob";
 import showService from "../services/showService";
-import ShowListParams from "./@types/ShowListParams";
+import ShowListParams from "./types/ShowListParams";
 import { ShowDetailDTO } from "../dtos/showDto";
 
 const mongoURI = MONGO_DB_PATH;
@@ -72,8 +72,6 @@ async function main() {
     rows: 10,
     cpage: 1,
   };
-
-  console.log(params);
 
   try {
     await batchProcess(params);
