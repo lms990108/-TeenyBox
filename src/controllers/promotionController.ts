@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
 import PromotionService from "../services/promotionService";
+import { MulterRequest } from "../interfaces/MulterRequest";
 
 class PromotionController {
-  async createPromotion(req: Request, res: Response): Promise<Response> {
-    const promotion = await PromotionService.create(req.body);
-    return res.status(201).json(promotion);
+  // 컨트롤러
+  async createPromotion(req: MulterRequest, res: Response): Promise<void> {
+    // 이미지 URL을 DTO에 포함시킵니다.
+    const promotionDataWithImage = {
+      ...req.body,
+      posterImage: req.body.poster_image,
+    };
+
+    const promotion = await PromotionService.create(promotionDataWithImage);
+    res.status(201).json(promotion);
   }
 
   async updatePromotion(req: Request, res: Response): Promise<void> {

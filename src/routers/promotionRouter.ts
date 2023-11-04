@@ -2,6 +2,7 @@ import express from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import promotionController from "../controllers/promotionController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
+import { upload } from "../middlewares/s3Middleware";
 import * as promotionDto from "../dtos/promotionDto";
 
 const router = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 // 생성: 새로운 게시물을 추가합니다.
 router.post(
   "/add_promotion",
+  upload.single("promotion_poster"),
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
