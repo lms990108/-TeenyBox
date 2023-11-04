@@ -18,6 +18,22 @@ export function validationMiddleware(type: any): RequestHandler {
               errorCode = 422;
               errorMessage = Object.values(error.constraints!).join(", ");
               break;
+            case "social_provider":
+              errorCode = 423;
+              errorMessage = Object.values(error.constraints!).join(", ");
+              break;
+            case "nickname":
+              errorCode = 424;
+              errorMessage = Object.values(error.constraints!).join(", ");
+              break;
+            case "profile_url":
+              errorCode = 425;
+              errorMessage = Object.values(error.constraints!).join(", ");
+              break;
+            case "interested_area":
+              errorCode = 426;
+              errorMessage = Object.values(error.constraints!).join(", ");
+              break;
             case "title":
               errorCode = 423;
               errorMessage = Object.values(error.constraints!).join(", ");
