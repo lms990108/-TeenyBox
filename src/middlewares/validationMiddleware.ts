@@ -7,8 +7,9 @@ import { MulterRequest } from "../interfaces/MulterRequest";
 export function validationMiddleware(type: any): RequestHandler {
   return (req: MulterRequest, res: Response, next: NextFunction) => {
     if (req.file) {
-      req.body.poster_image = req.file.location; // 또는 파일 시스템 경로를 사용하는 경우 req.file.path
+      req.body.poster_image = req.file.path; // 로컬 파일 시스템 경로를 사용합니다.
     }
+
     const dto = plainToInstance(type, req.body);
 
     validate(dto).then((errors: ValidationError[]) => {

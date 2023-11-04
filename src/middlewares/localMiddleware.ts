@@ -1,5 +1,4 @@
 import multer from "multer";
-import path from "path";
 
 // 로컬 저장소 구성
 const localStorage = multer.diskStorage({
