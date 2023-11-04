@@ -6,6 +6,7 @@ import getShowDetailJob from "./common/jobs/getShowDetailJob";
 import showService from "../services/showService";
 import ShowListParams from "./types/ShowListParams";
 import { ShowDetailDTO } from "../dtos/showDto";
+import { updateShowStatusJob } from "./common/jobs/updateShowStatusJob";
 
 const mongoURI = MONGO_DB_PATH;
 
@@ -53,7 +54,7 @@ async function batchProcess(params: ShowListParams): Promise<void> {
   }
 }
 
-function getTodayAndYesterday() {
+export function getTodayAndYesterday() {
   const today = new Date();
   today.setHours(today.getHours() + 9); // Convert UTC to KST
   const yesterday = new Date(today);
@@ -77,9 +78,12 @@ async function main() {
   };
 
   try {
+    logger.info("Batch process started.");
     logger.info(
-      `Batch process started. Processing shows from ${yesterday} to ${today}...`,
+      `Updating show state... Changing state of the ended shows before ${today} to '공연완료'...`,
     );
+    await updateShowStatusJob();
+    logger.info(`Start Retrieving shows from ${yesterday} to ${today}.`);
     await batchProcess(params);
     logger.info("Batch process completed successfully.");
   } catch (err) {

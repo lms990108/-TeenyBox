@@ -13,6 +13,10 @@ class showRepository {
     });
   }
 
+  async updateShowsByQuery(findQuery, updateQuery) {
+    return await ShowModel.updateMany(findQuery, updateQuery, { new: true });
+  }
+
   async isShowExist(showId: string): Promise<boolean> {
     return (await ShowModel.countDocuments({ showId })) > 0;
   }

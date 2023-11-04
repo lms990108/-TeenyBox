@@ -25,6 +25,19 @@ class showService {
     return show;
   }
 
+  async updateShowsByQuery(findQuery, updateQuery) {
+    const shows = await showRepository.updateShowsByQuery(
+      findQuery,
+      updateQuery,
+    );
+
+    if (!shows) {
+      throw new NotFoundError("공연을 수정할 수 없습니다.");
+    }
+
+    return shows;
+  }
+
   async isShowExist(showId: string) {
     return await showRepository.isShowExist(showId);
   }
