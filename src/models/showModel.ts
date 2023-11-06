@@ -8,6 +8,8 @@ export interface IShow extends Document {
   end_date: Date;
   region: RegionType;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   cast?: string[];
   creator?: string;
   runtime?: string;
@@ -35,6 +37,8 @@ const ShowSchema = new Schema<IShow>(
     end_date: { type: Date, required: true },
     region: String,
     location: String,
+    latitude: Number,
+    longitude: Number,
     cast: [String],
     creator: String,
     runtime: String,

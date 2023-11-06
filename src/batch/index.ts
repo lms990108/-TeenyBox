@@ -23,7 +23,11 @@ async function connectToMongo(): Promise<void> {
 async function processShow(show: ShowDetailDTO): Promise<void> {
   const isExist = await showService.isShowExist(show.showId);
   if (!isExist) {
-    const showDetail = await getShowDetailJob(show.showId, show.region);
+    const showDetail = await getShowDetailJob(
+      show.showId,
+      show.location,
+      show.region,
+    );
     await showService.createShow(showDetail);
     logger.info(`Show titled '${showDetail.title}' has been created.`);
   }
@@ -57,22 +61,25 @@ async function batchProcess(params: ShowListParams): Promise<void> {
 export function getTodayAndYesterday() {
   const today = new Date();
   today.setHours(today.getHours() + 9); // Convert UTC to KST
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
+  const dayAfter270Days = new Date(today);
+  dayAfter270Days.setDate(dayAfter270Days.getDate() + 270);
 
   return {
     today: today.toISOString().slice(0, 10).replace(/-/g, ""),
-    yesterday: yesterday.toISOString().slice(0, 10).replace(/-/g, ""),
+    dayAfter270Days: dayAfter270Days
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, ""),
   };
 }
 
 async function main() {
   await connectToMongo();
-  const { today, yesterday } = getTodayAndYesterday();
+  const { today, dayAfter270Days } = getTodayAndYesterday();
 
   const params: ShowListParams = {
-    stdate: yesterday,
-    eddate: today,
+    stdate: today,
+    eddate: dayAfter270Days,
     rows: 10,
     cpage: 1,
   };
@@ -83,7 +90,7 @@ async function main() {
       `Updating show state... Changing state of the ended shows before ${today} to '공연완료'...`,
     );
     await updateShowStatusJob();
-    logger.info(`Start Retrieving shows from ${yesterday} to ${today}.`);
+    logger.info(`Start Retrieving shows from ${today} to ${dayAfter270Days}.`);
     await batchProcess(params);
     logger.info("Batch process completed successfully.");
   } catch (err) {

@@ -2,7 +2,7 @@ import { Union } from "./CustomUnion";
 
 export const STATUS = {
   ONGOING: "공연중",
-  FINISHED: "공연종료",
+  FINISHED: "공연완료",
   NOT_YET: "공연예정",
 } as const;
 
