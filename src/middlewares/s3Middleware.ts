@@ -28,7 +28,7 @@ itemsRouter.post(
   },
 );
  */
-const upload = multer({
+export const upload = multer({
   storage: multerS3({
     s3,
     bucket: "elice-shopping",
@@ -37,5 +37,3 @@ const upload = multer({
     },
   }),
 });
-
-module.exports = { upload };

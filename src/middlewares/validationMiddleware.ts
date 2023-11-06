@@ -1,10 +1,15 @@
 import { plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Response, NextFunction, RequestHandler } from "express";
+import { MulterRequest } from "../interfaces/MulterRequest";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validationMiddleware(type: any): RequestHandler {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: MulterRequest, res: Response, next: NextFunction) => {
+    if (req.file) {
+      req.body.poster_image = req.file.path; // 로컬 파일 시스템 경로를 사용합니다.
+    }
+
     const dto = plainToInstance(type, req.body);
 
     validate(dto).then((errors: ValidationError[]) => {
@@ -26,7 +31,7 @@ export function validationMiddleware(type: any): RequestHandler {
               errorCode = 424;
               errorMessage = Object.values(error.constraints!).join(", ");
               break;
-            case "poster_url":
+            case "poster_image":
               errorCode = 425;
               errorMessage = Object.values(error.constraints!).join(", ");
               break;
