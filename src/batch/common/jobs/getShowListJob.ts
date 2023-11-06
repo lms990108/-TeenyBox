@@ -27,7 +27,6 @@ async function fetchShowsForRegion(
 ): Promise<ShowDetailDTO[]> {
   const URL = "http://kopis.or.kr/openApi/restful/pblprfr";
   const SHCATE = "AAAA"; // 연극 코드 (장르)
-  const PRFSTATE = "02"; // 공연상태 코드 (02: 공연중)
 
   logger.info(
     `Fetching show list for region ${regionName} at page ${params.cpage}...`,
@@ -39,7 +38,6 @@ async function fetchShowsForRegion(
         ...params,
         service: KOPIS_API_KEY,
         shcate: SHCATE,
-        prfstate: PRFSTATE,
         signgucode: regionCode,
       },
     });
@@ -51,6 +49,7 @@ async function fetchShowsForRegion(
     const handledRegionName = handleRegion(regionName);
     const showDetails: ShowDetailDTO[] = shows.map((show) => ({
       showId: show["mt20id"],
+      location: show["fcltynm"],
       region: handledRegionName,
     }));
 

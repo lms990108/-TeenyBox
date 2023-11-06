@@ -2,6 +2,7 @@ import { CreateShowDTO } from "../dtos/showDto";
 import showRepository from "../repositories/showRepository";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
+import { updateShowsQuery } from "../types/updateShowsQuery";
 
 class showService {
   async createShow(showDetail: CreateShowDTO) {
@@ -25,7 +26,9 @@ class showService {
     return show;
   }
 
-  async updateShowsByQuery(findQuery, updateQuery) {
+  async updateShowsByQuery(updateShowsQuery: updateShowsQuery) {
+    const { findQuery, updateQuery } = updateShowsQuery;
+
     const shows = await showRepository.updateShowsByQuery(
       findQuery,
       updateQuery,

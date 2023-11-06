@@ -3,7 +3,7 @@ import showService from "../services/showService";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
-    const page = parseInt(req.query.query as string) || 1;
+    const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
 
     const shows = await showService.findShows(page, limit);
