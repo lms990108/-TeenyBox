@@ -21,7 +21,7 @@ export interface IShow extends Document {
   schedule?: string;
   poster?: string;
   detail_images?: string[];
-  reviews?: (typeof mongoose.Schema.Types.ObjectId)[];
+  // reviews?: (typeof mongoose.Schema.Types.ObjectId)[];
 }
 
 const ShowSchema = new Schema<IShow>(
@@ -53,12 +53,12 @@ const ShowSchema = new Schema<IShow>(
     schedule: String,
     poster: String,
     detail_images: [String],
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Review",
+    //   },
+    // ],
   },
   {
     timestamps: true,

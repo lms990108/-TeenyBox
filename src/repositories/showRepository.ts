@@ -30,11 +30,11 @@ class showRepository {
   }
 
   async findShowByShowId(showId: string) {
-    return (await ShowModel.findOne({ showId })).populated("reviews");
+    return await ShowModel.findOne({ showId });
   }
 
   async findShowByTitle(title: string) {
-    return await ShowModel.findOne({ title: title }).populate("reviews");
+    return await ShowModel.findOne({ title: title });
   }
 
   async search(query, page: number, limit: number) {
