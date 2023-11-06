@@ -4,6 +4,8 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import logger from "./common/utils/logger";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./config/swagger";
 
 import pingRouter from "./routers/pingRouter";
 import postRouter from "./routers/postRouter";
@@ -40,6 +42,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(morgan("dev", { stream: morganStream }));
 }
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/ping", pingRouter);
 app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
