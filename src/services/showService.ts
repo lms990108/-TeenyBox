@@ -1,4 +1,4 @@
-import { CreateShowDTO, SearchShowDTO } from "../dtos/showDto";
+import { CreateShowDTO } from "../dtos/showDto";
 import showRepository from "../repositories/showRepository";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
@@ -23,6 +23,19 @@ class showService {
       throw new NotFoundError(`showId: ${showId} 공연을 수정할 수 없습니다.`); // Todo: 500 에러로 변경
 
     return show;
+  }
+
+  async updateShowsByQuery(findQuery, updateQuery) {
+    const shows = await showRepository.updateShowsByQuery(
+      findQuery,
+      updateQuery,
+    );
+
+    if (!shows) {
+      throw new NotFoundError("공연을 수정할 수 없습니다.");
+    }
+
+    return shows;
   }
 
   async isShowExist(showId: string) {
@@ -58,8 +71,19 @@ class showService {
     return show;
   }
 
-  async search(searchShowDTO: SearchShowDTO) {
-    const shows = await showRepository.search(searchShowDTO);
+  async search(
+    title: string,
+    state: string,
+    region: string,
+    page: number,
+    limit: number,
+  ) {
+    const query = {};
+    if (title) query["title"] = { $regex: title, $options: "i" };
+    if (state) query["state"] = state;
+    if (region) query["region"] = region;
+
+    const shows = await showRepository.search(query, page, limit);
 
     if (!shows) {
       throw new NotFoundError(`검색 결과: 해당하는 공연을 찾을 수 없습니다.`);

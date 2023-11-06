@@ -4,8 +4,9 @@ import { MONGO_DB_PATH } from "./config/secret";
 import { getShowListJob } from "./common/jobs/getShowListJob";
 import getShowDetailJob from "./common/jobs/getShowDetailJob";
 import showService from "../services/showService";
-import ShowListParams from "./@types/ShowListParams";
+import ShowListParams from "./types/ShowListParams";
 import { ShowDetailDTO } from "../dtos/showDto";
+import { updateShowStatusJob } from "./common/jobs/updateShowStatusJob";
 
 const mongoURI = MONGO_DB_PATH;
 
@@ -53,9 +54,12 @@ async function batchProcess(params: ShowListParams): Promise<void> {
   }
 }
 
-function getTodayAndYesterdayDate() {
+export function getTodayAndYesterday() {
   const today = new Date();
-  const yesterday = new Date(today.valueOf() - 86400000);
+  today.setHours(today.getHours() + 9); // Convert UTC to KST
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
   return {
     today: today.toISOString().slice(0, 10).replace(/-/g, ""),
     yesterday: yesterday.toISOString().slice(0, 10).replace(/-/g, ""),
@@ -64,7 +68,7 @@ function getTodayAndYesterdayDate() {
 
 async function main() {
   await connectToMongo();
-  const { today, yesterday } = getTodayAndYesterdayDate();
+  const { today, yesterday } = getTodayAndYesterday();
 
   const params: ShowListParams = {
     stdate: yesterday,
@@ -73,9 +77,13 @@ async function main() {
     cpage: 1,
   };
 
-  console.log(params);
-
   try {
+    logger.info("Batch process started.");
+    logger.info(
+      `Updating show state... Changing state of the ended shows before ${today} to '공연완료'...`,
+    );
+    await updateShowStatusJob();
+    logger.info(`Start Retrieving shows from ${yesterday} to ${today}.`);
     await batchProcess(params);
     logger.info("Batch process completed successfully.");
   } catch (err) {
