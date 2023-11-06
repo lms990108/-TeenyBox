@@ -28,6 +28,8 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+// uploads 폴더를 정적 경로로 설정합니다.
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // log directory check
 const logDir = path.join(__dirname, "logs");

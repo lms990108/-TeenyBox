@@ -18,6 +18,7 @@ router.post(
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put(
   "/update_promotion/:promotionNumber",
+  uploadLocal.single("promotion_poster"),
   validationMiddleware(promotionDto.UpdatePromotionDTO),
   asyncHandler(promotionController.updatePromotion),
 );
