@@ -12,7 +12,7 @@ class CommentService {
     // userId는 현재 접속한 사용자의 ID를 나타냅니다.
     try {
       // 사용자 정보 조회
-      const user = await UserModel.findById(userId);
+      const user = await UserModel.findOne({ user_id: userId });
       if (!user) {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }
