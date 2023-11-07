@@ -1,5 +1,6 @@
 import { UserModel, IUser } from "../models/userModel";
 import { UserRequestDTO, UserResponseDTO } from "../dtos/userDto";
+import { SocialProvider } from "../batch/types/SocialLogin";
 
 class UserRepository {
   // 사용자 생성
@@ -23,10 +24,7 @@ class UserRepository {
       const createdUser = await existingUser.save();
       const userResponse: UserResponseDTO = {
         user_id: createdUser.user_id,
-        social_provider: createdUser.social_provider as
-          | "kakao"
-          | "naver"
-          | "google",
+        social_provider: createdUser.social_provider as SocialProvider,
         nickname: createdUser.nickname,
         profile_url: createdUser.profile_url,
         interested_area: createdUser.interested_area,
@@ -39,10 +37,7 @@ class UserRepository {
       const createdUser = await user.save();
       const userResponse: UserResponseDTO = {
         user_id: createdUser.user_id,
-        social_provider: createdUser.social_provider as
-          | "kakao"
-          | "naver"
-          | "google",
+        social_provider: createdUser.social_provider as SocialProvider,
         nickname: createdUser.nickname,
         profile_url: createdUser.profile_url,
         interested_area: createdUser.interested_area,
@@ -90,7 +85,7 @@ class UserRepository {
 
     const userResponseDTOs = users.map((user) => ({
       user_id: user.user_id,
-      social_provider: user.social_provider as "kakao" | "naver" | "google",
+      social_provider: user.social_provider as SocialProvider,
       nickname: user.nickname,
       profile_url: user.profile_url,
       interested_area: user.interested_area,

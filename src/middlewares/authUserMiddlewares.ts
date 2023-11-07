@@ -19,14 +19,12 @@ export const checkLoginStatus = async (
   try {
     const accessToken = req.cookies.token as string;
     if (!accessToken) {
-      res.status(200).json({ isLoggedIn: false });
-      next();
+      res.status(401).json({ isLoggedIn: false });
       return;
     }
     const { foundUser, error } = await findByToken(accessToken);
     if (error) {
-      res.status(200).json({ isLoggedIn: false });
-      next();
+      res.status(401).json({ isLoggedIn: false });
       return;
     }
     req.isLoggedIn = true;
@@ -34,7 +32,7 @@ export const checkLoginStatus = async (
     if (req.user) {
       res.status(200).json({ isLoggedIn: true, user: req.user });
     } else {
-      res.status(200).json({ isLoggedIn: false });
+      res.status(401).json({ isLoggedIn: false });
     }
     next();
   } catch (err) {

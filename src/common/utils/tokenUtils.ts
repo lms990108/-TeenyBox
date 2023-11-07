@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { UserModel } from "../../models/userModel";
 import NotFoundError from "../error/NotFoundError";
 import { UserResponseDTO } from "../../dtos/userDto";
+import { SocialProvider } from "../../batch/types/SocialLogin";
 
 const SECRET_KEY = process.env.SECRET_KEY as string;
 
@@ -50,10 +51,7 @@ export async function findByToken(
     }
     const userResponse: UserResponseDTO = {
       user_id: foundUser.user_id,
-      social_provider: foundUser.social_provider as
-        | "kakao"
-        | "naver"
-        | "google",
+      social_provider: foundUser.social_provider as SocialProvider,
       nickname: foundUser.nickname,
       profile_url: foundUser.profile_url,
       interested_area: foundUser.interested_area,

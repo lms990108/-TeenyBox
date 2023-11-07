@@ -43,6 +43,56 @@ class UserController {
     }
   }
 
+  async naverLogin(req: Request, res: Response) {
+    const { authorizationCode, state } = req.body;
+    const { user, token, refreshToken, naverUserData } =
+      await UserService.naverLogin(authorizationCode, state);
+    if (user) {
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      return res.status(200).json({ message: "로그인 되었습니다.", user });
+    } else {
+      return res.status(302).json({
+        message: "회원가입이 필요합니다.",
+        naverUserData,
+        social_provider: "naver",
+      });
+    }
+  }
+
+  async googleLogin(req: Request, res: Response) {
+    const { authorizationCode } = req.body;
+    const { user, token, refreshToken, googleUserData } =
+      await UserService.googleLogin(authorizationCode);
+    if (user) {
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      return res.status(200).json({ message: "로그인 되었습니다.", user });
+    } else {
+      return res.status(302).json({
+        message: "회원가입이 필요합니다.",
+        googleUserData,
+        social_provider: "google",
+      });
+    }
+  }
+
   async logout(req: Request, res: Response) {
     res.clearCookie("token"); // 쿠키 삭제
     res.clearCookie("refreshToken");
