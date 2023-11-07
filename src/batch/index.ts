@@ -1,6 +1,5 @@
 import logger from "./common/logger";
 import mongoose from "mongoose";
-import { MONGO_DB_PATH } from "./config/secret";
 import { getShowListJob } from "./common/jobs/getShowListJob";
 import getShowDetailJob from "./common/jobs/getShowDetailJob";
 import showService from "../services/showService";
@@ -8,7 +7,7 @@ import ShowListParams from "./types/ShowListParams";
 import { ShowDetailDTO } from "../dtos/showDto";
 import { updateShowStatusJob } from "./common/jobs/updateShowStatusJob";
 
-const mongoURI = MONGO_DB_PATH;
+const mongoURI = process.env.MONGO_DB_PATH;
 
 async function connectToMongo(): Promise<void> {
   try {
