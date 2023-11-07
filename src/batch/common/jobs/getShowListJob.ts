@@ -1,7 +1,6 @@
 import axios from "axios";
 import logger from "../logger";
 import { XMLParser } from "fast-xml-parser";
-import { KOPIS_API_KEY } from "../../config/secret";
 import { ShowDetailDTO } from "../../../dtos/showDto";
 import ShowListParams from "../../types/ShowListParams";
 import { REGION } from "../../../common/enum/enum";
@@ -36,7 +35,7 @@ async function fetchShowsForRegion(
     const response = await axios.get(URL, {
       params: {
         ...params,
-        service: KOPIS_API_KEY,
+        service: process.env.KOPIS_API_KEY,
         shcate: SHCATE,
         signgucode: regionCode,
       },

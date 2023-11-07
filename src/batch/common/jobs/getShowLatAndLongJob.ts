@@ -1,7 +1,6 @@
 import axios from "axios";
 import logger from "../logger";
 import { XMLParser } from "fast-xml-parser";
-import { KOPIS_API_KEY } from "../../config/secret";
 
 interface LocationDetail {
   latitude: number;
@@ -22,7 +21,7 @@ async function fetchXML(url: string, params: object) {
 async function getLocationId(location: string): Promise<string> {
   const getLocationListURL = `http://kopis.or.kr/openApi/restful/prfplc`;
   const params = {
-    service: KOPIS_API_KEY,
+    service: process.env.KOPIS_API_KEY,
     rows: 1,
     cpage: 1,
     shprfnmfct: location,
@@ -43,7 +42,7 @@ async function getLocationDetailJob(
   locationId: string,
 ): Promise<LocationDetail> {
   const url = `http://kopis.or.kr/openApi/restful/prfplc/${locationId}`;
-  const params = { service: KOPIS_API_KEY };
+  const params = { service: process.env.KOPIS_API_KEY };
   const jsonObj = await fetchXML(url, params);
   const locationDetail = jsonObj["dbs"]["db"] || [];
 

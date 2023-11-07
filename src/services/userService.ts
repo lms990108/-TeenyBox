@@ -130,6 +130,160 @@ class UserService {
     };
   }
 
+  // 네이버 로그인
+  async naverLogin(authorizationCode: string, state: string) {
+    const accessToken = await this.getNaverToken(
+      authorizationCode,
+      state,
+      process.env.NAVER_CLIENT_ID,
+      process.env.NAVER_CLIENT_SECRET,
+    );
+    const naverUserData = await this.getNaverUserData(accessToken);
+    const user = await UserRepository.getUserById(naverUserData.id);
+
+    if (user) {
+      if (user.state === "탈퇴") {
+        return {
+          user: null,
+          token: null,
+          refreshToken: null,
+          naverUserData: naverUserData,
+        };
+      }
+      const token = generateToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      return { user, token, refreshToken, naverUserData };
+    } else {
+      return {
+        user: null,
+        token: null,
+        refreshToken: null,
+        naverUserData: naverUserData,
+      };
+    }
+  }
+
+  // 네이버 로그인 (get token)
+  async getNaverToken(
+    code: string,
+    state: string,
+    client_id: string,
+    client_secret: string,
+  ): Promise<string> {
+    const data = new URLSearchParams();
+    data.append("grant_type", "authorization_code");
+    data.append("client_id", client_id);
+    data.append("client_secret", client_secret);
+    data.append("code", code);
+    data.append("state", state);
+
+    const response = await axios.post(
+      "https://nid.naver.com/oauth2.0/token",
+      data,
+      {
+        headers: {
+          "Content-Type": "text/json;charset=utf-8",
+        },
+      },
+    );
+
+    return response.data.access_token;
+  }
+
+  // 네이버 로그인 (get user info)
+  async getNaverUserData(accessToken: string): Promise<KakaoUserDataDTO> {
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await axios.get("https://openapi.naver.com/v1/nid/me", {
+      headers,
+    });
+
+    const result = response.data;
+
+    return {
+      id: result.response.id,
+      profileUrl: result.response.profile_image,
+      nickname: result.response.nickname,
+    };
+  }
+
+  // 구글 로그인
+  async googleLogin(authorizationCode: string) {
+    const accessToken = await this.getGoogleToken(
+      authorizationCode,
+      process.env.KAKAO_REST_API_KEY,
+    );
+    const googleUserData = await this.getGoogleUserData(accessToken);
+    const user = await UserRepository.getUserById(googleUserData.id);
+
+    if (user) {
+      if (user.state === "탈퇴") {
+        return {
+          user: null,
+          token: null,
+          refreshToken: null,
+          googleUserData: googleUserData,
+        };
+      }
+      const token = generateToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      return { user, token, refreshToken, googleUserData };
+    } else {
+      return {
+        user: null,
+        token: null,
+        refreshToken: null,
+        googleUserData: googleUserData,
+      };
+    }
+  }
+
+  // 구글 로그인 (get token)
+  async getGoogleToken(code: string, client_id: string): Promise<string> {
+    const data = new URLSearchParams();
+    data.append("grant_type", "authorization_code");
+    data.append("client_id", client_id);
+    data.append("code", code);
+
+    const response = await axios.post(
+      "https://oauth2.googleapis.com/token",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        },
+      },
+    );
+
+    return response.data.access_token;
+  }
+
+  // 구글 로그인 (get user info)
+  async getGoogleUserData(accessToken: string): Promise<KakaoUserDataDTO> {
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    const response = await axios.get(
+      "https://www.googleapis.com/userinfo/v2/me",
+      {
+        headers,
+      },
+    );
+
+    const result = response.data;
+
+    return {
+      id: result.id,
+      profileUrl: result.picture,
+      nickname: result.name,
+    };
+  }
+
   // 회원정보 조회
   async getUserById(userId: string): Promise<UserResponseDTO | null> {
     const user = await UserRepository.getUserById(userId);
