@@ -20,7 +20,6 @@ export class CommentRepository {
       .sort({ createdAt: -1 })
       .exec();
   }
-
   // 게시글 아이디로 모든 댓글 조회 (페이징 추가)
   async findByPostId(
     postId: string,
