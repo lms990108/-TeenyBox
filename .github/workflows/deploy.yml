@@ -22,4 +22,4 @@ jobs:
           port: ${{ secrets.DEV_PORT }}
           script: |
             cd EliceStudy2nd_BE
-            ./deploy.sh
+            ./bin/deploy.sh
