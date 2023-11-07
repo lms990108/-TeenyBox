@@ -1,22 +1,35 @@
-import { IsEnum, IsString } from "class-validator";
-import { STATUS, REGION } from "../common/enum/enum";
-import { Union } from "../common/enum/CustomUnion";
+export interface ShowDetailDTO {
+  showId: string;
+  location: string;
+  region: string;
+}
 
-type Status = Union<typeof STATUS>;
-type Region = Union<typeof REGION>;
+export class CreateShowDTO {
+  showId: string;
+  title: string;
+  start_date: string;
+  end_date: string;
+  region: number;
+  location?: string;
+  latitude?: number;
+  longitude?: number;
+  cast?: string;
+  creator?: string;
+  runtime?: string;
+  age?: string;
+  company?: string;
+  price?: string;
+  description?: string;
+  state?: string;
+  schedule?: string;
+  poster?: string;
+  detail_images?: string[];
+}
 
 export class SearchShowDTO {
-  @IsString()
-  public title?: string;
-
-  @IsString()
-  @IsEnum(STATUS)
-  public status?: Status;
-
-  @IsString()
-  @IsEnum(REGION)
-  public region?: Region;
-
-  public skip: number = 0;
-  public limit: number = 10;
+  public title: string = "";
+  public status: string = "";
+  public region: string = "";
+  public page: number = 1;
+  public limit: number = 20;
 }

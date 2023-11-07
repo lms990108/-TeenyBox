@@ -40,10 +40,19 @@ class UserService {
   }
 
   // 닉네임 중복 확인
-  async checkNickname(nickname: string) {
-    const user = await UserRepository.getUserByNickname(nickname);
+  async checkNickname(user_id: string, nickname: string) {
+    const user = await UserRepository.getUserById(user_id); // 가입하려는 사용자
+    const existingUser = await UserRepository.getUserByNickname(nickname); // 존재하는 사용자
 
-    if (user && user.state !== "탈퇴") {
+    if (existingUser) {
+      if (
+        user &&
+        user.state === "탈퇴" &&
+        user.nickname === existingUser.nickname
+      ) {
+        return true; // 탈퇴한 사용자는 기존 닉네임 사용 가능
+      }
+
       throw new BadRequestError("중복된 닉네임입니다.");
     }
 

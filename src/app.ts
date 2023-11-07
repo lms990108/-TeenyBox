@@ -2,10 +2,10 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import logger from "./batch/logger";
+import logger from "./common/utils/logger";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./config/swagger";
 
 import pingRouter from "./routers/pingRouter";
 import postRouter from "./routers/postRouter";
@@ -13,6 +13,8 @@ import promotionRouter from "./routers/promotionRouter";
 import commentRouter from "./routers/commentRouter";
 import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
+import { errorMiddleware } from "./middlewares/errorMiddleware";
+import path from "path";
 
 dotenv.config();
 
@@ -31,13 +33,6 @@ app.use(cookieParser());
 // uploads 폴더를 정적 경로로 설정합니다.
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// log directory check
-const logDir = path.join(__dirname, "logs");
-
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
-
 const morganStream = {
   write: (message: string) => {
     logger.info(message.trim());
@@ -50,12 +45,15 @@ if (process.env.NODE_ENV === "production") {
   app.use(morgan("dev", { stream: morganStream }));
 }
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/ping", pingRouter);
 app.use("/api/board", postRouter);
 app.use("/api/promotion", promotionRouter);
 app.use("/api/comment", commentRouter);
 app.use("/api/show", showRouter);
 app.use("/api/user", userRouter);
+
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   logger.info(`server is running on ${port}`);

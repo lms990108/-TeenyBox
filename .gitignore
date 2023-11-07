@@ -215,6 +215,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# custom
+secret.ts
+
 # 추가된 파일
 uploads/
 

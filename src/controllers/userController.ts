@@ -13,8 +13,8 @@ class UserController {
   }
 
   async checkNickname(req: Request, res: Response) {
-    const { nickname } = req.body;
-    await UserService.checkNickname(nickname);
+    const { user_id, nickname } = req.body;
+    await UserService.checkNickname(user_id, nickname);
     return res.status(200).json({ message: "사용 가능한 닉네임입니다." });
   }
 

@@ -1,6 +1,8 @@
+import { Union } from "./CustomUnion";
+
 export const STATUS = {
   ONGOING: "공연중",
-  FINISHED: "공연종료",
+  FINISHED: "공연완료",
   NOT_YET: "공연예정",
 } as const;
 
@@ -23,6 +25,25 @@ export const REGION = {
   제주: 50,
   강원: 51,
 } as const;
+
+export enum REGION_NAME {
+  서울,
+  "경기/인천",
+  부산,
+  대구,
+  광주,
+  대전,
+  울산,
+  세종,
+  강원,
+  충청,
+  전라,
+  경상,
+  제주,
+}
+
+export type StatusType = Union<typeof STATUS>;
+export type RegionType = keyof typeof REGION_NAME;
 
 export const ROLE = {
   USER: "user",
