@@ -2,13 +2,19 @@ import axios from "axios";
 import { XMLParser } from "fast-xml-parser";
 import { KOPIS_API_KEY } from "../../config/secret";
 import { CreateShowDTO } from "../../../dtos/showDto";
+import { getLocationLatAndLongJob } from "./getShowLatAndLongJob";
 
 function convertToDate(dateStr: string) {
   const formattedDate = dateStr.replace(/\./g, "-");
   return new Date(formattedDate);
 }
 
-function parseShowData(xmlData: string, region: string): CreateShowDTO {
+function parseShowData(
+  xmlData: string,
+  latitude: number,
+  longitude: number,
+  region: string,
+): CreateShowDTO {
   const parser = new XMLParser();
   const jsonObj = parser.parse(xmlData);
 
@@ -24,6 +30,8 @@ function parseShowData(xmlData: string, region: string): CreateShowDTO {
     end_date: end_date,
     region: region,
     location: show["fcltynm"],
+    latitude: latitude,
+    longitude: longitude,
     cast: show["prfcast"],
     creator: show["prfcrew"],
     runtime: show["prfruntime"],
@@ -38,17 +46,22 @@ function parseShowData(xmlData: string, region: string): CreateShowDTO {
   } as unknown as CreateShowDTO;
 }
 
-export default async function getShowDetailJob(showId: string, region: string) {
-  const URL = `http://kopis.or.kr/openApi/restful/pblprfr/${showId}`;
+export default async function getShowDetailJob(
+  showId: string,
+  location: string,
+  region: string,
+) {
+  const getShowDetailURL = `http://kopis.or.kr/openApi/restful/pblprfr/${showId}`;
 
   try {
-    const response = await axios.get(URL, {
+    const response = await axios.get(getShowDetailURL, {
       params: {
         service: KOPIS_API_KEY,
       },
     });
+    const { latitude, longitude } = await getLocationLatAndLongJob(location);
 
-    return parseShowData(response.data, region);
+    return parseShowData(response.data, latitude, longitude, region);
   } catch (err) {
     console.error("Error fetching show details:", err);
   }

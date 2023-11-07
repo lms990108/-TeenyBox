@@ -8,6 +8,8 @@ export interface IShow extends Document {
   end_date: Date;
   region: RegionType;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   cast?: string[];
   creator?: string;
   runtime?: string;
@@ -19,7 +21,7 @@ export interface IShow extends Document {
   schedule?: string;
   poster?: string;
   detail_images?: string[];
-  reviews?: (typeof mongoose.Schema.Types.ObjectId)[];
+  // reviews?: (typeof mongoose.Schema.Types.ObjectId)[];
 }
 
 const ShowSchema = new Schema<IShow>(
@@ -35,6 +37,8 @@ const ShowSchema = new Schema<IShow>(
     end_date: { type: Date, required: true },
     region: String,
     location: String,
+    latitude: Number,
+    longitude: Number,
     cast: [String],
     creator: String,
     runtime: String,
@@ -49,12 +53,12 @@ const ShowSchema = new Schema<IShow>(
     schedule: String,
     poster: String,
     detail_images: [String],
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Review",
+    //   },
+    // ],
   },
   {
     timestamps: true,

@@ -1,5 +1,6 @@
 export interface ShowDetailDTO {
   showId: string;
+  location: string;
   region: string;
 }
 
@@ -10,6 +11,8 @@ export class CreateShowDTO {
   end_date: string;
   region: number;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   cast?: string;
   creator?: string;
   runtime?: string;
