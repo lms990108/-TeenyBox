@@ -23,7 +23,7 @@ class PromotionController {
   async updatePromotion(req: MulterRequest, res: Response): Promise<void> {
     try {
       const promotionNumber = Number(req.params.promotionNumber);
-      let updateData = req.body;
+      const updateData = req.body;
 
       // 이미지가 새로 업로드되었는지 확인
       if (req.body.poster_image) {
