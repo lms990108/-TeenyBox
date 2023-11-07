@@ -1,6 +1,5 @@
 import axios from "axios";
 import { XMLParser } from "fast-xml-parser";
-import { KOPIS_API_KEY } from "../../config/secret";
 import { CreateShowDTO } from "../../../dtos/showDto";
 import { getLocationLatAndLongJob } from "./getShowLatAndLongJob";
 
@@ -56,7 +55,7 @@ export default async function getShowDetailJob(
   try {
     const response = await axios.get(getShowDetailURL, {
       params: {
-        service: KOPIS_API_KEY,
+        service: process.env.KOPIS_API_KEY,
       },
     });
     const { latitude, longitude } = await getLocationLatAndLongJob(location);
