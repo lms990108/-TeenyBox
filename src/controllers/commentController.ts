@@ -1,11 +1,26 @@
 import { Request, Response } from "express";
 import CommentService from "../services/commentService";
+import { AuthRequest } from "../middlewares/authUserMiddlewares";
 
 class CommentController {
   // 댓글 생성
-  async createComment(req: Request, res: Response): Promise<void> {
-    const comment = await CommentService.createComment(req.body);
-    res.status(201).json(comment);
+  async createComment(req: AuthRequest, res: Response): Promise<void> {
+    // 인증된 사용자의 정보가 있는지 확인합니다.
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
+    // 서비스에게 DTO와 함께 사용자 ID를 전달합니다.
+    try {
+      const newComment = await CommentService.createComment(
+        req.body,
+        req.user.user_id,
+      );
+      res.status(201).json(newComment);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 
   // 특정 게시글의 모든 댓글 조회 (페이징 처리 추가)

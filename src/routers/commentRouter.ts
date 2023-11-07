@@ -3,12 +3,14 @@ import asyncHandler from "../common/utils/asyncHandler";
 import commentController from "../controllers/commentController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import * as commentDto from "../dtos/commentDto";
+import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 const router = express.Router();
 
 // 댓글 생성
 router.post(
   "/add_comment",
+  authenticateUser, // 사용자 인증 미들웨어 추가
   validationMiddleware(commentDto.CreateCommentDTO),
   asyncHandler(commentController.createComment),
 );

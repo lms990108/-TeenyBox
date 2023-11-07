@@ -2,7 +2,8 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IComment extends Document {
   content: string;
-  user_id: string; // 추후에 user 로직이 완료되면 ref로 변경
+  user_id: mongoose.Schema.Types.ObjectId;
+  user_nickname: string;
   post: mongoose.Schema.Types.ObjectId;
   promotion: mongoose.Schema.Types.ObjectId;
   createdAt?: Date;
@@ -16,6 +17,10 @@ const commentSchema = new Schema<IComment>(
       required: true,
     },
     user_id: {
+      type: String,
+      required: true,
+    },
+    user_nickname: {
       type: String,
       required: true,
     },

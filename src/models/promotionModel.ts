@@ -2,13 +2,13 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPromotion extends Document {
   promotion_number: number;
-  user_id: string; // 일단 string으로 생성 후 나중에 user 로직 끝나면 ref
+  user_id: string;
   title: string;
   content: string;
-  poster_url: string;
+  poster_image: string; // Image 모델을 참조합니다.
   createdAt?: Date;
   updatedAt?: Date;
-  comments: (typeof mongoose.Schema.Types.ObjectId)[];
+  comments: mongoose.Schema.Types.ObjectId[];
 }
 
 const promotionSchema = new Schema<IPromotion>(
@@ -31,7 +31,7 @@ const promotionSchema = new Schema<IPromotion>(
       type: String,
       required: true,
     },
-    poster_url: {
+    poster_image: {
       type: String,
       required: true,
     },

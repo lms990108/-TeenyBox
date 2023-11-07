@@ -6,10 +6,6 @@ export class CreateCommentDTO {
   @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
 
-  @IsString({ message: "user_id는 문자열이어야 합니다." })
-  @IsNotEmpty({ message: "user_id는 반드시 입력되어야 합니다." })
-  user_id!: string;
-
   @IsOptional()
   @IsMongoId({ message: "post는 유효한 MongoDB ID여야 합니다." })
   post?: string;

@@ -2,6 +2,7 @@ import express from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import promotionController from "../controllers/promotionController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
+import { uploadLocal } from "../middlewares/localMiddleware"; // uploadLocal 미들웨어를 가져옵니다.
 import * as promotionDto from "../dtos/promotionDto";
 
 const router = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 // 생성: 새로운 게시물을 추가합니다.
 router.post(
   "/add_promotion",
+  uploadLocal.single("promotion_poster"), // S3 업로드 대신 로컬 업로드 미들웨어를 사용
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
@@ -16,6 +18,7 @@ router.post(
 // 수정: 주어진 ID를 가진 게시물을 업데이트합니다.
 router.put(
   "/update_promotion/:promotionNumber",
+  uploadLocal.single("promotion_poster"),
   validationMiddleware(promotionDto.UpdatePromotionDTO),
   asyncHandler(promotionController.updatePromotion),
 );

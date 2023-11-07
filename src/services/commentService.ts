@@ -4,16 +4,32 @@ import PostModel from "../models/postModel";
 import PromotionModel from "../models/promotionModel";
 import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
+import { UserModel } from "../models/userModel";
 
 class CommentService {
   // 댓글 생성
-  async createComment(dto: CreateCommentDTO) {
+  async createComment(dto: CreateCommentDTO, userId: string) {
+    // userId는 현재 접속한 사용자의 ID를 나타냅니다.
     try {
-      const newComment = await CommentRepository.create(dto);
+      // 사용자 정보 조회
+      const user = await UserModel.findOne({ user_id: userId });
+      if (!user) {
+        throw new NotFoundError("사용자를 찾을 수 없습니다.");
+      }
+
+      // 사용자 닉네임을 DTO에 추가
+      const commentData = {
+        ...dto,
+        user_id: userId,
+        user_nickname: user.nickname, // 사용자 닉네임
+      };
+
+      // 댓글 생성
+      const newComment = await CommentRepository.create(commentData);
       return newComment;
     } catch (error) {
       throw new InternalServerError(
-        `댓글을 생성하는데 실패했습니다. comment: ${error.message}`,
+        `댓글을 생성하는데 실패했습니다. ${error.message}`,
       );
     }
   }

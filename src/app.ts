@@ -14,6 +14,7 @@ import commentRouter from "./routers/commentRouter";
 import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
+import path from "path";
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+// uploads 폴더를 정적 경로로 설정합니다.
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const morganStream = {
   write: (message: string) => {
