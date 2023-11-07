@@ -234,6 +234,238 @@ const router = express.Router();
  */
 /**
  * @swagger
+ * /user/naver-login:
+ *   post:
+ *     tags: [user]
+ *     summary: 네이버 로그인
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               authorizationCode:
+ *                 type: string
+ *                 description: 네이버에서 발급받은 인가 코드
+ *                 example: "GsRL1CYcDVqrcy6vwJ"
+ *               state:
+ *                 type: string
+ *                 description: 상태 매개변수
+ *                 example: "psg9Ns2m2n"
+ *     responses:
+ *       200:
+ *         description: 로그인 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 로그인 성공 메시지
+ *                   example: "로그인 되었습니다."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: 사용자 ID
+ *                       example: "654a8c722f0c32431d8cea87"
+ *                     user_id:
+ *                       type: string
+ *                       description: 사용자의 고유 ID
+ *                       example: "116217972498421836521"
+ *                     social_provider:
+ *                       type: string
+ *                       description: 소셜 프로바이더 (네이버)
+ *                       example: "naver"
+ *                     nickname:
+ *                       type: string
+ *                       description: 사용자 닉네임
+ *                       example: "은리"
+ *                     profile_url:
+ *                       type: string
+ *                       description: 사용자 프로필 이미지 URL
+ *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
+ *                     interested_area:
+ *                       type: string
+ *                       description: 관심 지역
+ *                       example: "제주"
+ *                     role:
+ *                       type: string
+ *                       description: 사용자 권한
+ *                       example: "user"
+ *                     state:
+ *                       type: string
+ *                       description: 가입 상태
+ *                       example: "가입"
+ *                     dibs:
+ *                       type: array
+ *                       description: 사용자가 저장한 항목
+ *                     post:
+ *                       type: array
+ *                       description: 사용자 자유 게시물
+ *                     promotion:
+ *                       type: array
+ *                       description: 사용자 홍보 게시물
+ *                     comment:
+ *                       type: array
+ *                       description: 사용자가 작성한 댓글
+ *                     review:
+ *                       type: array
+ *                       description: 사용자가 작성한 리뷰
+ *                     __v:
+ *                       type: number
+ *                       description: 모델 버전
+ *                       example: 0
+ *       302:
+ *         description: 회원가입 필요
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 회원가입 필요 메시지
+ *                   example: "회원가입이 필요합니다."
+ *                 naverUserData:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: 네이버 사용자 고유 ID
+ *                       example: "116217972498421836521"
+ *                     profileUrl:
+ *                       type: string
+ *                       description: 네이버 사용자 프로필 이미지 URL
+ *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
+ *                     nickname:
+ *                       type: string
+ *                       description: 네이버 사용자 닉네임
+ *                       example: "은리"
+ *                 social_provider:
+ *                   type: string
+ *                   description: 소셜 프로바이더 (네이버)
+ *                   example: "naver"
+ */
+/**
+ * @swagger
+ * /user/google-login:
+ *   post:
+ *     tags: [user]
+ *     summary: 구글 로그인
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               authorizationCode:
+ *                 type: string
+ *                 description: 구글에서 발급받은 인가 코드
+ *                 example: "4%2F0AfJohXnehP85xqdMRGrVzRRZzWcv_WPRyiykLAD76s7mhPF4jTsSAvV3Q5dJDIe4V2_IEA"
+ *     responses:
+ *       200:
+ *         description: 로그인 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 로그인 성공 메시지
+ *                   example: "로그인 되었습니다."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: 사용자 ID
+ *                       example: "654a8c722f0c32431d8cea87"
+ *                     user_id:
+ *                       type: string
+ *                       description: 사용자의 고유 ID
+ *                       example: "116217972498421836521"
+ *                     social_provider:
+ *                       type: string
+ *                       description: 소셜 프로바이더 (구글)
+ *                       example: "google"
+ *                     nickname:
+ *                       type: string
+ *                       description: 사용자 닉네임
+ *                       example: "은리"
+ *                     profile_url:
+ *                       type: string
+ *                       description: 사용자 프로필 이미지 URL
+ *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
+ *                     interested_area:
+ *                       type: string
+ *                       description: 관심 지역
+ *                       example: "제주"
+ *                     role:
+ *                       type: string
+ *                       description: 사용자 권한
+ *                       example: "user"
+ *                     state:
+ *                       type: string
+ *                       description: 가입 상태
+ *                       example: "가입"
+ *                     dibs:
+ *                       type: array
+ *                       description: 사용자가 저장한 항목
+ *                     post:
+ *                       type: array
+ *                       description: 사용자 자유 게시물
+ *                     promotion:
+ *                       type: array
+ *                       description: 사용자 홍보 게시물
+ *                     comment:
+ *                       type: array
+ *                       description: 사용자가 작성한 댓글
+ *                     review:
+ *                       type: array
+ *                       description: 사용자가 작성한 리뷰
+ *                     __v:
+ *                       type: number
+ *                       description: 모델 버전
+ *                       example: 0
+ *       302:
+ *         description: 회원가입 필요
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 회원가입 필요 메시지
+ *                   example: "회원가입이 필요합니다."
+ *                 googleUserData:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: 구글 사용자 고유 ID
+ *                       example: "116217972498421836521"
+ *                     profileUrl:
+ *                       type: string
+ *                       description: 구글 사용자 프로필 이미지 URL
+ *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
+ *                     nickname:
+ *                       type: string
+ *                       description: 구글 사용자 닉네임
+ *                       example: "은리"
+ *                 social_provider:
+ *                   type: string
+ *                   description: 소셜 프로바이더 (구글)
+ *                   example: "google"
+ */
+/**
+ * @swagger
  * /user/logout:
  *   post:
  *     tags: [user]
