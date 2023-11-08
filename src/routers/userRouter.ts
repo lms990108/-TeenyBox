@@ -7,6 +7,7 @@ import {
 } from "../middlewares/authUserMiddlewares";
 import { UserRequestDTO } from "../dtos/userDto";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
+import asyncHandler from "../common/utils/asyncHandler";
 
 const router = express.Router();
 
@@ -762,17 +763,21 @@ const router = express.Router();
 router.post(
   "/register",
   validationMiddleware(UserRequestDTO),
-  UserController.RegisterUser,
+  asyncHandler(UserController.RegisterUser),
 );
-router.post("/check-nickname", UserController.checkNickname);
-router.post("/kakao-login", UserController.kakaoLogin);
-router.post("/naver-login", UserController.naverLogin);
-router.post("/google-login", UserController.googleLogin);
-router.post("/logout", UserController.logout);
+router.post("/check-nickname", asyncHandler(UserController.checkNickname));
+router.post("/kakao-login", asyncHandler(UserController.kakaoLogin));
+router.post("/naver-login", asyncHandler(UserController.naverLogin));
+router.post("/google-login", asyncHandler(UserController.googleLogin));
+router.post("/logout", asyncHandler(UserController.logout));
 router.get("/check-login", checkLoginStatus);
-router.get("/", authenticateUser, UserController.getUser);
-router.put("/", authenticateUser, UserController.updateUser);
-router.delete("/", authenticateUser, UserController.deleteUser);
-router.get("/admin/users", authenticateAdmin, UserController.getAllUsers);
+router.get("/", authenticateUser, asyncHandler(UserController.getUser));
+router.put("/", authenticateUser, asyncHandler(UserController.updateUser));
+router.delete("/", authenticateUser, asyncHandler(UserController.deleteUser));
+router.get(
+  "/admin/users",
+  authenticateAdmin,
+  asyncHandler(UserController.getAllUsers),
+);
 
 export default router;
