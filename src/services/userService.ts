@@ -183,7 +183,7 @@ class UserService {
       data,
       {
         headers: {
-          "Content-Type": "text/json;charset=utf-8",
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
       },
     );
@@ -214,7 +214,8 @@ class UserService {
   async googleLogin(authorizationCode: string) {
     const accessToken = await this.getGoogleToken(
       authorizationCode,
-      process.env.KAKAO_REST_API_KEY,
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
     );
     const googleUserData = await this.getGoogleUserData(accessToken);
     const user = await UserRepository.getUserById(googleUserData.id);
@@ -243,11 +244,20 @@ class UserService {
   }
 
   // 구글 로그인 (get token)
-  async getGoogleToken(code: string, client_id: string): Promise<string> {
+  async getGoogleToken(
+    code: string,
+    client_id: string,
+    client_secret: string,
+  ): Promise<string> {
+    // auth code를 URL 디코딩
+    const decodedCode = decodeURIComponent(code);
+
     const data = new URLSearchParams();
     data.append("grant_type", "authorization_code");
     data.append("client_id", client_id);
-    data.append("code", code);
+    data.append("client_secret", client_secret);
+    data.append("code", decodedCode);
+    data.append("redirect_uri", process.env.GOOGLE_REDIRECT_URL);
 
     const response = await axios.post(
       "https://oauth2.googleapis.com/token",
@@ -280,7 +290,7 @@ class UserService {
     return {
       id: result.id,
       profileUrl: result.picture,
-      nickname: result.name,
+      nickname: result.given_name,
     };
   }
 
