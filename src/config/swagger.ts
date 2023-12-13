@@ -16,7 +16,7 @@ const options = {
     },
     servers: [
       {
-        url: "https://dailytopi2.shop/api",
+        url: "https://dailytopia2.shop/api",
         description: "development server",
       },
       {
