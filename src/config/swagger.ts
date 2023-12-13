@@ -19,6 +19,10 @@ const options = {
         url: "https://dailytopi2.shop/api",
         description: "development server",
       },
+      {
+        url: "http://localhost:5001/api",
+        description: "local server",
+      },
     ],
   },
   apis: ["./src/routers/*.ts"],

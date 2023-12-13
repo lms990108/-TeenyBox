@@ -15,6 +15,7 @@ import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import path from "path";
+import cors from "cors";
 
 dotenv.config();
 
@@ -27,6 +28,11 @@ mongoose
   .then(() => logger.info("mongoose connected"))
   .catch((err: Error) => logger.error("DB connection fail", err));
 
+app.use(
+  cors({
+    origin: "*",
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
