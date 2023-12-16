@@ -3,6 +3,7 @@ import asyncHandler from "../common/utils/asyncHandler";
 import postController from "../controllers/postController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import * as postDto from "../dtos/postDto";
+import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 const router = express.Router();
 
@@ -27,6 +28,7 @@ const router = express.Router();
  */
 router.post(
   "/add_post",
+  authenticateUser,
   validationMiddleware(postDto.CreatePostDTO),
   asyncHandler(postController.createPost),
 );

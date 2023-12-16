@@ -2,11 +2,34 @@ import PostRepository from "../repositories/postRepository";
 import { CreatePostDTO, UpdatePostDTO } from "../dtos/postDto";
 import { IPost } from "../models/postModel";
 import NotFoundError from "../common/error/NotFoundError";
+import InternalServerError from "../common/error/InternalServerError";
+import { UserModel } from "../models/userModel";
 
 class PostService {
   // 게시글 생성
-  async create(postData: CreatePostDTO): Promise<IPost> {
-    return await PostRepository.create(postData);
+  async create(postData: CreatePostDTO, userId: string): Promise<IPost> {
+    try {
+      // 사용자 정보 조회
+      const user = await UserModel.findOne({ user_id: userId });
+      if (!user) {
+        throw new NotFoundError("사용자를 찾을 수 없습니다.");
+      }
+
+      // 게시글 데이터에 사용자 ID와 닉네임 추가
+      const postDataWithUser = {
+        ...postData,
+        user_id: userId,
+        user_nickname: user.nickname, // 여기에 사용자의 닉네임 필드가 있다고 가정합니다.
+      };
+
+      // 게시글 생성
+      const newPost = await PostRepository.create(postDataWithUser);
+      return newPost;
+    } catch (error) {
+      throw new InternalServerError(
+        `게시글을 생성하는데 실패했습니다. ${error.message}`,
+      );
+    }
   }
 
   // 게시글 수정
