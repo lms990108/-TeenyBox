@@ -1,5 +1,55 @@
 import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CreatePostDTO:
+ *       type: object
+ *       properties:
+ *         post_number:
+ *           type: integer
+ *           description: 게시물의 고유 식별자 (제공되지 않을 경우 자동 생성됨)
+ *         user_id:
+ *           type: string
+ *           description: 게시물 작성자의 사용자 식별자
+ *           example: "user123"
+ *         title:
+ *           type: string
+ *           description: 게시물의 제목
+ *           example: "흥미로운 게시물 제목"
+ *           maxLength: 30
+ *         content:
+ *           type: string
+ *           description: 게시물의 내용
+ *           example: "게시물의 내용입니다..."
+ *       required:
+ *         - user_id
+ *         - title
+ *         - content
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdatePostDTO:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: 게시물의 제목
+ *           example: "업데이트된 게시물 제목"
+ *           maxLength: 30
+ *         content:
+ *           type: string
+ *           description: 게시물의 내용
+ *           example: "게시물의 업데이트된 내용입니다..."
+ *       required:
+ *         - title
+ *         - content
+ */
+
 // 게시글 생성을 위한 DTO
 export class CreatePostDTO {
   post_number?: number;
