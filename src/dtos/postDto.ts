@@ -7,13 +7,6 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
  *     CreatePostDTO:
  *       type: object
  *       properties:
- *         post_number:
- *           type: integer
- *           description: 게시물의 고유 식별자 (제공되지 않을 경우 자동 생성됨)
- *         user_id:
- *           type: string
- *           description: 게시물 작성자의 사용자 식별자
- *           example: "user123"
  *         title:
  *           type: string
  *           description: 게시물의 제목
