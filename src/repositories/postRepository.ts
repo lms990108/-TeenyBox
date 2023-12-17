@@ -38,7 +38,7 @@ class PostRepository {
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname", // 여기서 'nickname' 필드만 선택합니다.
+        select: "nickname profile_url", // 여기서 'nickname 과 profile_url' 필드 선택
       })
       .exec();
   }
@@ -46,7 +46,12 @@ class PostRepository {
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost | null> {
     // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    return await PostModel.findOne({ post_number: postNumber });
+    return await PostModel.findOne({ post_number: postNumber })
+      .populate({
+        path: "user_id",
+        select: "nickname profile_url", // 여기서 'nickname 과 profile_url' 필드 선택
+      })
+      .exec();
   }
 
   // userId로 게시글들 조회
