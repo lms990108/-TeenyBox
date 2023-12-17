@@ -33,7 +33,14 @@ class PostRepository {
 
   // 게시글 전체 조회 & 페이징
   async findAll(skip: number, limit: number): Promise<IPost[]> {
-    return await PostModel.find().skip(skip).limit(limit).exec();
+    return await PostModel.find()
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: "user_id",
+        select: "nickname", // 여기서 'nickname' 필드만 선택합니다.
+      })
+      .exec();
   }
 
   // 게시글 번호로 조회
