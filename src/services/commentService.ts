@@ -21,7 +21,6 @@ class CommentService {
       const commentData = {
         ...dto,
         user_id: userId,
-        user_nickname: user.nickname, // 사용자 닉네임
       };
 
       // 댓글 생성

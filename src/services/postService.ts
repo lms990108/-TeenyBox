@@ -19,7 +19,6 @@ class PostService {
       const postDataWithUser = {
         ...postData,
         user_id: userId,
-        user_nickname: user.nickname, // 여기에 사용자의 닉네임 필드가 있다고 가정합니다.
       };
 
       // 게시글 생성
