@@ -1,10 +1,21 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import PostService from "../services/postService";
 
 class PostController {
-  async createPost(req: Request, res: Response): Promise<void> {
-    const post = await PostService.create(req.body);
-    res.status(201).json(post);
+  async createPost(req: AuthRequest, res: Response): Promise<void> {
+    // 인증된 사용자의 정보가 있는지 확인합니다.
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
+    try {
+      const post = await PostService.create(req.body, req.user.user_id);
+      res.status(201).json(post);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async updatePost(req: Request, res: Response): Promise<void> {

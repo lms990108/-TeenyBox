@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPost extends Document {
   post_number: number;
-  user_id: string; // 일단 string으로 생성 후 나중에 user 로직 끝나면 ref
+  user_id: mongoose.Schema.Types.ObjectId; // 일단 string으로 생성 후 나중에 user 로직 끝나면 ref
   title: string;
   content: string;
   createdAt?: Date;
@@ -19,7 +19,8 @@ const postSchema = new Schema<IPost>(
       index: true,
     },
     user_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // 'User'는 참조하고자 하는 모델의 이름입니다.
       required: true,
     },
     title: {
