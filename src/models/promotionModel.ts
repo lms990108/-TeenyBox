@@ -5,6 +5,7 @@ export interface IPromotion extends Document {
   user_id: string;
   title: string;
   content: string;
+  tags?: string[];
   poster_image: string; // Image 모델을 참조합니다.
   createdAt?: Date;
   updatedAt?: Date;
@@ -30,6 +31,10 @@ const promotionSchema = new Schema<IPromotion>(
     content: {
       type: String,
       required: true,
+    },
+    tags: {
+      type: [String],
+      required: false,
     },
     poster_image: {
       type: String,

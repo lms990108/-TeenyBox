@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MaxLength } from "class-validator";
+import {
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  IsOptional,
+  IsArray,
+} from "class-validator";
 
 /**
  * @swagger
@@ -20,6 +26,12 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
  *           type: string
  *           description: 프로모션 포스터 이미지 경로
  *           example: "/path/to/image.jpg"
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 프로모션에 관련된 태그들
+ *           example: ["세일", "이벤트", "할인"]
  *       required:
  *         - title
  *         - content
@@ -46,6 +58,12 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
  *           type: string
  *           description: 프로모션 포스터 이미지 경로 (수정 시 변경 가능)
  *           example: "/path/to/updated_image.jpg"
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 프로모션에 관련된 태그들 (수정 시 변경 가능)
+ *           example: ["업데이트", "새로운 이벤트"]
  *       required:
  *         - title
  *         - content
@@ -68,6 +86,10 @@ export class CreatePromotionDTO {
   @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
 
+  @IsOptional()
+  @IsArray({ message: "tags는 배열이어야 합니다." })
+  tags?: string[];
+
   @IsString({ message: "포스터 이미지 경로는 문자열이어야 합니다." })
   @IsNotEmpty({ message: "포스터 이미지 경로는 반드시 입력되어야 합니다." })
   poster_image!: string; // 이 필드는 업로드된 이미지의 경로 또는 URL을 담게 됩니다.
@@ -86,4 +108,8 @@ export class UpdatePromotionDTO {
 
   @IsString({ message: "포스터 이미지 경로는 문자열이어야 합니다." })
   poster_image?: string; // 수정 시 포스터 이미지는 선택적일 수 있으므로 optional로 만듭니다.
+
+  @IsOptional()
+  @IsArray({ message: "tags는 배열이어야 합니다." })
+  tags?: string[];
 }
