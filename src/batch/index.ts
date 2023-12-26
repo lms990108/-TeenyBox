@@ -30,9 +30,16 @@ async function processShow(show: ShowDetailDTO): Promise<void> {
       show.location,
       show.region,
     );
-    console.log("seat count: " + showDetail.seat_cnt + "\n");
     await showService.createShow(showDetail);
     logger.info(`Show titled '${showDetail.title}' has been created.`);
+  } else {
+    const showDetail = await getShowDetailJob(
+      show.showId,
+      show.location,
+      show.region,
+    );
+    await showService.updateShow(show.showId, showDetail);
+    logger.info(`Show titled '${showDetail.title}' has been updated.`);
   }
 }
 
