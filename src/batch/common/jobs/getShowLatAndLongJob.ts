@@ -5,6 +5,7 @@ import { XMLParser } from "fast-xml-parser";
 interface LocationDetail {
   latitude: number;
   longitude: number;
+  seatCnt: number;
 }
 
 async function fetchXML(url: string, params: object) {
@@ -52,8 +53,9 @@ async function getLocationDetailJob(
 
   const latitude = Number(locationDetail["la"]);
   const longitude = Number(locationDetail["lo"]);
+  const seatCnt = Number(locationDetail["seatscale"]);
 
-  return { latitude, longitude };
+  return { latitude, longitude, seatCnt };
 }
 
 export async function getLocationLatAndLongJob(location: string) {

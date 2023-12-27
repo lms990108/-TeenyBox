@@ -10,6 +10,7 @@ export interface IShow extends Document {
   location?: string;
   latitude?: number;
   longitude?: number;
+  seat_cnt?: number;
   cast?: string[];
   creator?: string;
   runtime?: string;
@@ -39,6 +40,7 @@ const ShowSchema = new Schema<IShow>(
     location: String,
     latitude: Number,
     longitude: Number,
+    seat_cnt: Number,
     cast: [String],
     creator: String,
     runtime: String,

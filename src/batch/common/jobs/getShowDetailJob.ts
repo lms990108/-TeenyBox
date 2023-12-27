@@ -12,6 +12,7 @@ function parseShowData(
   xmlData: string,
   latitude: number,
   longitude: number,
+  seatCnt: number,
   region: string,
 ): CreateShowDTO {
   const parser = new XMLParser();
@@ -31,6 +32,7 @@ function parseShowData(
     location: show["fcltynm"],
     latitude: latitude,
     longitude: longitude,
+    seat_cnt: seatCnt,
     cast: show["prfcast"],
     creator: show["prfcrew"],
     runtime: show["prfruntime"],
@@ -58,9 +60,10 @@ export default async function getShowDetailJob(
         service: process.env.KOPIS_API_KEY,
       },
     });
-    const { latitude, longitude } = await getLocationLatAndLongJob(location);
+    const { latitude, longitude, seatCnt } =
+      await getLocationLatAndLongJob(location);
 
-    return parseShowData(response.data, latitude, longitude, region);
+    return parseShowData(response.data, latitude, longitude, seatCnt, region);
   } catch (err) {
     console.error("Error fetching show details:", err);
   }

@@ -13,6 +13,7 @@ export class CreateShowDTO {
   location?: string;
   latitude?: number;
   longitude?: number;
+  seat_cnt?: number;
   cast?: string;
   creator?: string;
   runtime?: string;

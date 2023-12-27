@@ -1,11 +1,14 @@
 import logger from "./common/logger";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import { getShowListJob } from "./common/jobs/getShowListJob";
 import getShowDetailJob from "./common/jobs/getShowDetailJob";
 import showService from "../services/showService";
 import ShowListParams from "./types/ShowListParams";
 import { ShowDetailDTO } from "../dtos/showDto";
 import { updateShowStatusJob } from "./common/jobs/updateShowStatusJob";
+
+dotenv.config();
 
 const mongoURI = process.env.MONGO_DB_PATH;
 
@@ -29,6 +32,14 @@ async function processShow(show: ShowDetailDTO): Promise<void> {
     );
     await showService.createShow(showDetail);
     logger.info(`Show titled '${showDetail.title}' has been created.`);
+  } else {
+    const showDetail = await getShowDetailJob(
+      show.showId,
+      show.location,
+      show.region,
+    );
+    await showService.updateShow(show.showId, showDetail);
+    logger.info(`Show titled '${showDetail.title}' has been updated.`);
   }
 }
 
