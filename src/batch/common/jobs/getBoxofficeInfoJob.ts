@@ -16,8 +16,6 @@ export default async function getBoxofficeInfoJob(today: Date) {
     const boxofficeInfos = jsonObj["boxofs"]["boxof"] || [];
     const infoLists = [];
 
-    console.log(boxofficeInfos);
-
     if (!boxofficeInfos) {
       throw new InternalServerError(`No boxofficeInfo found for ${today}`);
     }
