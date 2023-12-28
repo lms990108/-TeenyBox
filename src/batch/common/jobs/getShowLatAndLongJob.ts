@@ -1,22 +1,10 @@
-import axios from "axios";
 import logger from "../logger";
-import { XMLParser } from "fast-xml-parser";
-
+import fetchXML from "../../utils/xmlParser";
+import BadRequestError from "../../../common/error/BadRequestError";
 interface LocationDetail {
   latitude: number;
   longitude: number;
   seatCnt: number;
-}
-
-async function fetchXML(url: string, params: object) {
-  try {
-    const response = await axios.get(url, { params });
-    const parser = new XMLParser();
-    return parser.parse(response.data);
-  } catch (err) {
-    logger.error(`Error fetching XML from ${url}: ${err.message}`);
-    throw err;
-  }
 }
 
 async function getLocationId(location: string): Promise<string> {
@@ -48,7 +36,7 @@ async function getLocationDetailJob(
   const locationDetail = jsonObj["dbs"]["db"] || [];
 
   if (!locationDetail) {
-    throw new Error(`No location detail found for ${locationId}`);
+    throw new BadRequestError(`No location detail found for ${locationId}`);
   }
 
   const latitude = Number(locationDetail["la"]);
