@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/ping", pingRouter);
-app.use("/api/board", postRouter);
+app.use("/api/post", postRouter);
 app.use("/api/promotion", promotionRouter);
 app.use("/api/comment", commentRouter);
 app.use("/api/show", showRouter);
