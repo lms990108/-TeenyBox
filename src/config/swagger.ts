@@ -1,5 +1,16 @@
 import swaggerJSDoc from "swagger-jsdoc";
 
+const swaggerSecurityScheme = {
+  cookieAuth: {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "Token",
+    name: "Authorization",
+    description: "인증 토큰 값을 넣어주세요.",
+    in: "cookie",
+  },
+};
+
 const options = {
   definition: {
     openapi: "3.1.0",
@@ -13,6 +24,9 @@ const options = {
         url: "https://dailytopia2.shop/",
         email: "easygoinglife2@gmail.com",
       },
+    },
+    components: {
+      securitySchemes: swaggerSecurityScheme,
     },
     servers: [
       {
