@@ -320,14 +320,36 @@ class UserService {
   }
 
   // 회원정보 삭제(탈퇴)
-  async deleteUser(userId: string): Promise<UserResponseDTO | null> {
-    const user = await UserRepository.deleteUser(userId);
+  async deleteUser(userId: string): Promise<void> {
+    return await UserRepository.deleteUser(userId);
+  }
 
-    if (!user) {
-      throw new NotFoundError("사용자를 찾을 수 없습니다.");
+  // 유저 찜 목록
+  async getBookmarks(userId: string, page: number, limit: number) {
+    const bookmarks = await UserRepository.getBookmarks(userId, page, limit);
+    if (!bookmarks) {
+      throw new NotFoundError("찜 목록을 조회할 수 없습니다.");
     }
+    return bookmarks;
+  }
 
-    return user;
+  async isBookmarked(userId: string, showId: string): Promise<boolean> {
+    return await UserRepository.isBookmarked(userId, showId);
+  }
+
+  // 찜 추가(공연 상세 페이지)
+  async saveShow(userId: string, showId: string): Promise<void> {
+    return await UserRepository.saveShow(userId, showId);
+  }
+
+  // 찜 취소(공연 상세 페이지)
+  async cancelShow(userId: string, showId: string): Promise<void> {
+    return await UserRepository.cancelShow(userId, showId);
+  }
+
+  // 찜 취소(유저 찜 목록)
+  async cancelBookmarks(userId: string, showIds: string[]): Promise<void> {
+    await UserRepository.cancelBookmarks(userId, showIds);
   }
 
   // 전체 회원 목록 조회 (pagination: default 20개)
