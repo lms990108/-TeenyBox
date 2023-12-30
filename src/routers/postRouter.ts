@@ -10,7 +10,7 @@ const router = express.Router();
 // /add_post 라우트의 Swagger 주석
 /**
  * @swagger
- * /add_post:
+ * /posts/add_post:
  *   post:
  *     tags:
  *       - Post
@@ -53,7 +53,7 @@ router.post(
 // /update_post/{postNumber} 라우트의 Swagger 주석
 /**
  * @swagger
- * /update_post/{postNumber}:
+ * /posts/update_post/{postNumber}:
  *   put:
  *     tags:
  *       - Post
@@ -226,7 +226,7 @@ router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
 /**
  * @swagger
- * /delete_post/{postNumber}:
+ * /posts/delete_post/{postNumber}:
  *   delete:
  *     tags:
  *       - Post
