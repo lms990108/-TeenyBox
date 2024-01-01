@@ -106,7 +106,7 @@ class UserController {
   }
 
   async updateUser(req: AuthRequest, res: Response) {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     const updateUserRequestDTO: UserDto.UserRequestDTO = req.body;
     const user = await UserService.updateUser(userId, updateUserRequestDTO);
     return res
@@ -115,11 +115,47 @@ class UserController {
   }
 
   async deleteUser(req: AuthRequest, res: Response) {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     await UserService.deleteUser(userId);
     res.clearCookie("token");
     res.clearCookie("refreshToken");
     return res.status(200).json({ message: "회원 탈퇴가 완료되었습니다." });
+  }
+
+  async getBookmarks(req: AuthRequest, res: Response) {
+    const userId = req.user._id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 6;
+    const bookmarks = await UserService.getBookmarks(userId, page, limit);
+    return res.status(200).json({ bookmarks });
+  }
+
+  async isBookmarked(req: AuthRequest, res: Response) {
+    const userId = req.user._id;
+    const showId = req.params.showId as string;
+    const isBookmarked = await UserService.isBookmarked(userId, showId);
+    return res.status(200).json({ isBookmarked });
+  }
+
+  async saveShow(req: AuthRequest, res: Response) {
+    const userId = req.user._id;
+    const showId = req.params.showId as string;
+    await UserService.saveShow(userId, showId);
+    return res.status(200).json({ message: "공연 찜이 완료되었습니다." });
+  }
+
+  async cancelShow(req: AuthRequest, res: Response) {
+    const userId = req.user._id;
+    const showId = req.params.showId as string;
+    await UserService.cancelShow(userId, showId);
+    return res.status(200).json({ message: "공연 찜이 취소되었습니다." });
+  }
+
+  async cancelBookmarks(req: AuthRequest, res: Response) {
+    const userId = req.user._id;
+    const { showIds } = req.body;
+    await UserService.cancelBookmarks(userId, showIds);
+    return res.status(200).json({ message: "찜한 공연이 삭제되었습니다." });
   }
 
   async getAllUsers(req: Request, res: Response) {

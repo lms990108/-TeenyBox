@@ -775,6 +775,31 @@ router.get("/", authenticateUser, asyncHandler(UserController.getUser));
 router.put("/", authenticateUser, asyncHandler(UserController.updateUser));
 router.delete("/", authenticateUser, asyncHandler(UserController.deleteUser));
 router.get(
+  "/bookmarks",
+  authenticateUser,
+  asyncHandler(UserController.getBookmarks),
+);
+router.get(
+  "/is-bookmarked/:showId",
+  authenticateUser,
+  asyncHandler(UserController.isBookmarked),
+);
+router.put(
+  "/save/:showId",
+  authenticateUser,
+  asyncHandler(UserController.saveShow),
+);
+router.put(
+  "/cancel/:showId",
+  authenticateUser,
+  asyncHandler(UserController.cancelShow),
+);
+router.put(
+  "/cancels/bookmarks",
+  authenticateUser,
+  asyncHandler(UserController.cancelBookmarks),
+);
+router.get(
   "/admin/users",
   authenticateAdmin,
   asyncHandler(UserController.getAllUsers),
