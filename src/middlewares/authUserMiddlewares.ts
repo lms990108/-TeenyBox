@@ -22,8 +22,8 @@ export const checkLoginStatus = async (
       res.status(401).json({ isLoggedIn: false });
       return;
     }
-    const { foundUser, error } = await findByToken(accessToken);
-    if (error) {
+    const foundUser = await findByToken(accessToken);
+    if (!foundUser) {
       res.status(401).json({ isLoggedIn: false });
       return;
     }
@@ -53,16 +53,15 @@ export const authenticateUser = async (
       throw new ForbiddenError("로그인한 유저만 사용할 수 있는 서비스입니다.");
     }
     // 액세스 토큰 검증
-    const { foundUser, error } = await findByToken(accessToken);
-    if (error) {
+    const foundUser = await findByToken(accessToken);
+    if (!foundUser) {
       // 액세스 토큰이 만료된 경우 리프레시 토큰 검증(유효하다면 액세스 토큰 재발급)
       const refreshToken = req.cookies.refreshToken as string;
       if (!refreshToken) {
         throw new UnauthorizedError("인증되지 않은 사용자입니다.");
       }
-      const { foundUser: refreshUser, error: refreshError } =
-        await findByToken(refreshToken);
-      if (refreshError) {
+      const refreshUser = await findByToken(refreshToken);
+      if (!refreshUser) {
         throw new ForbiddenError("새로 로그인해야 합니다.");
       }
       // 새로운 액세스 토큰 생성 후 쿠키에 저장
@@ -96,16 +95,15 @@ export const authenticateAdmin = async (
       throw new ForbiddenError("로그인한 유저만 사용할 수 있는 서비스입니다.");
     }
     // 액세스 토큰 검증
-    const { foundUser, error } = await findByToken(accessToken);
-    if (error) {
+    const foundUser = await findByToken(accessToken);
+    if (!foundUser) {
       // 액세스 토큰이 만료된 경우 리프레시 토큰 검증(유효하다면 액세스 토큰 재발급)
       const refreshToken = req.cookies.refreshToken as string;
       if (!refreshToken) {
         throw new UnauthorizedError("인증되지 않은 사용자입니다.");
       }
-      const { foundUser: refreshUser, error: refreshError } =
-        await findByToken(refreshToken);
-      if (refreshError) {
+      const refreshUser = await findByToken(refreshToken);
+      if (!refreshUser) {
         throw new ForbiddenError("새로 로그인해야 합니다.");
       }
       // 새로운 액세스 토큰 생성 후 쿠키에 저장

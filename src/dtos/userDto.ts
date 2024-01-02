@@ -33,6 +33,10 @@ export class UserRequestDTO {
 export class UserResponseDTO {
   @IsString()
   @IsNotEmpty()
+  _id: string;
+
+  @IsString()
+  @IsNotEmpty()
   user_id: string;
 
   @IsEnum(SOCIAL)

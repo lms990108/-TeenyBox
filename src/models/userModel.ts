@@ -8,79 +8,88 @@ export interface IUser extends Document {
   interested_area: string;
   role: string;
   state: string;
-  dibs: mongoose.Types.ObjectId[] | null;
+  dibs: string[] | null;
   post: mongoose.Types.ObjectId[] | null;
   promotion: mongoose.Types.ObjectId[] | null;
   comment: mongoose.Types.ObjectId[] | null;
   review: mongoose.Types.ObjectId[] | null;
+  deletedAt?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 }
 
-const UserSchema: Schema = new Schema<IUser>({
-  user_id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  social_provider: {
-    type: String,
-    required: true,
-    enum: ["kakao", "naver", "google"],
-  },
-  nickname: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  profile_url: {
-    type: String,
-    required: true,
-  },
-  interested_area: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    required: true,
-    default: "user",
-  },
-  state: {
-    type: String,
-    enum: ["가입", "탈퇴"],
-    required: true,
-    default: "가입",
-  },
-  dibs: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Show",
+const UserSchema: Schema = new Schema<IUser>(
+  {
+    user_id: {
+      type: String,
+      required: true,
+      unique: true,
     },
-  ],
-  post: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Post",
+    social_provider: {
+      type: String,
+      required: true,
+      enum: ["kakao", "naver", "google"],
     },
-  ],
-  promotion: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Promotion",
+    nickname: {
+      type: String,
+      required: true,
+      unique: true,
     },
-  ],
-  comment: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Comment",
+    profile_url: {
+      type: String,
+      required: true,
     },
-  ],
-  review: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Review",
+    interested_area: {
+      type: String,
+      required: true,
     },
-  ],
-});
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      required: true,
+      default: "user",
+    },
+    state: {
+      type: String,
+      enum: ["가입", "탈퇴"],
+      required: true,
+      default: "가입",
+    },
+    dibs: [
+      {
+        type: String,
+      },
+    ],
+    post: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    promotion: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Promotion",
+      },
+    ],
+    comment: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    review: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    deletedAt: { type: Date, default: null },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+);
 
 export const UserModel = mongoose.model<IUser>("User", UserSchema);
