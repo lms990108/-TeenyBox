@@ -73,10 +73,6 @@ import {
 export class CreatePromotionDTO {
   promotion_number?: number;
 
-  @IsString({ message: "user_id는 문자열이어야 합니다." })
-  @IsNotEmpty({ message: "user_id는 반드시 입력되어야 합니다." })
-  user_id!: string;
-
   @IsString({ message: "제목은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "제목은 반드시 입력되어야 합니다." })
   @MaxLength(30, { message: "제목은 30자를 초과할 수 없습니다." })

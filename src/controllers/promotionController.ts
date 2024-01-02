@@ -5,13 +5,24 @@ import fs from "fs";
 class PromotionController {
   // 컨트롤러
   async createPromotion(req: MulterRequest, res: Response): Promise<void> {
+    console.log(req.body); // 확인하기위해 추가
     const promotionDataWithImage = {
       ...req.body,
       posterImage: req.body.poster_image,
     };
 
-    const promotion = await PromotionService.create(promotionDataWithImage);
-    res.status(201).json(promotion);
+    // 인증된 사용자의 정보가 있는지 확인합니다.
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
+    try {
+      const post = await PromotionService.create(req.body, req.user._id);
+      res.status(201).json(post);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async updatePromotionDefault(req: Request, res: Response): Promise<void> {

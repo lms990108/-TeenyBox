@@ -4,13 +4,14 @@ import promotionController from "../controllers/promotionController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import { uploadLocal } from "../middlewares/localMiddleware";
 import * as promotionDto from "../dtos/promotionDto";
+import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 const router = express.Router();
 
 // /add_promotion 라우트의 Swagger 주석
 /**
  * @swagger
- * /add_promotion:
+ * /promotions/add_promotion:
  *   post:
  *     tags:
  *       - Promotion
@@ -46,6 +47,7 @@ const router = express.Router();
  */
 router.post(
   "/add_promotion",
+  authenticateUser,
   uploadLocal.single("promotion_poster"),
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
@@ -54,7 +56,7 @@ router.post(
 // /update_promotion/{promotionNumber} 라우트의 Swagger 주석
 /**
  * @swagger
- * /update_promotion/{promotionNumber}:
+ * /promotions/update_promotion/{promotionNumber}:
  *   put:
  *     tags:
  *       - Promotion
