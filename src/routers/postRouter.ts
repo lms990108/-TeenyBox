@@ -97,6 +97,7 @@ router.post(
  */
 router.put(
   "/update_post/:postNumber",
+  authenticateUser,
   validationMiddleware(postDto.UpdatePostDTO),
   asyncHandler(postController.updatePost),
 );
