@@ -11,7 +11,7 @@ class PostController {
     }
 
     try {
-      const post = await PostService.create(req.body, req.user.user_id);
+      const post = await PostService.create(req.body, req.user._id);
       res.status(201).json(post);
     } catch (error) {
       res.status(500).json({ message: error.message });

@@ -10,7 +10,7 @@ class PostService {
   async create(postData: CreatePostDTO, userId: string): Promise<IPost> {
     try {
       // 사용자 정보 조회
-      const user = await UserModel.findOne({ user_id: userId });
+      const user = await UserModel.findOne({ _id: userId });
       if (!user) {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }

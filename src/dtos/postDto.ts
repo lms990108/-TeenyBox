@@ -17,7 +17,6 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
  *           description: 게시물의 내용
  *           example: "게시물의 내용입니다..."
  *       required:
- *         - user_id
  *         - title
  *         - content
  */
@@ -46,7 +45,6 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 // 게시글 생성을 위한 DTO
 export class CreatePostDTO {
   post_number?: number;
-  user_id?: string;
 
   @IsString({ message: "제목은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "제목은 반드시 입력되어야 합니다." })
