@@ -18,8 +18,11 @@ class PromotionController {
     }
 
     try {
-      const post = await PromotionService.create(req.body, req.user._id);
-      res.status(201).json(post);
+      const promotion = await PromotionService.create(
+        promotionDataWithImage,
+        req.user._id,
+      );
+      res.status(201).json(promotion);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
