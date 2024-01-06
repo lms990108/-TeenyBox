@@ -4,12 +4,14 @@ import { IPromotion } from "../models/promotionModel";
 import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
 import { UserModel } from "../models/userModel";
+import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 
 class PromotionService {
   // 게시글 생성
   async create(
-    PromotionData: CreatePromotionDTO,
+    promotionData: CreatePromotionDTO,
     userId: string,
+    imageFile: Express.Multer.File,
   ): Promise<IPromotion> {
     try {
       // 사용자 정보 조회
@@ -18,17 +20,27 @@ class PromotionService {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }
 
-      // 게시글 데이터에 사용자 ID와 닉네임 추가
-      const PromotionDataWithUser = {
-        ...PromotionData,
+      console.log(user); // 유저가있어?
+
+      // S3 버킷 이름 설정
+      const bucketName = "elice-5th";
+
+      // 이미지 파일을 S3에 업로드하고, URL을 받습니다.
+      const imageUrl = await uploadImageToS3(
+        imageFile,
+        bucketName,
+        `promotions/${Date.now()}_${imageFile.originalname}`,
+      );
+
+      // S3에서 반환된 이미지 URL을 promotionData에 추가합니다.
+      const promotionDataWithImage = {
+        ...promotionData,
+        poster_image: imageUrl,
         user_id: userId,
       };
 
-      // 게시글 생성
-      const newPromotion = await PromotionRepository.create(
-        PromotionDataWithUser,
-      );
-      return newPromotion;
+      // 데이터베이스에 게시글을 생성하고, 생성된 게시글 객체를 반환합니다.
+      return PromotionRepository.create(promotionDataWithImage);
     } catch (error) {
       throw new InternalServerError(
         `게시글을 생성하는데 실패했습니다. ${error.message}`,
