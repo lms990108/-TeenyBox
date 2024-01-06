@@ -99,12 +99,6 @@ export default router;
  *                 type: string
  *                 description: 업데이트된 게시물 내용
  *                 example: "피드백을 바탕으로 기능을 개선했습니다..."
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: 업데이트된 게시물 태그
- *                 example: ["개선", "피드백"]
  *     responses:
  *       '200':
  *         description: 게시물이 성공적으로 업데이트됨

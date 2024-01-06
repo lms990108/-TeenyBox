@@ -38,7 +38,7 @@ class PostRepository {
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname profile_url", // 여기서 'nickname 과 profile_url' 필드 선택
+        select: "nickname profile_url _id",
       })
       .exec();
   }
@@ -49,7 +49,7 @@ class PostRepository {
     return await PostModel.findOne({ post_number: postNumber })
       .populate({
         path: "user_id",
-        select: "nickname profile_url", // 여기서 'nickname 과 profile_url' 필드 선택
+        select: "nickname profile_url _id",
       })
       .exec();
   }
@@ -63,6 +63,10 @@ class PostRepository {
     return await PostModel.find({ user_id: userId })
       .skip(skip)
       .limit(limit)
+      .populate({
+        path: "user_id",
+        select: "nickname profile_url _id",
+      })
       .exec();
   }
 
