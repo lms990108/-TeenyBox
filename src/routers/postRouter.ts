@@ -32,129 +32,196 @@ router.delete(
   asyncHandler(postController.deletePostByNumber),
 );
 
+export default router;
+
 /**
  * @swagger
  * tags:
- *   - name: 게시물
- *     description: 게시물 관련 작업
+ *   - name: Post
  *
- * paths:
- *   /posts/add_post:
- *     post:
- *       tags:
- *         - 게시물
- *       summary: 새 게시물 추가
- *       security:
- *         - bearerAuth: []
- *       requestBody:
- *         required: true
+ * /posts/add_post:
+ *   post:
+ *     tags:
+ *       - Post
+ *     summary: 새 게시물 추가
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: 게시물 제목
+ *               content:
+ *                 type: string
+ *                 description: 게시물 내용
+ *     responses:
+ *       '201':
+ *         description: 게시물이 성공적으로 생성됨
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 title:
- *                   type: string
- *                   description: 게시물 제목
- *                   example: "신규 기능 발표"
- *                   maxLength: 100
- *                 content:
- *                   type: string
- *                   description: 게시물 내용
- *                   example: "새 기능을 발표합니다..."
- *                 tags:
- *                   type: array
- *                   items:
- *                     type: string
- *                   description: 게시물 관련 태그
- *                   example: ["공지", "업데이트"]
- *       responses:
- *         '201':
- *           description: 게시물이 성공적으로 생성됨
- *           content:
- *             application/json:
- *               schema:
- *                 $ref: '#/components/schemas/PostResponse'
- *         '400':
- *           description: 잘못된 요청
+ *               $ref: '#/components/schemas/PostResponse'
+ *       '400':
+ *         description: 잘못된 요청
  *
- *   /posts/update_post/{postNumber}:
- *     put:
- *       tags:
- *         - 게시물
- *       summary: 기존 게시물 업데이트
- *       security:
- *         - bearerAuth: []
- *       parameters:
- *         - in: path
- *           name: postNumber
- *           required: true
- *           schema:
- *             type: integer
- *             description: 게시물 고유 식별자
- *       requestBody:
+ * /posts/update_post/{postNumber}:
+ *   put:
+ *     tags:
+ *       - Post
+ *     summary: 기존 게시물 업데이트
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postNumber
  *         required: true
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 title:
- *                   type: string
- *                   description: 업데이트된 게시물 제목
- *                   example: "기능 업데이트"
- *                   maxLength: 100
- *                 content:
- *                   type: string
- *                   description: 업데이트된 게시물 내용
- *                   example: "피드백을 바탕으로 기능을 개선했습니다..."
- *                 tags:
- *                   type: array
- *                   items:
- *                     type: string
- *                   description: 업데이트된 게시물 태그
- *                   example: ["개선", "피드백"]
- *       responses:
- *         '200':
- *           description: 게시물이 성공적으로 업데이트됨
- *           content:
- *             application/json:
- *               schema:
- *                 $ref: '#/components/schemas/PostResponse'
- *         '400':
- *           description: 잘못된 요청
- *         '404':
- *           description: 게시물을 찾을 수 없음
- *
- *   /posts:
- *     get:
- *       tags:
- *         - 게시물
- *       summary: 모든 게시물 조회
- *       parameters:
- *         - in: query
- *           name: page
+ *         schema:
+ *           type: integer
+ *           description: 게시물 고유 식별자
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
  *           schema:
- *             type: integer
- *             default: 1
- *             description: 페이지 번호
- *         - in: query
- *           name: limit
- *           schema:
- *             type: integer
- *             default: 10
- *             description: 페이지당 게시물 수
- *       responses:
- *         '200':
- *           description: 게시물 목록
- *           content:
- *             application/json:
- *               schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: 업데이트된 게시물 제목
+ *                 example: "기능 업데이트"
+ *                 maxLength: 100
+ *               content:
+ *                 type: string
+ *                 description: 업데이트된 게시물 내용
+ *                 example: "피드백을 바탕으로 기능을 개선했습니다..."
+ *               tags:
  *                 type: array
  *                 items:
- *                   $ref: '#/components/schemas/PostResponse'
- *         '404':
- *           description: 게시물을 찾을 수 없음
+ *                   type: string
+ *                 description: 업데이트된 게시물 태그
+ *                 example: ["개선", "피드백"]
+ *     responses:
+ *       '200':
+ *         description: 게시물이 성공적으로 업데이트됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PostResponse'
+ *       '400':
+ *         description: 잘못된 요청
+ *       '404':
+ *         description: 게시물을 찾을 수 없음
+ *
+ * /posts:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 모든 게시물 조회
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           description: 페이지당 게시물 수
+ *     responses:
+ *       '200':
+ *         description: 게시물 목록
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PostResponse'
+ *       '404':
+ *         description: 게시물을 찾을 수 없음
+ *
+ * /posts/number/{postNumber}:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 특정 게시물 조회
+ *     parameters:
+ *       - in: path
+ *         name: postNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: 조회할 게시물 번호
+ *     responses:
+ *       '200':
+ *         description: 게시물 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PostResponse'
+ *       '404':
+ *         description: 게시물을 찾을 수 없음
+ *
+ * /posts/user/{userId}:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 특정 사용자의 게시물 모두 조회
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: 조회할 사용자의 ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           description: 페이지당 게시물 수
+ *     responses:
+ *       '200':
+ *         description: 사용자의 게시물 목록 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PostResponse'
+ *       '404':
+ *         description: 사용자를 찾을 수 없음
+ *
+ * /posts/delete_post/{postNumber}:
+ *   delete:
+ *     tags:
+ *       - Post
+ *     summary: 특정 게시물 삭제
+ *     parameters:
+ *       - in: path
+ *         name: postNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: 삭제할 게시물 번호
+ *     responses:
+ *       '200':
+ *         description: 게시물 삭제 성공
+ *       '404':
+ *         description: 게시물을 찾을 수 없음
  *
  * components:
  *   schemas:
@@ -170,11 +237,6 @@ router.delete(
  *         content:
  *           type: string
  *           description: 게시물 내용
- *         tags:
- *           type: array
- *           items:
- *             type: string
- *           description: 게시물 관련 태그
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -189,5 +251,3 @@ router.delete(
  *       scheme: bearer
  *       bearerFormat: JWT
  */
-
-export default router;
