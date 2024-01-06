@@ -20,7 +20,7 @@ export class CreatePromotionDTO {
   content!: string;
 
   @IsOptional()
-  tags?: string[];
+  tags?: string[] | string;
 }
 
 // 게시글 수정을 위한 DTO
