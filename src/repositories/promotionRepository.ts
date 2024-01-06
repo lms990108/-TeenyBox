@@ -37,15 +37,20 @@ class promotionRepository {
 
   // 게시글 전체 조회 & 페이징
   async findAll(skip: number, limit: number): Promise<IPromotion[]> {
-    return await PromotionModel.find().skip(skip).limit(limit).exec();
+    return await PromotionModel.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("user_id", "nickname profile_url")
+      .exec();
   }
 
   // 게시글 번호로 조회
   async findByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    return await PromotionModel.findOne({ promotion_number: promotionNumber });
+    return await PromotionModel.findOne({ promotion_number: promotionNumber })
+      .populate("user_id", "nickname profile_url")
+      .exec();
   }
 
   // userId로 게시글들 조회
@@ -57,6 +62,7 @@ class promotionRepository {
     return await PromotionModel.find({ user_id: userId })
       .skip(skip)
       .limit(limit)
+      .populate("user_id", "nickname profile_url")
       .exec();
   }
 

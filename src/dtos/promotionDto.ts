@@ -35,6 +35,5 @@ export class UpdatePromotionDTO {
   content!: string;
 
   @IsOptional()
-  @IsArray({ message: "tags는 배열이어야 합니다." })
-  tags?: string[];
+  tags?: string[] | string;
 }
