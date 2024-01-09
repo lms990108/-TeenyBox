@@ -11,16 +11,21 @@ class PostController {
     }
 
     try {
-      const post = await PostService.create(req.body, req.user.user_id);
+      const post = await PostService.create(req.body, req.user._id);
       res.status(201).json(post);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
 
-  async updatePost(req: Request, res: Response): Promise<void> {
+  async updatePost(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
     const postNumber = Number(req.params.postNumber);
-    const post = await PostService.update(postNumber, req.body);
+    const post = await PostService.update(postNumber, req.body, req.user._id);
     res.status(200).json(post);
   }
 

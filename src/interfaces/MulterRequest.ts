@@ -1,6 +1,6 @@
-import { Request } from "express";
+import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import multer from "multer";
 
-export interface MulterRequest extends Request {
+export interface MulterRequest extends AuthRequest {
   file: multer.File;
 }

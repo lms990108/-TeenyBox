@@ -2,16 +2,29 @@ import { Request, Response } from "express";
 import PromotionService from "../services/promotionService";
 import { MulterRequest } from "../interfaces/MulterRequest";
 import fs from "fs";
-class PromotionController {
-  // 컨트롤러
-  async createPromotion(req: MulterRequest, res: Response): Promise<void> {
-    const promotionDataWithImage = {
-      ...req.body,
-      posterImage: req.body.poster_image,
-    };
+import { uploadImageToS3, deleteImageFromS3 } from "../common/utils/awsS3Utils";
 
-    const promotion = await PromotionService.create(promotionDataWithImage);
-    res.status(201).json(promotion);
+class PromotionController {
+  // 컨트롤러 - 게시글 생성
+  async createPromotion(req: MulterRequest, res: Response): Promise<void> {
+    // 인증된 사용자의 정보가 있는지 확인합니다.
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
+    try {
+      // 이미지 파일이 있는지 확인하고, 서비스 메서드를 호출하여 게시글을 생성합니다.
+      const promotion = await PromotionService.create(
+        req.body,
+        req.user._id,
+        req.file,
+      );
+
+      res.status(201).json(promotion);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 
   async updatePromotionDefault(req: Request, res: Response): Promise<void> {
