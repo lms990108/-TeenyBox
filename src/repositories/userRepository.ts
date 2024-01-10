@@ -83,28 +83,31 @@ class UserRepository {
   async getBookmarks(userId: string, page: number, limit: number) {
     const user = await UserModel.findById(userId);
 
-    const bookmarks = await Promise.all(
-      user.dibs.slice((page - 1) * limit, page * limit).map(async (showId) => {
-        const show = await ShowModel.findOne({ showId });
+    const showIds = user.dibs.reverse();
+
+    const paginatedShowIds = showIds.slice((page - 1) * limit, page * limit);
+
+    const shows = await Promise.all(
+      paginatedShowIds.map(async (showId) => {
+        const show = await ShowModel.findOne({ _id: showId });
+
         if (show) {
           return {
-            showId: show.showId,
+            _id: show._id,
             title: show.title,
             poster: show.poster,
             region: show.region,
             company: show.company,
           };
         } else {
-          return showId;
+          return null;
         }
       }),
     );
 
-    const validBookmarks = bookmarks
-      .filter((bookmark) => bookmark !== null)
-      .reverse();
+    const validShows = shows.filter((show) => show !== null);
 
-    return validBookmarks;
+    return validShows;
   }
 
   // 찜 여부
