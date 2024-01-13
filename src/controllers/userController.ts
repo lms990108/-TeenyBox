@@ -6,10 +6,8 @@ import { AuthRequest } from "../middlewares/authUserMiddlewares";
 class UserController {
   async RegisterUser(req: Request, res: Response) {
     const createUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    const user = await UserService.register(createUserRequestDTO);
-    return res
-      .status(201)
-      .json({ message: "회원가입이 완료되었습니다.", user });
+    await UserService.register(createUserRequestDTO);
+    return res.status(201).json({ message: "회원가입이 완료되었습니다." });
   }
 
   async checkNickname(req: Request, res: Response) {
@@ -33,7 +31,7 @@ class UserController {
         secure: true,
         sameSite: "strict",
       });
-      return res.status(200).json({ message: "로그인 되었습니다.", user });
+      return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
       return res.status(302).json({
         message: "회원가입이 필요합니다.",
@@ -58,7 +56,7 @@ class UserController {
         secure: true,
         sameSite: "strict",
       });
-      return res.status(200).json({ message: "로그인 되었습니다.", user });
+      return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
       return res.status(302).json({
         message: "회원가입이 필요합니다.",
@@ -83,7 +81,7 @@ class UserController {
         secure: true,
         sameSite: "strict",
       });
-      return res.status(200).json({ message: "로그인 되었습니다.", user });
+      return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
       return res.status(302).json({
         message: "회원가입이 필요합니다.",
@@ -108,10 +106,8 @@ class UserController {
   async updateUser(req: AuthRequest, res: Response) {
     const userId = req.user._id;
     const updateUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    const user = await UserService.updateUser(userId, updateUserRequestDTO);
-    return res
-      .status(200)
-      .json({ message: "회원 정보가 수정되었습니다.", user });
+    await UserService.updateUser(userId, updateUserRequestDTO);
+    return res.status(200).json({ message: "회원 정보가 수정되었습니다." });
   }
 
   async deleteUser(req: AuthRequest, res: Response) {
@@ -162,6 +158,14 @@ class UserController {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const users = await UserService.getAllUsers(page);
     return res.status(200).json({ users });
+  }
+
+  async deleteUsers(req: Request, res: Response) {
+    const { userIds } = req.body;
+    await UserService.deleteUsers(userIds);
+    return res
+      .status(200)
+      .json({ message: "선택한 회원의 탈퇴가 완료되었습니다." });
   }
 }
 

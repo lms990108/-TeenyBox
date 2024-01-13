@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { generateToken, findByToken } from "../common/utils/tokenUtils";
-import { UserResponseDTO } from "../dtos/userDto";
 import ForbiddenError from "../common/error/ForbiddenError";
 import UnauthorizedError from "../common/error/UnauthorizedError";
+import { IUser } from "../models/userModel";
 
 // 사용자 정의 속성을 추가한 요청 객체 타입 확장
 export interface AuthRequest extends Request {
   isLoggedIn: boolean;
-  user: UserResponseDTO | null;
+  user: IUser | null;
 }
 
 // 로그인 상태 확인 미들웨어

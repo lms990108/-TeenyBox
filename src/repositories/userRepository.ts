@@ -1,7 +1,6 @@
 import { UserModel, IUser } from "../models/userModel";
 import { ShowModel } from "../models/showModel";
-import { UserRequestDTO, UserResponseDTO } from "../dtos/userDto";
-import { SocialProvider } from "../batch/types/SocialLogin";
+import { UserRequestDTO } from "../dtos/userDto";
 
 class UserRepository {
   // 사용자 생성
@@ -13,7 +12,7 @@ class UserRepository {
     interested_area: string;
     role: string;
     state: string;
-  }): Promise<UserResponseDTO> {
+  }): Promise<void> {
     const existingUser = await UserModel.findOne({ user_id: userData.user_id });
     if (existingUser) {
       existingUser.social_provider = userData.social_provider;
@@ -22,32 +21,10 @@ class UserRepository {
       existingUser.interested_area = userData.interested_area;
       existingUser.role = userData.role;
       existingUser.state = userData.state;
-      const createdUser = await existingUser.save();
-      const userResponse: UserResponseDTO = {
-        _id: createdUser._id,
-        user_id: createdUser.user_id,
-        social_provider: createdUser.social_provider as SocialProvider,
-        nickname: createdUser.nickname,
-        profile_url: createdUser.profile_url,
-        interested_area: createdUser.interested_area,
-        role: createdUser.role as "admin" | "user",
-        state: createdUser.state as "가입" | "탈퇴",
-      };
-      return userResponse;
+      await existingUser.save();
     } else {
       const user = new UserModel(userData);
-      const createdUser = await user.save();
-      const userResponse: UserResponseDTO = {
-        _id: createdUser._id,
-        user_id: createdUser.user_id,
-        social_provider: createdUser.social_provider as SocialProvider,
-        nickname: createdUser.nickname,
-        profile_url: createdUser.profile_url,
-        interested_area: createdUser.interested_area,
-        role: createdUser.role as "admin" | "user",
-        state: createdUser.state as "가입" | "탈퇴",
-      };
-      return userResponse;
+      await user.save();
     }
   }
 
@@ -57,16 +34,16 @@ class UserRepository {
   }
 
   // 회원정보 조회 (소셜 고유 ID)
-  async getUserById(userId: string): Promise<UserResponseDTO | null> {
+  async getUserById(userId: string): Promise<IUser | null> {
     return await UserModel.findOne({ user_id: userId });
   }
 
   // 회원정보 수정
   async updateUser(
     userId: string,
-    updateUserRequestDTO: UserRequestDTO,
-  ): Promise<UserResponseDTO | null> {
-    return await UserModel.findByIdAndUpdate(userId, updateUserRequestDTO, {
+    updateUserData: UserRequestDTO,
+  ): Promise<void> {
+    return await UserModel.findByIdAndUpdate(userId, updateUserData, {
       new: true,
     });
   }
@@ -83,28 +60,31 @@ class UserRepository {
   async getBookmarks(userId: string, page: number, limit: number) {
     const user = await UserModel.findById(userId);
 
-    const bookmarks = await Promise.all(
-      user.dibs.slice((page - 1) * limit, page * limit).map(async (showId) => {
-        const show = await ShowModel.findOne({ showId });
+    const showIds = user.dibs.reverse();
+
+    const paginatedShowIds = showIds.slice((page - 1) * limit, page * limit);
+
+    const shows = await Promise.all(
+      paginatedShowIds.map(async (showId) => {
+        const show = await ShowModel.findOne({ _id: showId });
+
         if (show) {
           return {
-            showId: show.showId,
+            _id: show._id,
             title: show.title,
             poster: show.poster,
             region: show.region,
             company: show.company,
           };
         } else {
-          return showId;
+          return null;
         }
       }),
     );
 
-    const validBookmarks = bookmarks
-      .filter((bookmark) => bookmark !== null)
-      .reverse();
+    const validShows = shows.filter((show) => show !== null);
 
-    return validBookmarks;
+    return validShows;
   }
 
   // 찜 여부
@@ -133,24 +113,24 @@ class UserRepository {
     });
   }
 
-  // 전체 회원 목록 조회
-  async getUsers(skip: number, limit: number): Promise<UserResponseDTO[]> {
-    const users = await UserModel.find().skip(skip).limit(limit);
+  // 전체 회원 목록 조회(관리자 페이지)
+  async getUsers(skip: number, limit: number): Promise<IUser[]> {
+    return await UserModel.find().skip(skip).limit(limit);
+  }
 
-    const userResponseDTOs = users.map((user) => ({
-      _id: user._id,
-      user_id: user.user_id,
-      social_provider: user.social_provider as SocialProvider,
-      nickname: user.nickname,
-      profile_url: user.profile_url,
-      interested_area: user.interested_area,
-      role: user.role as "admin" | "user",
-      state: user.state as "가입" | "탈퇴",
-      created_at: user.createdAt,
-      update_at: user.updatedAt,
-      deleted_at: user.deletedAt,
-    }));
-    return userResponseDTOs;
+  // 선택한 회원 탈퇴(관리자 페이지)
+  async deleteUsers(userIds: string[]): Promise<void> {
+    await Promise.all(
+      userIds.map(async (userId) => {
+        const user = await UserModel.findById(userId);
+        if (user) {
+          await UserModel.findByIdAndUpdate(userId, {
+            state: "탈퇴",
+            deletedAt: new Date(),
+          });
+        }
+      }),
+    );
   }
 }
 
