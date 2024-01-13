@@ -32,24 +32,20 @@ class PromotionService {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }
 
-      // S3 버킷 이름 설정
-      const bucketName = "elice-5th";
-
-      // 이미지 파일을 S3에 업로드하고, URL을 받습니다.
+      // 이미지 파일을 S3에 업로드
       const imageUrl = await uploadImageToS3(
         imageFile,
-        bucketName,
         `promotions/${Date.now()}_${imageFile.originalname}`,
       );
 
-      // S3에서 반환된 이미지 URL을 promotionData에 추가합니다.
+      // S3에서 반환된 이미지 URL을 promotionData에 추가
       const promotionDataWithImage = {
         ...promotionData,
         poster_image: imageUrl,
         user_id: userId,
       };
 
-      // 데이터베이스에 게시글을 생성하고, 생성된 게시글 객체를 반환합니다.
+      // 데이터베이스에 게시글을 생성하고, 생성된 게시글 객체를 반환
       return PromotionRepository.create(promotionDataWithImage);
     } catch (error) {
       throw new InternalServerError(
