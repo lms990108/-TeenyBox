@@ -874,7 +874,7 @@ const router = express.Router();
  * /user/admin/users:
  *   get:
  *     tags: [user]
- *     summary: 관리자 전체 회원 조회
+ *     summary: 전체 회원 조회(관리자 페이지)
  *     responses:
  *       200:
  *         description: 전체 회원 조회 성공
@@ -909,6 +909,40 @@ const router = express.Router();
  *                       state: "가입"
  *
  */
+/**
+ * @swagger
+ * /user/admin/delete-users:
+ *   delete:
+ *     tags: [user]
+ *     summary: 선택한 회원 탈퇴(관리자 페이지)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example:
+ *                   - "654a4cfc2a8ed874281b68b1"
+ *                   - "658ead7773cff144375f4d9a"
+ *                   - "659eb0f9ed66cdc33be42b32"
+ *     responses:
+ *       200:
+ *         description: 선택한 회원 탈퇴 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Description of the property
+ *                   example: "선택한 회원의 탈퇴가 완료되었습니다."
+ */
+
 router.post(
   "/register",
   validationMiddleware(UserRequestDTO),
@@ -952,6 +986,11 @@ router.get(
   "/admin/users",
   authenticateAdmin,
   asyncHandler(UserController.getAllUsers),
+);
+router.delete(
+  "/admin/delete-users",
+  // authenticateAdmin,
+  asyncHandler(UserController.deleteUsers),
 );
 
 export default router;

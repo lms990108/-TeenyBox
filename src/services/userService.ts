@@ -352,9 +352,9 @@ class UserService {
     await UserRepository.cancelBookmarks(userId, showIds);
   }
 
-  // 전체 회원 목록 조회 (pagination: default 20개)
+  // 전체 회원 목록 조회(관리자 페이지)
   async getAllUsers(page: number): Promise<UserResponseDTO[]> {
-    const limit = 20; // 한 페이지에 표시할 개수
+    const limit = 20;
     const skip = (page - 1) * limit;
 
     const users = await UserRepository.getUsers(skip, limit);
@@ -364,6 +364,11 @@ class UserService {
     }
 
     return users;
+  }
+
+  // 선택한 회원 탈퇴(관리자 페이지)
+  async deleteUsers(userIds: string[]): Promise<void> {
+    await UserRepository.deleteUsers(userIds);
   }
 }
 

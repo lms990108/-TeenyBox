@@ -163,6 +163,14 @@ class UserController {
     const users = await UserService.getAllUsers(page);
     return res.status(200).json({ users });
   }
+
+  async deleteUsers(req: Request, res: Response) {
+    const { userIds } = req.body;
+    await UserService.deleteUsers(userIds);
+    return res
+      .status(200)
+      .json({ message: "선택한 회원의 탈퇴가 완료되었습니다." });
+  }
 }
 
 export default new UserController();

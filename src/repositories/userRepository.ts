@@ -136,7 +136,7 @@ class UserRepository {
     });
   }
 
-  // 전체 회원 목록 조회
+  // 전체 회원 목록 조회(관리자 페이지)
   async getUsers(skip: number, limit: number): Promise<UserResponseDTO[]> {
     const users = await UserModel.find().skip(skip).limit(limit);
 
@@ -154,6 +154,21 @@ class UserRepository {
       deleted_at: user.deletedAt,
     }));
     return userResponseDTOs;
+  }
+
+  // 선택한 회원 탈퇴(관리자 페이지)
+  async deleteUsers(userIds: string[]): Promise<void> {
+    await Promise.all(
+      userIds.map(async (userId) => {
+        const user = await UserModel.findById(userId);
+        if (user) {
+          await UserModel.findByIdAndUpdate(userId, {
+            state: "탈퇴",
+            deletedAt: new Date(),
+          });
+        }
+      }),
+    );
   }
 }
 
