@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  MaxLength,
-  IsOptional,
-  IsArray,
-} from "class-validator";
+import { IsNotEmpty, IsString, MaxLength, IsOptional } from "class-validator";
 
 // 게시글 생성을 위한 DTO
 export class CreatePromotionDTO {
