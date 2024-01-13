@@ -16,6 +16,7 @@ import userRouter from "./routers/userRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import path from "path";
 import cors from "cors";
+import reviewRouter from "./routers/reviewRouter";
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ app.use("/api/promotions", promotionRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/show", showRouter);
 app.use("/api/user", userRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.use(errorMiddleware);
 
