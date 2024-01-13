@@ -33,10 +33,7 @@ class PromotionService {
       }
 
       // 이미지 파일을 S3에 업로드
-      const imageUrl = await uploadImageToS3(
-        imageFile,
-        `promotions/${Date.now()}_${imageFile.originalname}`,
-      );
+      const imageUrl = await uploadImageToS3(imageFile, imageFile.originalname);
 
       // S3에서 반환된 이미지 URL을 promotionData에 추가
       const promotionDataWithImage = {
