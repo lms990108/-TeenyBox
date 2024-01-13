@@ -46,9 +46,9 @@ class PostService {
 
     // 게시글 작성자와 현재 사용자 비교
     // 현재 동작이 제대로 되지 않음.
-    console.log("post.user_id 출력 : " + post.user_id.toString());
+    console.log("post.user_id 출력 : " + post.user_id["_id"].toString());
     console.log("userId 출력 : " + userId);
-    if (post.user_id.toString() !== userId) {
+    if (post.user_id["_id"].toString() !== userId.toString()) {
       throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
     }
 

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import PromotionService from "../services/promotionService";
 import { MulterRequest } from "../interfaces/MulterRequest";
 import fs from "fs";
-import { uploadImageToS3, deleteImageFromS3 } from "../common/utils/awsS3Utils";
+// import { uploadImageToS3, deleteImageFromS3 } from "../common/utils/awsS3Utils";
 
 class PromotionController {
   // 컨트롤러 - 게시글 생성
