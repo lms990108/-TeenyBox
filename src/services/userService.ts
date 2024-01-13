@@ -1,9 +1,6 @@
 import axios from "axios";
-import {
-  UserRequestDTO,
-  UserResponseDTO,
-  KakaoUserDataDTO,
-} from "../dtos/userDto";
+import { IUser } from "../models/userModel";
+import { UserRequestDTO, SocialUserDataDTO } from "../dtos/userDto";
 import UserRepository from "../repositories/userRepository";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
@@ -20,7 +17,7 @@ class UserService {
     nickname: string;
     profile_url: string;
     interested_area: string;
-  }) {
+  }): Promise<void> {
     const { user_id, social_provider, nickname, profile_url, interested_area } =
       createUserRequestDTO;
 
@@ -34,9 +31,7 @@ class UserService {
       state: "가입",
     };
 
-    const user = await UserRepository.createUser(userData);
-
-    return user;
+    await UserRepository.createUser(userData);
   }
 
   // 닉네임 중복 확인
@@ -112,7 +107,7 @@ class UserService {
   }
 
   // 카카오 로그인 (get user info)
-  async getKakaoUserData(accessToken: string): Promise<KakaoUserDataDTO> {
+  async getKakaoUserData(accessToken: string): Promise<SocialUserDataDTO> {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
@@ -192,7 +187,7 @@ class UserService {
   }
 
   // 네이버 로그인 (get user info)
-  async getNaverUserData(accessToken: string): Promise<KakaoUserDataDTO> {
+  async getNaverUserData(accessToken: string): Promise<SocialUserDataDTO> {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
@@ -273,7 +268,7 @@ class UserService {
   }
 
   // 구글 로그인 (get user info)
-  async getGoogleUserData(accessToken: string): Promise<KakaoUserDataDTO> {
+  async getGoogleUserData(accessToken: string): Promise<SocialUserDataDTO> {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
@@ -295,7 +290,7 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserById(userId: string): Promise<UserResponseDTO | null> {
+  async getUserById(userId: string): Promise<IUser | null> {
     const user = await UserRepository.getUserById(userId);
 
     if (!user) {
@@ -308,15 +303,9 @@ class UserService {
   // 회원정보 수정
   async updateUser(
     userId: string,
-    updateUserRequestDTO: UserRequestDTO,
-  ): Promise<UserResponseDTO | null> {
-    const user = await UserRepository.updateUser(userId, updateUserRequestDTO);
-
-    if (!user) {
-      throw new NotFoundError("사용자를 찾을 수 없습니다.");
-    }
-
-    return user;
+    updateUserData: UserRequestDTO,
+  ): Promise<void> {
+    await UserRepository.updateUser(userId, updateUserData);
   }
 
   // 회원정보 삭제(탈퇴)
@@ -353,7 +342,7 @@ class UserService {
   }
 
   // 전체 회원 목록 조회(관리자 페이지)
-  async getAllUsers(page: number): Promise<UserResponseDTO[]> {
+  async getAllUsers(page: number): Promise<IUser[]> {
     const limit = 20;
     const skip = (page - 1) * limit;
 

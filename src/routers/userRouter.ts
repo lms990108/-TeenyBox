@@ -55,36 +55,6 @@ const router = express.Router();
  *                   type: string
  *                   description: Description of the property
  *                   example: "회원가입이 완료되었습니다."
- *                 user:
- *                   properties:
- *                     user_id:
- *                       type: string
- *                       description: Description of the property
- *                       example: "3145587907"
- *                     social_provider:
- *                       type: string
- *                       description: Description of the property
- *                       example: "kakao"
- *                     nickname:
- *                       type: string
- *                       description: Description of the property
- *                       example: "아아아"
- *                     profile_url:
- *                       type: string
- *                       description: Description of the property
- *                       example: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                     interested_area:
- *                       type: string
- *                       description: Description of the property
- *                       example: "제주"
- *                     role:
- *                       type: string
- *                       description: Description of the property
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: Description of the property
- *                       example: "가입"
  */
 /**
  * @swagger
@@ -148,60 +118,6 @@ const router = express.Router();
  *                   type: string
  *                   description: 로그인 성공 메시지
  *                   example: "로그인 되었습니다."
- *                 user:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       description: 사용자 ID
- *                       example: "6544044568271cc98730a052"
- *                     user_id:
- *                       type: string
- *                       description: 사용자의 고유 ID
- *                       example: "3145587907"
- *                     social_provider:
- *                       type: string
- *                       description: 소셜 프로바이더 (카카오)
- *                       example: "kakao"
- *                     nickname:
- *                       type: string
- *                       description: 사용자 닉네임
- *                       example: "아아아"
- *                     profile_url:
- *                       type: string
- *                       description: 사용자 프로필 이미지 URL
- *                       example: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                     interested_area:
- *                       type: string
- *                       description: 관심 지역
- *                       example: "제주"
- *                     role:
- *                       type: string
- *                       description: 사용자 권한
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: 가입 상태
- *                       example: "가입"
- *                     dibs:
- *                       type: array
- *                       description: 사용자가 저장한 항목
- *                     post:
- *                       type: array
- *                       description: 사용자 자유 게시물
- *                     promotion:
- *                       type: array
- *                       description: 사용자 홍보 게시물
- *                     comment:
- *                       type: array
- *                       description: 사용자가 작성한 댓글
- *                     review:
- *                       type: array
- *                       description: 사용자가 작성한 리뷰
- *                     __v:
- *                       type: number
- *                       description: 모델 버전
- *                       example: 0
  *       302:
  *         description: 회원가입 필요
  *         content:
@@ -266,60 +182,6 @@ const router = express.Router();
  *                   type: string
  *                   description: 로그인 성공 메시지
  *                   example: "로그인 되었습니다."
- *                 user:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       description: 사용자 ID
- *                       example: "654a8c722f0c32431d8cea87"
- *                     user_id:
- *                       type: string
- *                       description: 사용자의 고유 ID
- *                       example: "116217972498421836521"
- *                     social_provider:
- *                       type: string
- *                       description: 소셜 프로바이더 (네이버)
- *                       example: "naver"
- *                     nickname:
- *                       type: string
- *                       description: 사용자 닉네임
- *                       example: "은리"
- *                     profile_url:
- *                       type: string
- *                       description: 사용자 프로필 이미지 URL
- *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
- *                     interested_area:
- *                       type: string
- *                       description: 관심 지역
- *                       example: "제주"
- *                     role:
- *                       type: string
- *                       description: 사용자 권한
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: 가입 상태
- *                       example: "가입"
- *                     dibs:
- *                       type: array
- *                       description: 사용자가 저장한 항목
- *                     post:
- *                       type: array
- *                       description: 사용자 자유 게시물
- *                     promotion:
- *                       type: array
- *                       description: 사용자 홍보 게시물
- *                     comment:
- *                       type: array
- *                       description: 사용자가 작성한 댓글
- *                     review:
- *                       type: array
- *                       description: 사용자가 작성한 리뷰
- *                     __v:
- *                       type: number
- *                       description: 모델 버전
- *                       example: 0
  *       302:
  *         description: 회원가입 필요
  *         content:
@@ -380,60 +242,6 @@ const router = express.Router();
  *                   type: string
  *                   description: 로그인 성공 메시지
  *                   example: "로그인 되었습니다."
- *                 user:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       description: 사용자 ID
- *                       example: "654a8c722f0c32431d8cea87"
- *                     user_id:
- *                       type: string
- *                       description: 사용자의 고유 ID
- *                       example: "116217972498421836521"
- *                     social_provider:
- *                       type: string
- *                       description: 소셜 프로바이더 (구글)
- *                       example: "google"
- *                     nickname:
- *                       type: string
- *                       description: 사용자 닉네임
- *                       example: "은리"
- *                     profile_url:
- *                       type: string
- *                       description: 사용자 프로필 이미지 URL
- *                       example: "https://lh3.googleusercontent.com/a/ACg8ocIRQmkBmWmhRc6-jXQw-K28fA303nnLDaRQabv-rR_h3Ys=s96-c"
- *                     interested_area:
- *                       type: string
- *                       description: 관심 지역
- *                       example: "제주"
- *                     role:
- *                       type: string
- *                       description: 사용자 권한
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: 가입 상태
- *                       example: "가입"
- *                     dibs:
- *                       type: array
- *                       description: 사용자가 저장한 항목
- *                     post:
- *                       type: array
- *                       description: 사용자 자유 게시물
- *                     promotion:
- *                       type: array
- *                       description: 사용자 홍보 게시물
- *                     comment:
- *                       type: array
- *                       description: 사용자가 작성한 댓글
- *                     review:
- *                       type: array
- *                       description: 사용자가 작성한 리뷰
- *                     __v:
- *                       type: number
- *                       description: 모델 버전
- *                       example: 0
  *       302:
  *         description: 회원가입 필요
  *         content:
@@ -646,60 +454,6 @@ const router = express.Router();
  *                   type: string
  *                   description: Description of the property
  *                   example: "회원 정보가 수정되었습니다."
- *                 user:
- *                   properties:
- *                     _id:
- *                       type: string
- *                       description: Description of the property
- *                       example: "6544044568271cc98730a052"
- *                     user_id:
- *                       type: string
- *                       description: Description of the property
- *                       example: "3145587907"
- *                     social_provider:
- *                       type: string
- *                       description: Description of the property
- *                       example: "kakao"
- *                     nickname:
- *                       type: string
- *                       description: Description of the property
- *                       example: "햄거버"
- *                     profile_url:
- *                       type: string
- *                       description: Description of the property
- *                       example: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYKwevKgJs666_yQmbkZLzlCBL-G2tmqOaHg&usqp=CAU"
- *                     interested_area:
- *                       type: string
- *                       description: Description of the property
- *                       example: "서울"
- *                     role:
- *                       type: string
- *                       description: Description of the property
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: Description of the property
- *                       example: "가입"
- *                     dibs:
- *                       type: array
- *                       description: Description of the property
- *                       example: []
- *                     post:
- *                       type: array
- *                       description: Description of the property
- *                       example: []
- *                     promotion:
- *                       type: array
- *                       description: Description of the property
- *                       example: []
- *                     comment:
- *                       type: array
- *                       description: Description of the property
- *                       example: []
- *                     review:
- *                       type: array
- *                       description: Description of the property
- *                       example: []
  */
 /**
  * @swagger
@@ -989,7 +743,7 @@ router.get(
 );
 router.delete(
   "/admin/delete-users",
-  // authenticateAdmin,
+  authenticateAdmin,
   asyncHandler(UserController.deleteUsers),
 );
 

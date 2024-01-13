@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEnum } from "class-validator";
+import { IsString, IsNotEmpty, IsEnum, IsDate } from "class-validator";
 import { ROLE, STATE, SOCIAL } from "../common/enum/enum";
 import { Union } from "../common/enum/CustomUnion";
 
@@ -62,9 +62,18 @@ export class UserResponseDTO {
   @IsEnum(STATE)
   @IsNotEmpty()
   state: State;
+
+  @IsDate()
+  created_at: Date;
+
+  @IsDate()
+  updated_at: Date;
+
+  @IsDate()
+  deleted_at: Date | null;
 }
 
-export class KakaoUserDataDTO {
+export class SocialUserDataDTO {
   @IsString()
   id: string;
 
