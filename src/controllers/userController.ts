@@ -23,12 +23,10 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
@@ -48,12 +46,10 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
@@ -73,12 +69,10 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
         sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
