@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import showService from "../services/showService";
+import { ShowResponseDto } from "../dtos/showDto";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
@@ -7,21 +8,23 @@ class ShowController {
     const limit = parseInt(req.query.limit as string) || 20;
 
     const shows = await showService.findShows(page, limit);
-    return res.status(200).json({ shows });
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
     const showId = req.params.showId as string;
 
     const show = await showService.findShowByShowId(showId);
-    return res.status(200).json(show);
+    return res.status(200).json({ show: new ShowResponseDto(show) });
   }
 
   async findShowByTitle(req: Request, res: Response): Promise<Response> {
     const title = req.query.title as string;
 
     const show = await showService.findShowByTitle(title);
-    return res.status(200).json(show);
+    return res.status(200).json({ show: new ShowResponseDto(show) });
   }
 
   async search(req: Request, res: Response): Promise<Response> {
@@ -32,7 +35,9 @@ class ShowController {
     const limit = parseInt(req.query.limit as string) || 20;
 
     const shows = await showService.search(title, state, region, page, limit);
-    return res.status(200).json(shows);
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
   }
 
   async deleteByShowId(req: Request, res: Response): Promise<Response> {

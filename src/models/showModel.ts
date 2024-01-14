@@ -23,7 +23,7 @@ export interface IShow extends Document {
   schedule?: string;
   poster?: string;
   detail_images?: string[];
-  // reviews?: (typeof mongoose.Schema.Types.ObjectId)[];
+  reviews?: mongoose.Schema.Types.ObjectId[] | null;
 }
 
 const ShowSchema = new Schema<IShow>(
@@ -46,7 +46,7 @@ const ShowSchema = new Schema<IShow>(
     cast: [String],
     creator: String,
     runtime: String,
-    age: String, // API 에서 주는 값을 그대로 String으로 저장했으나 확장성을 고려하면 Number로 바꾸는 것이 좋을 것 같다
+    age: String,
     company: String,
     price: String,
     description: String,
@@ -57,12 +57,13 @@ const ShowSchema = new Schema<IShow>(
     schedule: String,
     poster: String,
     detail_images: [String],
-    // reviews: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Review",
-    //   },
-    // ],
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+        nullable: true,
+      },
+    ],
   },
   {
     timestamps: true,
