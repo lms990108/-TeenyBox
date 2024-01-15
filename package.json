@@ -5,7 +5,7 @@
   "main": "./dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "node --max-old-space-size=4096 ./node_modules/.bin/tsc",
     "start": "cross-env NODE_ENV=production node ./dist/app.js",
     "dev": "cross-env NODE_ENV=development nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts",
     "lint": "eslint src/**/*.ts"

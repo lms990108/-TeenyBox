@@ -23,11 +23,9 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
@@ -46,11 +44,9 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
@@ -69,11 +65,9 @@ class UserController {
     if (user) {
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
       });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: "strict",
       });
       return res.status(200).json({ message: "로그인 되었습니다." });
     } else {
