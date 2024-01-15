@@ -32,13 +32,9 @@ class PromotionService {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }
 
-      // S3 버킷 이름 설정
-      const bucketName = "elice-5th";
-
       // 이미지 파일을 S3에 업로드하고, URL을 받습니다.
       const imageUrl = await uploadImageToS3(
         imageFile,
-        bucketName,
         `promotions/${Date.now()}_${imageFile.originalname}`,
       );
 

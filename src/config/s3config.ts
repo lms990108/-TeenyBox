@@ -1,7 +1,15 @@
-import aws from "aws-sdk";
+// s3config.ts
+import { S3 } from "@aws-sdk/client-s3";
+import dotenv from "dotenv";
 
-export const s3 = new aws.S3({
-  accessKeyId: process.env.S3_ACCESS_KEY,
-  secretAccessKey: process.env.S3_SECRET_KEY,
+dotenv.config();
+
+const s3Client = new S3({
   region: "ap-northeast-2",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
+
+export default s3Client;

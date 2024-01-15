@@ -12,10 +12,12 @@ const s3Client = new S3({
   },
 });
 
+// S3 버킷 이름 설정
+const bucketName = "elice-5th";
+
 // 이미지를 S3에 업로드하는 함수
 export async function uploadImageToS3(
   file: Express.Multer.File,
-  bucketName: string,
   key: string,
 ): Promise<string> {
   const uploadParams = {
