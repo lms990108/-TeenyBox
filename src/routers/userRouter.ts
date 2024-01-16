@@ -8,7 +8,9 @@ import {
 import { UserRequestDTO } from "../dtos/userDto";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import asyncHandler from "../common/utils/asyncHandler";
+import multer from "multer";
 
+const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 /**
@@ -20,7 +22,7 @@ const router = express.Router();
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             properties:
  *               user_id:
@@ -419,7 +421,7 @@ const router = express.Router();
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             properties:
  *               user_id:
@@ -699,6 +701,7 @@ const router = express.Router();
 
 router.post(
   "/register",
+  upload.single("profile_url"),
   validationMiddleware(UserRequestDTO),
   asyncHandler(UserController.RegisterUser),
 );
@@ -709,7 +712,12 @@ router.post("/google-login", asyncHandler(UserController.googleLogin));
 router.post("/logout", asyncHandler(UserController.logout));
 router.get("/check-login", checkLoginStatus);
 router.get("/", authenticateUser, asyncHandler(UserController.getUser));
-router.put("/", authenticateUser, asyncHandler(UserController.updateUser));
+router.put(
+  "/",
+  authenticateUser,
+  upload.single("profile_url"),
+  asyncHandler(UserController.updateUser),
+);
 router.delete("/", authenticateUser, asyncHandler(UserController.deleteUser));
 router.get(
   "/bookmarks",

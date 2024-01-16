@@ -8,28 +8,32 @@ import {
   generateToken,
   generateRefreshToken,
 } from "../common/utils/tokenUtils";
+import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 
 class UserService {
   // 회원가입
-  async register(createUserRequestDTO: {
-    user_id: string;
-    social_provider: string;
-    nickname: string;
-    profile_url: string;
-    interested_area: string;
-  }): Promise<void> {
-    const { user_id, social_provider, nickname, profile_url, interested_area } =
-      createUserRequestDTO;
-
+  async register(
+    createUserRequestDTO: {
+      user_id: string;
+      social_provider: string;
+      nickname: string;
+      interested_area: string;
+    },
+    image: Express.Multer.File,
+  ): Promise<void> {
     const userData = {
-      user_id,
-      social_provider,
-      nickname,
-      profile_url,
-      interested_area,
+      ...createUserRequestDTO,
+      profile_url: null,
       role: "user",
       state: "가입",
     };
+
+    const imageUrl = await uploadImageToS3(
+      image,
+      `users/${Date.now()}_${image.originalname}`,
+    );
+
+    userData.profile_url = imageUrl;
 
     await UserRepository.createUser(userData);
   }
@@ -304,8 +308,21 @@ class UserService {
   async updateUser(
     userId: string,
     updateUserData: UserRequestDTO,
+    image: Express.Multer.File,
   ): Promise<void> {
-    await UserRepository.updateUser(userId, updateUserData);
+    const userData = {
+      ...updateUserData,
+      profile_url: null,
+    };
+
+    const imageUrl = await uploadImageToS3(
+      image,
+      `users/${Date.now()}_${image.originalname}`,
+    );
+
+    userData.profile_url = imageUrl;
+
+    await UserRepository.updateUser(userId, userData);
   }
 
   // 회원정보 삭제(탈퇴)
