@@ -5,13 +5,15 @@ import { validationMiddleware } from "../middlewares/validationMiddleware";
 import { uploadLocal } from "../middlewares/localMiddleware";
 import * as promotionDto from "../dtos/promotionDto";
 import { authenticateUser } from "../middlewares/authUserMiddlewares";
+import multer from "multer";
 
+const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 router.post(
   "/add_promotion",
   authenticateUser,
-  uploadLocal.single("promotion_poster"),
+  upload.single("promotion_poster"),
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
