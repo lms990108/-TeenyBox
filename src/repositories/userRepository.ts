@@ -15,12 +15,7 @@ class UserRepository {
   }): Promise<void> {
     const existingUser = await UserModel.findOne({ user_id: userData.user_id });
     if (existingUser) {
-      existingUser.social_provider = userData.social_provider;
-      existingUser.nickname = userData.nickname;
-      existingUser.profile_url = userData.profile_url;
-      existingUser.interested_area = userData.interested_area;
-      existingUser.role = userData.role;
-      existingUser.state = userData.state;
+      Object.assign(existingUser, userData);
       await existingUser.save();
     } else {
       const user = new UserModel(userData);

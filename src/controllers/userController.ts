@@ -6,7 +6,8 @@ import { AuthRequest } from "../middlewares/authUserMiddlewares";
 class UserController {
   async RegisterUser(req: Request, res: Response) {
     const createUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    await UserService.register(createUserRequestDTO);
+    const image: Express.Multer.File = req.file;
+    await UserService.register(createUserRequestDTO, image);
     return res.status(201).json({ message: "회원가입이 완료되었습니다." });
   }
 
@@ -106,7 +107,8 @@ class UserController {
   async updateUser(req: AuthRequest, res: Response) {
     const userId = req.user._id;
     const updateUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    await UserService.updateUser(userId, updateUserRequestDTO);
+    const image: Express.Multer.File = req.file;
+    await UserService.updateUser(userId, updateUserRequestDTO, image);
     return res.status(200).json({ message: "회원 정보가 수정되었습니다." });
   }
 

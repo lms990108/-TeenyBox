@@ -21,10 +21,6 @@ export class UserRequestDTO {
   @IsNotEmpty({ message: "닉네임은 반드시 입력되어야 합니다." })
   nickname: string;
 
-  @IsString({ message: "프로필 URL은 문자열이어야 합니다." })
-  @IsNotEmpty({ message: "프로필 URL은 반드시 입력되어야 합니다." })
-  profile_url: string;
-
   @IsString({ message: "관심 지역은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "관심 지역은 반드시 입력되어야 합니다." })
   interested_area: string;
