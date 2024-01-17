@@ -8,7 +8,7 @@ class UserRepository {
     user_id: string;
     social_provider: string;
     nickname: string;
-    profile_url: string;
+    profile_url?: string;
     interested_area: string;
     role: string;
     state: string;

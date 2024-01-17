@@ -18,24 +18,35 @@ class UserService {
       social_provider: string;
       nickname: string;
       interested_area: string;
+      profile_url?: string;
     },
-    image: Express.Multer.File,
+    image?: Express.Multer.File,
   ): Promise<void> {
-    const userData = {
-      ...createUserRequestDTO,
-      profile_url: null,
-      role: "user",
-      state: "가입",
-    };
+    if (createUserRequestDTO.profile_url) {
+      const userData = {
+        ...createUserRequestDTO,
+        role: "user",
+        state: "가입",
+      };
 
-    const imageUrl = await uploadImageToS3(
-      image,
-      `users/${Date.now()}_${image.originalname}`,
-    );
+      await UserRepository.createUser(userData);
+    } else {
+      const userData = {
+        ...createUserRequestDTO,
+        profile_url: null,
+        role: "user",
+        state: "가입",
+      };
 
-    userData.profile_url = imageUrl;
+      const imageUrl = await uploadImageToS3(
+        image,
+        `users/${Date.now()}_${image.originalname}`,
+      );
 
-    await UserRepository.createUser(userData);
+      userData.profile_url = imageUrl;
+
+      await UserRepository.createUser(userData);
+    }
   }
 
   // 닉네임 중복 확인
@@ -308,21 +319,25 @@ class UserService {
   async updateUser(
     userId: string,
     updateUserData: UserRequestDTO,
-    image: Express.Multer.File,
+    image?: Express.Multer.File,
   ): Promise<void> {
-    const userData = {
-      ...updateUserData,
-      profile_url: null,
-    };
+    if (updateUserData.profile_url) {
+      await UserRepository.updateUser(userId, updateUserData);
+    } else {
+      const userData = {
+        ...updateUserData,
+        profile_url: null,
+      };
 
-    const imageUrl = await uploadImageToS3(
-      image,
-      `users/${Date.now()}_${image.originalname}`,
-    );
+      const imageUrl = await uploadImageToS3(
+        image,
+        `users/${Date.now()}_${image.originalname}`,
+      );
 
-    userData.profile_url = imageUrl;
+      userData.profile_url = imageUrl;
 
-    await UserRepository.updateUser(userId, userData);
+      await UserRepository.updateUser(userId, userData);
+    }
   }
 
   // 회원정보 삭제(탈퇴)
