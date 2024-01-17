@@ -27,23 +27,23 @@ const router = express.Router();
  *             properties:
  *               user_id:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 사용자 소셜 아이디
  *                 example: "3145587907"
  *               social_provider:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 소셜 프로바이더
  *                 example: "kakao"
  *               nickname:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 닉네임
  *                 example: "아아아"
  *               profile_url:
  *                 type: string
- *                 description: Description of the property
- *                 example: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
+ *                 format: binary
+ *                 description: 프로필 이미지 파일 또는 이미지 URL
  *               interested_area:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 관심 지역
  *                 example: "제주"
  *     responses:
  *       201:
@@ -426,23 +426,23 @@ const router = express.Router();
  *             properties:
  *               user_id:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 사용자 소셜 아이디
  *                 example: "3145587907"
  *               social_provider:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 소셜 프로바이더
  *                 example: "kakao"
  *               nickname:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 닉네임
  *                 example: "햄거버"
  *               profile_url:
  *                 type: string
- *                 description: Description of the property
- *                 example: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYKwevKgJs666_yQmbkZLzlCBL-G2tmqOaHg&usqp=CAU"
+ *                 format: binary
+ *                 description: 프로필 이미지 파일 또는 이미지 URL
  *               interested_area:
  *                 type: string
- *                 description: Description of the property
+ *                 description: 관심 지역
  *                 example: "서울"
  *     responses:
  *       200:

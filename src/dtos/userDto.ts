@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsEnum, IsDate } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsDate,
+  IsOptional,
+} from "class-validator";
 import { ROLE, STATE, SOCIAL } from "../common/enum/enum";
 import { Union } from "../common/enum/CustomUnion";
 
@@ -24,6 +30,10 @@ export class UserRequestDTO {
   @IsString({ message: "관심 지역은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "관심 지역은 반드시 입력되어야 합니다." })
   interested_area: string;
+
+  @IsOptional()
+  @IsString({ message: "프로필 URL은 문자열이어야 합니다." })
+  profile_url?: string;
 }
 
 export class UserResponseDTO {
