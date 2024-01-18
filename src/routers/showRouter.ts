@@ -1,6 +1,7 @@
 import { Router } from "express";
 import ShowController from "../controllers/showController";
 import asyncHandler from "../common/utils/asyncHandler";
+import { authenticateAdmin } from "../middlewares/authUserMiddlewares";
 
 const showRouter = Router();
 
@@ -9,7 +10,12 @@ const showRouter = Router();
  * /show:
  *   get:
  *     tags: [Show]
- *     summary: 공연 전체 목록 조회
+ *     summary: 공연 전체 조회 및 검색
+ *     description: |
+ *      제목, 지역, 공연 상태로 검색이 가능합니다.
+ *      - 예시:
+ *        - 지역: 서울, 경기/인천, 부산, 대구, 광주, 대전, 울산, 세종, 강원, 충청, 전라, 경상, 제주
+ *        - 공연 상태: 공연예정, 공연중, 공연완료
  *     parameters:
  *      - in: query
  *        name: page
@@ -21,6 +27,21 @@ const showRouter = Router();
  *        schema:
  *         type: number
  *         description: 페이지당 공연 개수
+ *      - in: query
+ *        name: title
+ *        schema:
+ *         type: string
+ *         description: 공연 제목, 부분 검색 가능
+ *      - in: query
+ *        name: region
+ *        schema:
+ *         type: string
+ *         description: 지역
+ *      - in: query
+ *        name: state
+ *        schema:
+ *         type: string
+ *         description: 공연 상태
  *     responses:
  *       200:
  *         description: 공연 전체 목록 조회 성공
@@ -82,17 +103,17 @@ const showRouter = Router();
 
 /**
  * @swagger
- * /show/{showId}:
+ * /show/{id}:
  *   get:
  *     tags: [Show]
  *     summary: 공연 상세 정보 조회
  *     parameters:
  *       - in: path
- *         name: showId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *           description: showId
+ *           description: 공연 아이디
  *           example: "PF227440"
  *     responses:
  *       200:
@@ -198,99 +219,17 @@ const showRouter = Router();
 
 /**
  * @swagger
- * /show/search/query:
- *   get:
- *     tags: [Show]
- *     summary: 공연 검색
- *     parameters:
- *      - in: query
- *        name: title
- *        schema:
- *         type: string
- *         description: 공연 제목, 부분 검색 가능
- *         example: 연애
- *      - in: query
- *        name: region
- *        schema:
- *         type: string
- *         description: 지역
- *         example: 서울
- *      - in: query
- *        name: state
- *        schema:
- *         type: string
- *         description: 공연 상태
- *         example: 공연중
- *     responses:
- *       200:
- *         description: 공연 검색 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               example:
- *                   - _id: "6544bbb57fb7a9ce3075c52f"
- *                     showId: "PF227440"
- *                     title: "가장 보통의 연애"
- *                     start_date: "2023-10-30T00:00:00.000Z"
- *                     end_date: "2023-12-31T00:00:00.000Z"
- *                     region: "서울"
- *                     location: "연극플레이스 혜화 (연극플레이스 혜화)"
- *                     latitude: 37.5809723
- *                     longitude: 127.003528
- *                     cast: ["박시안, 박은경, 문서우, 김유경, 이현재, 김대우, 문준혁 등"]
- *                     creator: ""
- *                     runtime: "1시간 30분"
- *                     age: "만 13세 이상"
- *                     company: "(주)네오, 씨제스컬처 ((주)씨제스엔터테인먼트)"
- *                     price: "전석 40,000원"
- *                     description: ""
- *                     state: "공연중"
- *                     schedule: "월요일 ~ 금요일(17:00,19:30), 토요일 ~ 일요일(15:00,17:30), HOL(17:00,19:30)"
- *                     poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229026_231031_141835.gif"
- *                     detail_images: ["http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF229026_231031_0218351.jpg", "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF229026_231031_0218350.jpg"]
- *                     reviews: []
- *                     createdAt: "2023-11-06T15:55:24.610Z"
- *                     updatedAt: "2023-11-07T15:03:22.659Z"
- *                   - _id: "65490c7df46670b5a4f028dd"
- *                     showId: "PF225815"
- *                     title: "연애하기 좋은 날: 당근거래편 [대학로]"
- *                     start_date: "2023-09-22T00:00:00.000Z"
- *                     end_date: "2024-01-01T00:00:00.000Z"
- *                     region: "서울"
- *                     location: "우리소극장 [대학로] (우리소극장 [대학로])"
- *                     latitude: 37.5792262
- *                     longitude: 127.0051573
- *                     cast: ["오진영, 박현하, 박민서, 진주희, 김부연, 김이슬"]
- *                     creator: ""
- *                     runtime: "1시간 30분"
- *                     age: "만 13세 이상"
- *                     company: ""
- *                     price: "전석 35,000원"
- *                     description: ""
- *                     state: "공연중"
- *                     schedule: "월요일(19:30), 수요일 ~ 금요일(19:30), 토요일(15:00,17:00,19:00), 일요일(15:00,17:00)"
- *                     poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF225815_230926_131717.gif"
- *                     detail_images: ["http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF225815_230926_0117171.jpg"]
- *                     reviews: []
- *                     createdAt: "2023-11-06T15:55:41.991Z"
- *                     updatedAt: "2023-11-06T16:07:32.102Z"
- *
- */
-
-/**
- * @swagger
- * /show/{showId}:
+ * /show/{id}:
  *   delete:
  *     tags: [Show]
  *     summary: 공연 삭제
  *     parameters:
  *       - in: path
- *         name: showId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *           description: showId
+ *           description: 공연 아이디
  *           example: "PF10033"
  *     responses:
  *       200:
@@ -309,10 +248,13 @@ const showRouter = Router();
  *                   description: 메시지
  *                   example: "삭제되었습니다."
  */
+
 showRouter.get("/", asyncHandler(ShowController.findShows));
-showRouter.get("/:showId", asyncHandler(ShowController.findShowByShowId));
-showRouter.get("/title/:title", asyncHandler(ShowController.findShowByTitle));
-showRouter.get("/search/query", asyncHandler(ShowController.search));
-showRouter.delete("/:showId", asyncHandler(ShowController.deleteByShowId));
+showRouter.get("/:id", asyncHandler(ShowController.findShowByShowId));
+showRouter.delete(
+  "/:id",
+  authenticateAdmin,
+  asyncHandler(ShowController.deleteByShowId),
+);
 
 export default showRouter;

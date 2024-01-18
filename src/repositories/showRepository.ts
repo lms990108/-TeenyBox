@@ -21,23 +21,11 @@ class showRepository {
     return (await ShowModel.countDocuments({ showId })) > 0;
   }
 
-  async findShows(page: number, limit: number) {
-    return await ShowModel.find()
-      .sort({ updated_at: -1 })
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
-  }
-
   async findShowByShowId(showId: string) {
     return await ShowModel.findOne({ showId });
   }
 
-  async findShowByTitle(title: string) {
-    return await ShowModel.findOne({ title: title });
-  }
-
-  async search(query, page: number, limit: number) {
+  async findShows(query, page: number, limit: number) {
     return await ShowModel.aggregate([
       { $match: query },
       { $sort: { updated_at: -1 } },
