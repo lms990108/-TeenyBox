@@ -15,7 +15,7 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *        required: true
  *        schema:
  *         type: string
- *         description: showId
+ *         description: 공연 아이디
  *         example: "PF227440"
  *     requestBody:
  *       required: true
@@ -55,17 +55,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   patch:
  *     tags: [Review]
  *     summary: 리뷰 수정
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     requestBody:
  *       required: true
@@ -108,7 +108,7 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  * /reviews:
  *   get:
  *     tags: [Review]
- *     summary: 전체 리뷰 조회
+ *     summary: 전체 리뷰 조회 및 유저별, 공연별 조회
  *     parameters:
  *      - in: query
  *        name: page
@@ -120,106 +120,12 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *        schema:
  *         type: number
  *         description: 페이지당 리뷰 개수
- *     responses:
- *       200:
- *         description: 조회 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                reviews:
- *                 type: array
- *                 description: 리뷰 목록
- *                 example:
- *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
- *                     content: "재미있는 공연이에요!"
- *                     rate: 5
- *                     created_at: "2024-01-14T08:40:35.440Z"
- *                     updated_at: "2024-01-14T08:40:35.440Z"
- *                     deleted_at: null
- *                   - _id: "65a3932cb95752766c2f12c0"
- *                     user_id: "3246926995"
- *                     show_id: "PF185284"
- *                     content: "test2"
- *                     rate: 3
- *                     created_at: "2024-01-14T07:32:54.162Z"
- *                     updated_at: "2024-01-14T07:35:40.862Z"
- *                     deleted_at: null
- */
-
-/**
- * @swagger
- * /reviews/user/{userId}:
- *   get:
- *     tags: [Review]
- *     summary: 유저별 리뷰 조회
- *     parameters:
  *      - in: query
- *        name: page
- *        schema:
- *         type: number
- *         description: 페이지 번호
- *      - in: query
- *        name: limit
- *        schema:
- *         type: number
- *         description: 페이지당 리뷰 개수
- *      - in: path
  *        name: userId
  *        schema:
  *         type: string
  *         description: 유저 아이디
- *     responses:
- *       200:
- *         description: 조회 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                reviews:
- *                 type: array
- *                 description: 리뷰 목록
- *                 example:
- *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
- *                     content: "재미있는 공연이에요!"
- *                     rate: 5
- *                     created_at: "2024-01-14T08:40:35.440Z"
- *                     updated_at: "2024-01-14T08:40:35.440Z"
- *                     deleted_at: null
- *                   - _id: "65a3932cb95752766c2f12c0"
- *                     user_id: "3246926995"
- *                     show_id: "PF185284"
- *                     content: "test2"
- *                     rate: 3
- *                     created_at: "2024-01-14T07:32:54.162Z"
- *                     updated_at: "2024-01-14T07:35:40.862Z"
- *                     deleted_at: null
- */
-
-/**
- * @swagger
- * /reviews/show/{showId}:
- *   get:
- *     tags: [Review]
- *     summary: 공연별 리뷰 조회
- *     parameters:
  *      - in: query
- *        name: page
- *        schema:
- *         type: number
- *         description: 페이지 번호
- *      - in: query
- *        name: limit
- *        schema:
- *         type: number
- *         description: 페이지당 리뷰 개수
- *      - in: path
  *        name: showId
  *        schema:
  *         type: string
@@ -246,7 +152,7 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *                     deleted_at: null
  *                   - _id: "65a3932cb95752766c2f12c0"
  *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     show_id: "PF185284"
  *                     content: "test2"
  *                     rate: 3
  *                     created_at: "2024-01-14T07:32:54.162Z"
@@ -256,17 +162,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   get:
  *     tags: [Review]
- *     summary: 리뷰 단건 조회
+ *     summary: 단일 리뷰 조회
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     responses:
  *       200:
@@ -292,17 +198,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   delete:
  *     tags: [Review]
  *     summary: 리뷰 삭제
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     responses:
  *       200:
@@ -334,20 +240,16 @@ reviewRouter.post(
   asyncHandler(reviewController.create),
 );
 reviewRouter.patch(
-  "/:reviewId",
+  "/:id",
   authenticateUser,
   asyncHandler(reviewController.update),
 );
 reviewRouter.get("/", asyncHandler(reviewController.findAll));
-reviewRouter.get("/:reviewId", asyncHandler(reviewController.findOne));
-reviewRouter.get(
-  "/user/:userId",
-  asyncHandler(reviewController.findReviewsByUserId),
+reviewRouter.get("/:id", asyncHandler(reviewController.findOne));
+reviewRouter.delete(
+  "/:id",
+  authenticateUser,
+  asyncHandler(reviewController.deleteOne),
 );
-reviewRouter.get(
-  "/show/:showId",
-  asyncHandler(reviewController.findReviewsByShowId),
-);
-reviewRouter.delete("/:reviewId", asyncHandler(reviewController.deleteOne));
 
 export default reviewRouter;

@@ -1,9 +1,12 @@
 import BadRequestError from "../common/error/BadRequestError";
+import ForbiddenError from "../common/error/ForbiddenError";
 import { CreateReviewDto, UpdateReviewDto } from "../dtos/reviewDto";
 import { IReview } from "../models/reviewModel";
+import { IUser } from "../models/userModel";
 import reviewRepository from "../repositories/reviewRepository";
 import showService from "./showService";
 import userService from "./userService";
+import { ROLE } from "../common/enum/enum";
 
 class reviewService {
   async create(
@@ -24,7 +27,14 @@ class reviewService {
     return review;
   }
 
-  async update(reviewId: string, reviewData: UpdateReviewDto) {
+  async update(userId: string, reviewId: string, reviewData: UpdateReviewDto) {
+    const review = await reviewRepository.findOne(reviewId);
+
+    if (review.deletedAt != null)
+      throw new BadRequestError("이미 삭제된 리뷰입니다.");
+    if (userId !== review.userId)
+      throw new ForbiddenError("리뷰 수정은 작성자만 가능합니다.");
+
     return await reviewRepository.update(reviewId, reviewData);
   }
 
@@ -35,7 +45,7 @@ class reviewService {
   async findOne(reviewId: string): Promise<IReview> {
     const review = await reviewRepository.findOne(reviewId);
     if (review.deletedAt != null)
-      throw new BadRequestError("삭제된 리뷰입니다.");
+      throw new BadRequestError("이미 삭제된 리뷰입니다.");
     return review;
   }
 
@@ -44,6 +54,7 @@ class reviewService {
     limit: number = 20,
     userId: string,
   ) {
+    await userService.getUserById(userId);
     return await reviewRepository.findReviewsByUserId(page, limit, userId);
   }
 
@@ -52,13 +63,35 @@ class reviewService {
     limit: number = 20,
     showId: string,
   ) {
+    await showService.findShowByShowId(showId);
     return await reviewRepository.findReviewsByShowId(page, limit, showId);
   }
 
-  async deleteOne(reviewId: string) {
+  async findReviewsByUserIdAndShowId(
+    page: number = 0,
+    limit: number = 20,
+    userId: string,
+    showId: string,
+  ) {
+    await userService.getUserById(userId);
+    await showService.findShowByShowId(showId);
+
+    return await reviewRepository.findReviewsByUserIdAndShowId(
+      page,
+      limit,
+      userId,
+      showId,
+    );
+  }
+
+  async deleteOne(user: IUser, reviewId: string) {
     const review = await reviewRepository.findOne(reviewId);
+
     if (review.deletedAt != null)
       throw new BadRequestError("이미 삭제된 리뷰입니다.");
+    if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
+      throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
+
     return await reviewRepository.deleteOne(reviewId);
   }
 }

@@ -45,36 +45,7 @@ class showService {
     return await showRepository.isShowExist(showId);
   }
 
-  async findShows(page: number, limit: number) {
-    const shows = await showRepository.findShows(page, limit);
-
-    if (!shows) {
-      throw new NotFoundError("전체 공연 목록을 조회할 수 없습니다.");
-    }
-    return shows;
-  }
-
-  async findShowByShowId(showId: string) {
-    const show = await showRepository.findShowByShowId(showId);
-
-    if (!show) {
-      throw new NotFoundError(`${showId} 공연을 찾을 수 없습니다.`);
-    }
-
-    return show;
-  }
-
-  async findShowByTitle(title: string) {
-    const show = await showRepository.findShowByTitle(title);
-
-    if (!show) {
-      throw new NotFoundError(`${title} 공연을 찾을 수 없습니다.`);
-    }
-
-    return show;
-  }
-
-  async search(
+  async findShows(
     title: string,
     state: string,
     region: string,
@@ -86,13 +57,23 @@ class showService {
     if (state) query["state"] = state;
     if (region) query["region"] = region;
 
-    const shows = await showRepository.search(query, page, limit);
+    const shows = await showRepository.findShows(query, page, limit);
 
     if (!shows) {
       throw new NotFoundError(`검색 결과: 해당하는 공연을 찾을 수 없습니다.`);
     }
 
     return shows;
+  }
+
+  async findShowByShowId(showId: string) {
+    const show = await showRepository.findShowByShowId(showId);
+
+    if (!show) {
+      throw new NotFoundError(`${showId} 공연을 찾을 수 없습니다.`);
+    }
+
+    return show;
   }
 
   async deleteByShowId(showId: string) {

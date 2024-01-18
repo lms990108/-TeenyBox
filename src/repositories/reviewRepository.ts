@@ -54,6 +54,18 @@ class reviewRepository {
       .lean();
   }
 
+  async findReviewsByUserIdAndShowId(
+    page: number,
+    limit: number,
+    userId: string,
+    showId: string,
+  ) {
+    return await ReviewModel.find({ userId, showId, deletedAt: null })
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .lean();
+  }
+
   async deleteOne(reviewId: string) {
     return await ReviewModel.findOneAndUpdate(
       { _id: reviewId },
