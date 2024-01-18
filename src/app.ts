@@ -58,7 +58,7 @@ app.use("/api/ping", pingRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/promotions", promotionRouter);
 app.use("/api/comments", commentRouter);
-app.use("/api/show", showRouter);
+app.use("/api/shows", showRouter);
 app.use("/api/user", userRouter);
 app.use("/api/reviews", reviewRouter);
 

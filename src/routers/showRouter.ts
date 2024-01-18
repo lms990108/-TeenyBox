@@ -7,7 +7,7 @@ const showRouter = Router();
 
 /**
  * @swagger
- * /show:
+ * /shows:
  *   get:
  *     tags: [Show]
  *     summary: 공연 전체 조회 및 검색
@@ -103,7 +103,7 @@ const showRouter = Router();
 
 /**
  * @swagger
- * /show/{id}:
+ * /shows/{id}:
  *   get:
  *     tags: [Show]
  *     summary: 공연 상세 정보 조회
@@ -219,7 +219,7 @@ const showRouter = Router();
 
 /**
  * @swagger
- * /show/{id}:
+ * /shows/{id}:
  *   delete:
  *     tags: [Show]
  *     summary: 공연 삭제
