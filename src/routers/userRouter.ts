@@ -504,32 +504,32 @@ const router = express.Router();
  *                 bookmarks:
  *                   type: array
  *                   example:
- *                     - _id: "65490f47efc7d02dc13d0168"
+ *                     - showId: "PF229302"
  *                       title: "R.U.R 인류를 삭제하다"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229380_231106_134408.jpg"
  *                       region: "경기/인천"
  *                       company: "이리떼고찰소"
- *                     - _id: "658a60e2b22d61d2e4270dd3"
+ *                     - showId: "PF228934"
  *                       title: "7층의 섬"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF232481_231214_093851.gif"
  *                       region: "서울"
  *                       company: ""
- *                     - _id: "65490f47efc7d02dc13d0126"
+ *                     - showId: "PF232481"
  *                       title: "2호선 세입자 [대구]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228269_231020_141133.gif"
  *                       region: "대구"
  *                       company: ""
- *                     - _id: "65490f47efc7d02dc13d0114"
+ *                     - showId: "PF185284"
  *                       title: "12인의 성난 사람들 [부산]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228558_231025_100855.jpg"
  *                       region: "부산"
  *                       company: ""
- *                     - _id: "659c2a242df50c77b22d146e"
+ *                     - showId: "PF233557"
  *                       title: "1 HOUR"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF233557_240108_130948.jpg"
  *                       region: "서울"
  *                       company: ""
- *                     - _id: "65490f52efc7d02dc13d0185"
+ *                     - showId: "PF230920"
  *                       title: "(당)신의 재판 [창원]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229206_231102_135513.jpg"
  *                       region: "경상"
@@ -610,8 +610,8 @@ const router = express.Router();
  *                 items:
  *                   type: string
  *                 example:
- *                   - "65490f47efc7d02dc13d0168"
- *                   - "658a60e2b22d61d2e4270dd3"
+ *                   - "PF231614"
+ *                   - "PF185284"
  *     responses:
  *       200:
  *         description: 찜 취소 성공
