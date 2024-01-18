@@ -55,17 +55,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   patch:
  *     tags: [Review]
  *     summary: 리뷰 수정
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     requestBody:
  *       required: true
@@ -162,17 +162,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   get:
  *     tags: [Review]
  *     summary: 단일 리뷰 조회
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     responses:
  *       200:
@@ -198,17 +198,17 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 /**
  * @swagger
- * /reviews/{reviewId}:
+ * /reviews/{id}:
  *   delete:
  *     tags: [Review]
  *     summary: 리뷰 삭제
  *     parameters:
  *      - in: path
- *        name: reviewId
+ *        name: id
  *        required: true
  *        schema:
  *         type: string
- *         description: reviewId
+ *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     responses:
  *       200:
@@ -240,12 +240,16 @@ reviewRouter.post(
   asyncHandler(reviewController.create),
 );
 reviewRouter.patch(
-  "/:reviewId",
+  "/:id",
   authenticateUser,
   asyncHandler(reviewController.update),
 );
 reviewRouter.get("/", asyncHandler(reviewController.findAll));
-reviewRouter.get("/:reviewId", asyncHandler(reviewController.findOne));
-reviewRouter.delete("/:reviewId", asyncHandler(reviewController.deleteOne));
+reviewRouter.get("/:id", asyncHandler(reviewController.findOne));
+reviewRouter.delete(
+  "/:id",
+  authenticateUser,
+  asyncHandler(reviewController.deleteOne),
+);
 
 export default reviewRouter;

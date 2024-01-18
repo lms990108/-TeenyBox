@@ -13,16 +13,26 @@ class ReviewController {
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
-  async update(req: Request, res: Response): Promise<Response> {
-    const reviewid = req.params.reviewId as string;
+  async update(req: AuthRequest, res: Response): Promise<Response> {
+    const reviewid = req.params.id as string;
     const reviewData = req.body;
+    const userId = req.user.user_id;
 
-    const review = await reviewService.update(reviewid, reviewData);
+    const review = await reviewService.update(userId, reviewid, reviewData);
+
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
+  async deleteOne(req: AuthRequest, res: Response): Promise<Response> {
+    const reviewId = req.params.id;
+    const user = req.user;
+
+    const review = await reviewService.deleteOne(user, reviewId);
+    return res.status(200).json({ review: new ReviewResponseDto(review) });
+  }
+
   async findOne(req: Request, res: Response): Promise<Response> {
-    const reviewId = req.params.reviewId;
+    const reviewId = req.params.id;
 
     const review = await reviewService.findOne(reviewId);
     return res.status(200).json({ review });
@@ -51,13 +61,6 @@ class ReviewController {
     return res.status(200).json({
       reviews: reviews.map((review) => new ReviewResponseDto(review)),
     });
-  }
-
-  async deleteOne(req: Request, res: Response): Promise<Response> {
-    const reviewId = req.params.reviewId;
-
-    const review = await reviewService.deleteOne(reviewId);
-    return res.status(200).json({ review: new ReviewResponseDto(review) });
   }
 }
 
