@@ -44,6 +44,7 @@ class reviewService {
     limit: number = 20,
     userId: string,
   ) {
+    await userService.getUserById(userId);
     return await reviewRepository.findReviewsByUserId(page, limit, userId);
   }
 
@@ -52,7 +53,25 @@ class reviewService {
     limit: number = 20,
     showId: string,
   ) {
+    await showService.findShowByShowId(showId);
     return await reviewRepository.findReviewsByShowId(page, limit, showId);
+  }
+
+  async findReviewsByUserIdAndShowId(
+    page: number = 0,
+    limit: number = 20,
+    userId: string,
+    showId: string,
+  ) {
+    await userService.getUserById(userId);
+    await showService.findShowByShowId(showId);
+
+    return await reviewRepository.findReviewsByUserIdAndShowId(
+      page,
+      limit,
+      userId,
+      showId,
+    );
   }
 
   async deleteOne(reviewId: string) {

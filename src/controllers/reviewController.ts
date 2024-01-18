@@ -21,16 +21,6 @@ class ReviewController {
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
-  async findAll(req: Request, res: Response): Promise<Response> {
-    const page = +req.query.page;
-    const limit = +req.query.limit;
-
-    const reviews = await reviewService.findAll(page, limit);
-    return res.status(200).json({
-      reviews: reviews.map((review) => new ReviewResponseDto(review)),
-    });
-  }
-
   async findOne(req: Request, res: Response): Promise<Response> {
     const reviewId = req.params.reviewId;
 
@@ -38,31 +28,26 @@ class ReviewController {
     return res.status(200).json({ review });
   }
 
-  async findReviewsByUserId(req: Request, res: Response): Promise<Response> {
+  async findAll(req: Request, res: Response): Promise<Response> {
     const page = +req.query.page;
     const limit = +req.query.limit;
-    const userId = req.params.userId;
+    const userId = req.query.userId as string;
+    const showId = req.query.showId as string;
+    let reviews;
 
-    const reviews = await reviewService.findReviewsByUserId(
-      page,
-      limit,
-      userId,
-    );
-    return res.status(200).json({
-      reviews: reviews.map((review) => new ReviewResponseDto(review)),
-    });
-  }
+    if (userId && showId)
+      reviews = await reviewService.findReviewsByUserIdAndShowId(
+        page,
+        limit,
+        userId,
+        showId,
+      );
+    else if (showId)
+      reviews = await reviewService.findReviewsByShowId(page, limit, showId);
+    else if (userId)
+      reviews = await reviewService.findReviewsByUserId(page, limit, userId);
+    else reviews = await reviewService.findAll(page, limit);
 
-  async findReviewsByShowId(req: Request, res: Response): Promise<Response> {
-    const page = +req.query.page;
-    const limit = +req.query.limit;
-    const showId = req.params.showId;
-
-    const reviews = await reviewService.findReviewsByShowId(
-      page,
-      limit,
-      showId,
-    );
     return res.status(200).json({
       reviews: reviews.map((review) => new ReviewResponseDto(review)),
     });
