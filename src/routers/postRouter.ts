@@ -157,11 +157,50 @@ export default router;
  *     responses:
  *       '200':
  *         description: 게시물이 성공적으로 업데이트됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시물 고유 식별자
+ *                 user_id:
+ *                   type: string
+ *                   description: 사용자 ID
+ *                 title:
+ *                   type: string
+ *                   description: 게시물 제목
+ *                 content:
+ *                   type: string
+ *                   description: 게시물 내용
+ *                 _id:
+ *                   type: string
+ *                   description: 게시물의 고유 MongoDB ID
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 생성 시간
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 마지막 수정 시간
+ *                 __v:
+ *                   type: integer
+ *                   description: 버전
+ *               example:
+ *                 post_number: 37
+ *                 user_id: "654a4cfc2a8ed874281b68b1"
+ *                 title: "업데이트된 게시물 제목"
+ *                 content: "업데이트된 게시물 내용"
+ *                 _id: "65a89e82c3180cd22b2fdf2c"
+ *                 createdAt: "2024-01-18T03:44:02.952Z"
+ *                 updatedAt: "2024-01-18T04:00:00.000Z"
+ *                 __v: 1
  *       '400':
  *         description: 잘못된 요청
  *       '404':
  *         description: 게시물을 찾을 수 없음
- *
  *   get:
  *     tags:
  *       - Post
