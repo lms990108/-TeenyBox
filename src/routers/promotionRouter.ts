@@ -59,7 +59,7 @@ export default router;
  *   post:
  *     tags:
  *       - Promotion
- *     summary: 새로운 프로모션 추가
+ *     summary: 새로운 홍보게시글 추가
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -75,59 +75,59 @@ export default router;
  *               title:
  *                 type: string
  *                 maxLength: 30
- *                 description: 프로모션의 제목
+ *                 description: 홍보게시글의 제목
  *               content:
  *                 type: string
- *                 description: 프로모션의 내용
+ *                 description: 홍보게시글의 내용
  *               tags:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: 프로모션에 사용될 태그 배열
+ *                 description: 홍보게시글에 사용될 태그 배열
  *               promotion_poster:
  *                 type: string
  *                 format: binary
- *                 description: 프로모션의 포스터 이미지 파일
+ *                 description: 홍보게시글의 포스터 이미지 파일
  *     responses:
  *       201:
- *         description: 프로모션이 성공적으로 추가됨
+ *         description: 홍보게시글이 성공적으로 추가됨
  *       400:
  *         description: 잘못된 요청 데이터
  *
  *   get:
  *     tags:
  *       - Promotion
- *     summary: 모든 프로모션 조회
+ *     summary: 모든 홍보게시글 조회
  *     responses:
  *       200:
- *         description: 프로모션 목록 반환
+ *         description: 홍보게시글 목록 반환
  *         content:
  *           application/json:
  *             examples:
  *               success:
  *                 value:
  *                   - promotion_number: 1
- *                     title: "프로모션 제목"
- *                     content: "프로모션 내용"
+ *                     title: "홍보게시글 제목"
+ *                     content: "홍보게시글 내용"
  *                     poster_image: "/path/to/image.jpg"
  *                     tags: ["태그1", "태그2"]
  *                     createdAt: "2023-01-01T00:00:00.000Z"
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
- *         description: 프로모션을 찾을 수 없음
+ *         description: 홍보게시글을 찾을 수 없음
  *
  * /promotions/{promotionNumber}:
  *   put:
  *     tags:
  *       - Promotion
- *     summary: 주어진 번호의 프로모션 업데이트
+ *     summary: 주어진 번호의 홍보게시글 업데이트
  *     parameters:
  *       - in: path
  *         name: promotionNumber
  *         required: true
  *         schema:
  *           type: number
- *           description: 업데이트할 프로모션의 번호
+ *           description: 업데이트할 홍보게시글의 번호
  *     requestBody:
  *       required: true
  *       content:
@@ -141,78 +141,78 @@ export default router;
  *               title:
  *                 type: string
  *                 maxLength: 30
- *                 description: 업데이트된 프로모션의 제목
+ *                 description: 업데이트된 홍보게시글의 제목
  *               content:
  *                 type: string
- *                 description: 업데이트된 프로모션의 내용
+ *                 description: 업데이트된 홍보게시글의 내용
  *               tags:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: 업데이트된 프로모션의 태그들
+ *                 description: 업데이트된 홍보게시글의 태그들
  *               promotion_poster:
  *                 type: string
  *                 format: binary
- *                 description: 업데이트될 프로모션의 포스터 이미지 파일 (수정 시 변경 가능)
+ *                 description: 업데이트될 홍보게시글의 포스터 이미지 파일 (수정 시 변경 가능)
  *     responses:
  *       200:
- *         description: 프로모션이 성공적으로 업데이트됨
+ *         description: 홍보게시글이 성공적으로 업데이트됨
  *       400:
  *         description: 잘못된 요청 데이터
  *       404:
- *         description: 프로모션을 찾을 수 없음
+ *         description: 홍보게시글을 찾을 수 없음
  *
  *   get:
  *     tags:
  *       - Promotion
- *     summary: 특정 번호의 프로모션 조회
+ *     summary: 특정 번호의 홍보게시글 조회
  *     parameters:
  *       - in: path
  *         name: promotionNumber
  *         required: true
  *         schema:
  *           type: number
- *           description: 조회할 프로모션의 번호
+ *           description: 조회할 홍보게시글의 번호
  *     responses:
  *       200:
- *         description: 특정 프로모션 반환
+ *         description: 특정 홍보게시글 반환
  *         content:
  *           application/json:
  *             examples:
  *               success:
  *                 value:
  *                   promotion_number: 2
- *                   title: "특정 프로모션 제목"
- *                   content: "특정 프로모션 내용"
+ *                   title: "특정 홍보게시글 제목"
+ *                   content: "특정 홍보게시글 내용"
  *                   poster_image: "/path/to/image2.jpg"
  *                   tags: ["태그A", "태그B"]
  *                   createdAt: "2023-02-01T00:00:00.000Z"
  *                   updatedAt: "2023-02-01T00:00:00.000Z"
  *       404:
- *         description: 프로모션을 찾을 수 없음
+ *         description: 홍보게시글을 찾을 수 없음
  *
  *   delete:
  *     tags:
  *       - Promotion
- *     summary: 특정 번호의 프로모션 삭제
+ *     summary: 특정 번호의 홍보게시글 삭제
  *     parameters:
  *       - in: path
  *         name: promotionNumber
  *         required: true
  *         schema:
  *           type: number
- *           description: 삭제할 프로모션의 번호
+ *           description: 삭제할 홍보게시글의 번호
  *     responses:
  *       200:
- *         description: 프로모션이 성공적으로 삭제됨
+ *         description: 홍보게시글이 성공적으로 삭제됨
  *       404:
- *         description: 프로모션을 찾을 수 없음
+ *         description: 홍보게시글을 찾을 수 없음
  *
  * /promotions/user/{userId}:
  *   get:
  *     tags:
  *       - Promotion
- *     summary: 특정 사용자의 모든 프로모션 조회
+ *     summary: 특정 사용자의 모든 홍보게시글 조회
  *     parameters:
  *       - in: path
  *         name: userId
@@ -222,15 +222,15 @@ export default router;
  *           description: 조회할 사용자의 ID
  *     responses:
  *       200:
- *         description: 사용자의 프로모션 목록 반환
+ *         description: 사용자의 홍보게시글 목록 반환
  *         content:
  *           application/json:
  *             examples:
  *               success:
  *                 value:
  *                   - promotion_number: 3
- *                     title: "사용자 관련 프로모션 제목"
- *                     content: "사용자 관련 프로모션 내용"
+ *                     title: "사용자 관련 홍보게시글 제목"
+ *                     content: "사용자 관련 홍보게시글 내용"
  *                     poster_image: "/path/to/user_image.jpg"
  *                     tags: ["태그X", "태그Y"]
  *                     createdAt: "2023-03-01T00:00:00.000Z"
