@@ -15,7 +15,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /user/register:
+ * /users:
  *   post:
  *     tags: [user]
  *     summary: 회원가입
@@ -60,7 +60,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/check-nickname:
+ * /users/nickname:
  *   post:
  *     tags: [user]
  *     summary: 닉네임 중복확인
@@ -93,7 +93,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/kakao-login:
+ * /users/login/kakao:
  *   post:
  *     tags: [user]
  *     summary: 카카오 로그인
@@ -153,7 +153,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/naver-login:
+ * /users/login/naver:
  *   post:
  *     tags: [user]
  *     summary: 네이버 로그인
@@ -217,7 +217,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/google-login:
+ * /users/login/google:
  *   post:
  *     tags: [user]
  *     summary: 구글 로그인
@@ -277,7 +277,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/logout:
+ * /users/logout:
  *   post:
  *     tags: [user]
  *     summary: 사용자 로그아웃
@@ -296,7 +296,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/check-login:
+ * /users/login-status:
  *   get:
  *     tags: [user]
  *     summary: 사용자 로그인상태 확인
@@ -345,7 +345,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user:
+ * /users:
  *   get:
  *     tags: [user]
  *     summary: 사용자 정보 조회
@@ -414,7 +414,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user:
+ * /users:
  *   put:
  *     tags: [user]
  *     summary: 사용자 정보 수정
@@ -459,7 +459,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user:
+ * /users:
  *   delete:
  *     tags: [user]
  *     summary: 사용자 정보 탈퇴로 변경
@@ -478,7 +478,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/bookmarks:
+ * /users/bookmarks:
  *   get:
  *     tags: [user]
  *     summary: 유저 찜 목록 조회
@@ -504,32 +504,32 @@ const router = express.Router();
  *                 bookmarks:
  *                   type: array
  *                   example:
- *                     - _id: "65490f47efc7d02dc13d0168"
+ *                     - showId: "PF229302"
  *                       title: "R.U.R 인류를 삭제하다"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229380_231106_134408.jpg"
  *                       region: "경기/인천"
  *                       company: "이리떼고찰소"
- *                     - _id: "658a60e2b22d61d2e4270dd3"
+ *                     - showId: "PF228934"
  *                       title: "7층의 섬"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF232481_231214_093851.gif"
  *                       region: "서울"
  *                       company: ""
- *                     - _id: "65490f47efc7d02dc13d0126"
+ *                     - showId: "PF232481"
  *                       title: "2호선 세입자 [대구]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228269_231020_141133.gif"
  *                       region: "대구"
  *                       company: ""
- *                     - _id: "65490f47efc7d02dc13d0114"
+ *                     - showId: "PF185284"
  *                       title: "12인의 성난 사람들 [부산]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228558_231025_100855.jpg"
  *                       region: "부산"
  *                       company: ""
- *                     - _id: "659c2a242df50c77b22d146e"
+ *                     - showId: "PF233557"
  *                       title: "1 HOUR"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF233557_240108_130948.jpg"
  *                       region: "서울"
  *                       company: ""
- *                     - _id: "65490f52efc7d02dc13d0185"
+ *                     - showId: "PF230920"
  *                       title: "(당)신의 재판 [창원]"
  *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229206_231102_135513.jpg"
  *                       region: "경상"
@@ -538,7 +538,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/is-bookmarked/{showId}:
+ * /users/bookmarks/{showId}:
  *   get:
  *     tags: [user]
  *     summary: 찜 여부 확인
@@ -557,8 +557,8 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/save/{showId}:
- *   put:
+ * /users/bookmarks/{showId}:
+ *   post:
  *     tags: [user]
  *     summary: 찜 추가(공연 상세 페이지)
  *     responses:
@@ -576,8 +576,8 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/cancel/{showId}:
- *   put:
+ * /users/bookmarks/{showId}:
+ *   delete:
  *     tags: [user]
  *     summary: 찜 취소(공연 상세 페이지)
  *     responses:
@@ -595,8 +595,8 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/cancels/bookmarks:
- *   put:
+ * /users/bookmarks:
+ *   delete:
  *     tags: [user]
  *     summary: 찜 취소(마이페이지 유저 찜 목록)
  *     requestBody:
@@ -610,8 +610,8 @@ const router = express.Router();
  *                 items:
  *                   type: string
  *                 example:
- *                   - "65490f47efc7d02dc13d0168"
- *                   - "658a60e2b22d61d2e4270dd3"
+ *                   - "PF231614"
+ *                   - "PF185284"
  *     responses:
  *       200:
  *         description: 찜 취소 성공
@@ -627,7 +627,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/admin/users:
+ * /users/admin/users:
  *   get:
  *     tags: [user]
  *     summary: 전체 회원 조회(관리자 페이지)
@@ -667,7 +667,7 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /user/admin/delete-users:
+ * /users/admin/users:
  *   delete:
  *     tags: [user]
  *     summary: 선택한 회원 탈퇴(관리자 페이지)
@@ -700,17 +700,17 @@ const router = express.Router();
  */
 
 router.post(
-  "/register",
+  "/",
   upload.single("profile_url"),
   validationMiddleware(UserRequestDTO),
   asyncHandler(UserController.RegisterUser),
 );
-router.post("/check-nickname", asyncHandler(UserController.checkNickname));
-router.post("/kakao-login", asyncHandler(UserController.kakaoLogin));
-router.post("/naver-login", asyncHandler(UserController.naverLogin));
-router.post("/google-login", asyncHandler(UserController.googleLogin));
+router.post("/nickname", asyncHandler(UserController.checkNickname));
+router.post("/login/kakao", asyncHandler(UserController.kakaoLogin));
+router.post("/login/naver", asyncHandler(UserController.naverLogin));
+router.post("/login/google", asyncHandler(UserController.googleLogin));
+router.get("/login-status", checkLoginStatus);
 router.post("/logout", asyncHandler(UserController.logout));
-router.get("/check-login", checkLoginStatus);
 router.get("/", authenticateUser, asyncHandler(UserController.getUser));
 router.put(
   "/",
@@ -725,22 +725,22 @@ router.get(
   asyncHandler(UserController.getBookmarks),
 );
 router.get(
-  "/is-bookmarked/:showId",
+  "/bookmarks/:showId",
   authenticateUser,
   asyncHandler(UserController.isBookmarked),
 );
-router.put(
-  "/save/:showId",
+router.post(
+  "/bookmarks/:showId",
   authenticateUser,
   asyncHandler(UserController.saveShow),
 );
-router.put(
-  "/cancel/:showId",
+router.delete(
+  "/bookmarks/:showId",
   authenticateUser,
   asyncHandler(UserController.cancelShow),
 );
-router.put(
-  "/cancels/bookmarks",
+router.delete(
+  "/bookmarks",
   authenticateUser,
   asyncHandler(UserController.cancelBookmarks),
 );
@@ -750,7 +750,7 @@ router.get(
   asyncHandler(UserController.getAllUsers),
 );
 router.delete(
-  "/admin/delete-users",
+  "/admin/users",
   authenticateAdmin,
   asyncHandler(UserController.deleteUsers),
 );
