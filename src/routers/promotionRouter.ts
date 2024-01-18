@@ -10,34 +10,41 @@ import multer from "multer";
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
+// 글 작성
 router.post(
-  "/add_promotion",
+  "/",
   authenticateUser,
   upload.single("promotion_poster"),
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
 
+// 글 수정
 router.put(
-  "/update_promotion/:promotionNumber",
+  "/:promotionNumber",
   uploadLocal.single("promotion_poster"),
   validationMiddleware(promotionDto.UpdatePromotionDTO),
   asyncHandler(promotionController.updatePromotion),
 );
 
+// 글 리스트 조회
 router.get("/", asyncHandler(promotionController.getAllPromotions));
 
+// 글 상세 조회
 router.get(
-  "/number/:promotionNumber",
+  "/:promotionNumber",
   asyncHandler(promotionController.getPromotionByNumber),
 );
+
+// 작성자로 글 리스트 조회
 router.get(
   "/user/:userId",
   asyncHandler(promotionController.getPromotionsByUserId),
 );
 
+// 글 삭제
 router.delete(
-  "/delete_promotion/:promotionNumber",
+  "/:promotionNumber",
   asyncHandler(promotionController.deletePromotionByNumber),
 );
 
@@ -48,7 +55,7 @@ export default router;
  * tags:
  *   name: Promotion
  *
- * /promotions/add_promotion:
+ * /promotions:
  *   post:
  *     tags:
  *       - Promotion
@@ -87,7 +94,29 @@ export default router;
  *       400:
  *         description: 잘못된 요청 데이터
  *
- * /promotions/update_promotion/{promotionNumber}:
+ *   get:
+ *     tags:
+ *       - Promotion
+ *     summary: 모든 프로모션 조회
+ *     responses:
+ *       200:
+ *         description: 프로모션 목록 반환
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   - promotion_number: 1
+ *                     title: "프로모션 제목"
+ *                     content: "프로모션 내용"
+ *                     poster_image: "/path/to/image.jpg"
+ *                     tags: ["태그1", "태그2"]
+ *                     createdAt: "2023-01-01T00:00:00.000Z"
+ *                     updatedAt: "2023-01-01T00:00:00.000Z"
+ *       404:
+ *         description: 프로모션을 찾을 수 없음
+ *
+ * /promotions/{promotionNumber}:
  *   put:
  *     tags:
  *       - Promotion
@@ -133,30 +162,6 @@ export default router;
  *       404:
  *         description: 프로모션을 찾을 수 없음
  *
- * /promotions:
- *   get:
- *     tags:
- *       - Promotion
- *     summary: 모든 프로모션 조회
- *     responses:
- *       200:
- *         description: 프로모션 목록 반환
- *         content:
- *           application/json:
- *             examples:
- *               success:
- *                 value:
- *                   - promotion_number: 1
- *                     title: "프로모션 제목"
- *                     content: "프로모션 내용"
- *                     poster_image: "/path/to/image.jpg"
- *                     tags: ["태그1", "태그2"]
- *                     createdAt: "2023-01-01T00:00:00.000Z"
- *                     updatedAt: "2023-01-01T00:00:00.000Z"
- *       404:
- *         description: 프로모션을 찾을 수 없음
- *
- * /promotions/number/{promotionNumber}:
  *   get:
  *     tags:
  *       - Promotion
@@ -183,6 +188,23 @@ export default router;
  *                   tags: ["태그A", "태그B"]
  *                   createdAt: "2023-02-01T00:00:00.000Z"
  *                   updatedAt: "2023-02-01T00:00:00.000Z"
+ *       404:
+ *         description: 프로모션을 찾을 수 없음
+ *
+ *   delete:
+ *     tags:
+ *       - Promotion
+ *     summary: 특정 번호의 프로모션 삭제
+ *     parameters:
+ *       - in: path
+ *         name: promotionNumber
+ *         required: true
+ *         schema:
+ *           type: number
+ *           description: 삭제할 프로모션의 번호
+ *     responses:
+ *       200:
+ *         description: 프로모션이 성공적으로 삭제됨
  *       404:
  *         description: 프로모션을 찾을 수 없음
  *
@@ -215,22 +237,4 @@ export default router;
  *                     updatedAt: "2023-03-01T00:00:00.000Z"
  *       404:
  *         description: 사용자를 찾을 수 없음
- *
- * /promotions/delete_promotion/{promotionNumber}:
- *   delete:
- *     tags:
- *       - Promotion
- *     summary: 특정 번호의 프로모션 삭제
- *     parameters:
- *       - in: path
- *         name: promotionNumber
- *         required: true
- *         schema:
- *           type: number
- *           description: 삭제할 프로모션의 번호
- *     responses:
- *       200:
- *         description: 프로모션이 성공적으로 삭제됨
- *       404:
- *         description: 프로모션을 찾을 수 없음
  */
