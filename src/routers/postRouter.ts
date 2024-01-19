@@ -7,30 +7,33 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 const router = express.Router();
 
+// 게시글 작성
 router.post(
-  "/add_post",
+  "/",
   authenticateUser,
   validationMiddleware(postDto.CreatePostDTO),
   asyncHandler(postController.createPost),
 );
 
+// 게시글 수정
 router.put(
-  "/update_post/:postNumber",
+  "/:postNumber",
   authenticateUser,
   validationMiddleware(postDto.UpdatePostDTO),
   asyncHandler(postController.updatePost),
 );
 
+// 모든 게시글 조회
 router.get("/", asyncHandler(postController.getAllPosts));
 
-router.get("/number/:postNumber", asyncHandler(postController.getPostByNumber));
+// 게시글 상세 조회
+router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
 
+// 사용자별 게시글 조회
 router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
-router.delete(
-  "/delete_post/:postNumber",
-  asyncHandler(postController.deletePostByNumber),
-);
+// 게시글 삭제
+router.delete("/:postNumber", asyncHandler(postController.deletePostByNumber));
 
 export default router;
 
@@ -39,7 +42,11 @@ export default router;
  * tags:
  *   - name: Post
  *
- * /posts/add_post:
+ * @swagger
+ * tags:
+ *   - name: Post
+ *
+ * /posts:
  *   post:
  *     tags:
  *       - Post
@@ -51,67 +58,53 @@ export default router;
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: 게시물 제목
- *               content:
- *                 type: string
- *                 description: 게시물 내용
+ *             $ref: '#/components/schemas/CreatePostRequest'
  *     responses:
  *       '201':
  *         description: 게시물이 성공적으로 생성됨
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PostResponse'
+ *               type: object
+ *               properties:
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시물 고유 식별자
+ *                 user_id:
+ *                   type: string
+ *                   description: 사용자 ID
+ *                 title:
+ *                   type: string
+ *                   description: 게시물 제목
+ *                 content:
+ *                   type: string
+ *                   description: 게시물 내용
+ *                 _id:
+ *                   type: string
+ *                   description: 게시물의 고유 MongoDB ID
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 생성 시간
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 마지막 수정 시간
+ *                 __v:
+ *                   type: integer
+ *                   description: 버전
+ *               example:
+ *                 post_number: 37
+ *                 user_id: "654a4cfc2a8ed874281b68b1"
+ *                 title: "응답 확인 예시용 제목"
+ *                 content: "응답 확인 예시용 내용"
+ *                 _id: "65a89e82c3180cd22b2fdf2c"
+ *                 createdAt: "2024-01-18T03:44:02.952Z"
+ *                 updatedAt: "2024-01-18T03:44:02.952Z"
+ *                 __v: 0
  *       '400':
  *         description: 잘못된 요청
  *
- * /posts/update_post/{postNumber}:
- *   put:
- *     tags:
- *       - Post
- *     summary: 기존 게시물 업데이트
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: postNumber
- *         required: true
- *         schema:
- *           type: integer
- *           description: 게시물 고유 식별자
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: 업데이트된 게시물 제목
- *                 example: "기능 업데이트"
- *                 maxLength: 100
- *               content:
- *                 type: string
- *                 description: 업데이트된 게시물 내용
- *                 example: "피드백을 바탕으로 기능을 개선했습니다..."
- *     responses:
- *       '200':
- *         description: 게시물이 성공적으로 업데이트됨
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/PostResponse'
- *       '400':
- *         description: 잘못된 요청
- *       '404':
- *         description: 게시물을 찾을 수 없음
- *
- * /posts:
  *   get:
  *     tags:
  *       - Post
@@ -141,7 +134,73 @@ export default router;
  *       '404':
  *         description: 게시물을 찾을 수 없음
  *
- * /posts/number/{postNumber}:
+ * /posts/{postNumber}:
+ *   put:
+ *     tags:
+ *       - Post
+ *     summary: 기존 게시물 업데이트
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: 게시물 고유 식별자
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdatePostRequest'
+ *     responses:
+ *       '200':
+ *         description: 게시물이 성공적으로 업데이트됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시물 고유 식별자
+ *                 user_id:
+ *                   type: string
+ *                   description: 사용자 ID
+ *                 title:
+ *                   type: string
+ *                   description: 게시물 제목
+ *                 content:
+ *                   type: string
+ *                   description: 게시물 내용
+ *                 _id:
+ *                   type: string
+ *                   description: 게시물의 고유 MongoDB ID
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 생성 시간
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 마지막 수정 시간
+ *                 __v:
+ *                   type: integer
+ *                   description: 버전
+ *               example:
+ *                 post_number: 37
+ *                 user_id: "654a4cfc2a8ed874281b68b1"
+ *                 title: "업데이트된 게시물 제목"
+ *                 content: "업데이트된 게시물 내용"
+ *                 _id: "65a89e82c3180cd22b2fdf2c"
+ *                 createdAt: "2024-01-18T03:44:02.952Z"
+ *                 updatedAt: "2024-01-18T04:00:00.000Z"
+ *                 __v: 1
+ *       '400':
+ *         description: 잘못된 요청
+ *       '404':
+ *         description: 게시물을 찾을 수 없음
  *   get:
  *     tags:
  *       - Post
@@ -159,47 +218,46 @@ export default router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PostResponse'
+ *               type: object
+ *               properties:
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시물 고유 식별자
+ *                 user_id:
+ *                   type: string
+ *                   description: 사용자 ID
+ *                 title:
+ *                   type: string
+ *                   description: 게시물 제목
+ *                 content:
+ *                   type: string
+ *                   description: 게시물 내용
+ *                 _id:
+ *                   type: string
+ *                   description: 게시물의 고유 MongoDB ID
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 생성 시간
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 마지막 수정 시간
+ *                 __v:
+ *                   type: integer
+ *                   description: 버전
+ *               example:
+ *                 post_number: 37
+ *                 user_id: "654a4cfc2a8ed874281b68b1"
+ *                 title: "업데이트된 게시물 제목"
+ *                 content: "업데이트된 게시물 내용"
+ *                 _id: "65a89e82c3180cd22b2fdf2c"
+ *                 createdAt: "2024-01-18T03:44:02.952Z"
+ *                 updatedAt: "2024-01-18T04:00:00.000Z"
+ *                 __v: 1
  *       '404':
  *         description: 게시물을 찾을 수 없음
  *
- * /posts/user/{userId}:
- *   get:
- *     tags:
- *       - Post
- *     summary: 특정 사용자의 게시물 모두 조회
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *           description: 조회할 사용자의 ID
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *           description: 페이지 번호
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *           description: 페이지당 게시물 수
- *     responses:
- *       '200':
- *         description: 사용자의 게시물 목록 조회 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/PostResponse'
- *       '404':
- *         description: 사용자를 찾을 수 없음
- *
- * /posts/delete_post/{postNumber}:
  *   delete:
  *     tags:
  *       - Post
@@ -217,8 +275,54 @@ export default router;
  *       '404':
  *         description: 게시물을 찾을 수 없음
  *
+ * /posts/user/{userId}:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 특정 사용자의 게시물 모두 조회
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: 조회할 사용자의 ID
+ *     responses:
+ *       '200':
+ *         description: 사용자의 게시물 목록 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PostResponse'
+ *       '404':
+ *         description: 사용자를 찾을 수 없음
+ *
  * components:
  *   schemas:
+ *     CreatePostRequest:
+ *       type: object
+ *       required:
+ *         - title
+ *         - content
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: 게시물 제목
+ *         content:
+ *           type: string
+ *           description: 게시물 내용
+ *     UpdatePostRequest:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: 업데이트된 게시물 제목
+ *           maxLength: 100
+ *         content:
+ *           type: string
+ *           description: 업데이트된 게시물 내용
  *     PostResponse:
  *       type: object
  *       properties:
