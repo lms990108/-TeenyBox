@@ -61,11 +61,11 @@ class UserRepository {
 
     const shows = await Promise.all(
       paginatedShowIds.map(async (showId) => {
-        const show = await ShowModel.findOne({ _id: showId });
+        const show = await ShowModel.findOne({ showId });
 
         if (show) {
           return {
-            _id: show._id,
+            showId: show.showId,
             title: show.title,
             poster: show.poster,
             region: show.region,
