@@ -6,7 +6,7 @@ export interface IPromotion extends Document {
   title: string;
   content: string;
   tags?: string[];
-  poster_image: string;
+  image_url: string;
   createdAt?: Date;
   updatedAt?: Date;
   comments: mongoose.Schema.Types.ObjectId[];
@@ -37,7 +37,7 @@ const promotionSchema = new Schema<IPromotion>(
       type: [String],
       required: false,
     },
-    poster_image: {
+    image_url: {
       type: String,
       required: false,
     },

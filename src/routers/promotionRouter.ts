@@ -80,13 +80,58 @@ export default router;
  *                 items:
  *                   type: string
  *                 description: 홍보게시글에 사용될 태그 배열
- *               promotion_poster:
+ *               image_url:
  *                 type: string
  *                 format: url
  *                 description: 홍보게시글의 포스터 이미지 주소
  *     responses:
  *       201:
  *         description: 홍보게시글이 성공적으로 추가됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시물 고유 식별자
+ *                 user_id:
+ *                   type: string
+ *                   description: 사용자 ID
+ *                 title:
+ *                   type: string
+ *                   description: 게시물 제목
+ *                 content:
+ *                   type: string
+ *                   description: 게시물 내용
+ *                 _id:
+ *                   type: string
+ *                   description: 게시물의 고유 MongoDB ID
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 생성 시간
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 게시물 마지막 수정 시간
+ *                 __v:
+ *                   type: integer
+ *                   description: 버전
+ *               example:
+ *                 promotion_number: 42,
+ *                 user_id: "654a4cfc2a8ed874281b68b1"
+ *                 title: "응답 확인 예시용 제목"
+ *                 content: "응답 확인 예시용 내용"
+ *                 tags: [
+ *                   "태그1",
+ *                   "태그2",
+ *                 ]
+ *                 image_url: "https://elice-5th.s3.ap-northeast-2.amazonaws.com/promotions/1705331263225_catimage.jpeg"
+ *                 _id: "65a89e82c3180cd22b2fdf2c"
+ *                 createdAt: "2024-01-18T03:44:02.952Z"
+ *                 updatedAt: "2024-01-18T03:44:02.952Z"
+ *                 __v: 0
  *       400:
  *         description: 잘못된 요청 데이터
  *
@@ -146,7 +191,7 @@ export default router;
  *                 items:
  *                   type: string
  *                 description: 업데이트된 홍보게시글의 태그들
- *               promotion_poster:
+ *               image_url:
  *                 type: string
  *                 format: url
  *                 description: 업데이트될 홍보게시글의 포스터 이미지 주소
@@ -180,7 +225,7 @@ export default router;
  *                   promotion_number: 2
  *                   title: "특정 홍보게시글 제목"
  *                   content: "특정 홍보게시글 내용"
- *                   poster_image: "/path/to/image2.jpg"
+ *                   image_url: "/path/to/image2.jpg"
  *                   tags: ["태그A", "태그B"]
  *                   createdAt: "2023-02-01T00:00:00.000Z"
  *                   updatedAt: "2023-02-01T00:00:00.000Z"
@@ -227,7 +272,7 @@ export default router;
  *                   - promotion_number: 3
  *                     title: "사용자 관련 홍보게시글 제목"
  *                     content: "사용자 관련 홍보게시글 내용"
- *                     poster_image: "/path/to/user_image.jpg"
+ *                     image_url: "/path/to/user_image.jpg"
  *                     tags: ["태그X", "태그Y"]
  *                     createdAt: "2023-03-01T00:00:00.000Z"
  *                     updatedAt: "2023-03-01T00:00:00.000Z"
