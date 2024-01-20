@@ -13,6 +13,7 @@ import promotionRouter from "./routers/promotionRouter";
 import commentRouter from "./routers/commentRouter";
 import showRouter from "./routers/showRouter";
 import userRouter from "./routers/userRouter";
+import imageRouter from "./routers/imageRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import path from "path";
 import cors from "cors";
@@ -61,6 +62,7 @@ app.use("/api/comments", commentRouter);
 app.use("/api/shows", showRouter);
 app.use("/api/users", userRouter);
 app.use("/api/reviews", reviewRouter);
+app.use("/api/images", imageRouter);
 
 app.use(errorMiddleware);
 
