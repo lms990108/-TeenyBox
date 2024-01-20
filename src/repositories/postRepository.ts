@@ -34,6 +34,7 @@ class PostRepository {
   // 게시글 전체 조회 & 페이징
   async findAll(skip: number, limit: number): Promise<IPost[]> {
     return await PostModel.find()
+      .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate({
@@ -61,6 +62,7 @@ class PostRepository {
     limit: number,
   ): Promise<IPost[]> {
     return await PostModel.find({ user_id: userId })
+      .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate({

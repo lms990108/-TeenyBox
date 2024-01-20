@@ -38,6 +38,7 @@ class promotionRepository {
   // 게시글 전체 조회 & 페이징
   async findAll(skip: number, limit: number): Promise<IPromotion[]> {
     return await PromotionModel.find()
+      .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user_id", "nickname profile_url")
@@ -60,6 +61,7 @@ class promotionRepository {
     limit: number,
   ): Promise<IPromotion[]> {
     return await PromotionModel.find({ user_id: userId })
+      .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user_id", "nickname profile_url")
