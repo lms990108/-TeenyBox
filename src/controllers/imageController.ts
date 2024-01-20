@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 
 export async function uploadImage(req, res) {
