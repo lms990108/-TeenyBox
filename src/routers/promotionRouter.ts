@@ -2,19 +2,15 @@ import express from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import promotionController from "../controllers/promotionController";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
-import { uploadLocal } from "../middlewares/localMiddleware";
 import * as promotionDto from "../dtos/promotionDto";
 import { authenticateUser } from "../middlewares/authUserMiddlewares";
-import multer from "multer";
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 // 글 작성
 router.post(
   "/",
   authenticateUser,
-  upload.single("promotion_poster"),
   validationMiddleware(promotionDto.CreatePromotionDTO),
   asyncHandler(promotionController.createPromotion),
 );
@@ -22,7 +18,7 @@ router.post(
 // 글 수정
 router.put(
   "/:promotionNumber",
-  uploadLocal.single("promotion_poster"),
+  authenticateUser,
   validationMiddleware(promotionDto.UpdatePromotionDTO),
   asyncHandler(promotionController.updatePromotion),
 );
@@ -65,7 +61,7 @@ export default router;
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -86,8 +82,8 @@ export default router;
  *                 description: 홍보게시글에 사용될 태그 배열
  *               promotion_poster:
  *                 type: string
- *                 format: binary
- *                 description: 홍보게시글의 포스터 이미지 파일
+ *                 format: url
+ *                 description: 홍보게시글의 포스터 이미지 주소
  *     responses:
  *       201:
  *         description: 홍보게시글이 성공적으로 추가됨
@@ -131,7 +127,7 @@ export default router;
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -152,8 +148,8 @@ export default router;
  *                 description: 업데이트된 홍보게시글의 태그들
  *               promotion_poster:
  *                 type: string
- *                 format: binary
- *                 description: 업데이트될 홍보게시글의 포스터 이미지 파일 (수정 시 변경 가능)
+ *                 format: url
+ *                 description: 업데이트될 홍보게시글의 포스터 이미지 주소
  *     responses:
  *       200:
  *         description: 홍보게시글이 성공적으로 업데이트됨

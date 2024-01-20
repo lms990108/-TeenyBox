@@ -3,15 +3,14 @@ import { CreatePromotionDTO, UpdatePromotionDTO } from "../dtos/promotionDto";
 import { IPromotion } from "../models/promotionModel";
 import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
+import UnauthorizedError from "../common/error/UnauthorizedError";
 import { UserModel } from "../models/userModel";
-import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 
 class PromotionService {
   // 게시글 생성
   async create(
     promotionData: CreatePromotionDTO,
     userId: string,
-    imageFile: Express.Multer.File,
   ): Promise<IPromotion> {
     try {
       // 태그가 문자열로 들어왔다면 배열로 변환
@@ -32,21 +31,17 @@ class PromotionService {
         throw new NotFoundError("사용자를 찾을 수 없습니다.");
       }
 
-      // 이미지 파일을 S3에 업로드하고, URL을 받습니다.
-      const imageUrl = await uploadImageToS3(
-        imageFile,
-        `promotions/${Date.now()}_${imageFile.originalname}`,
-      );
-
-      // S3에서 반환된 이미지 URL을 promotionData에 추가합니다.
-      const promotionDataWithImage = {
+      // user정보 추가
+      const promotionDataWithUser = {
         ...promotionData,
-        poster_image: imageUrl,
         user_id: userId,
       };
 
       // 데이터베이스에 게시글을 생성하고, 생성된 게시글 객체를 반환합니다.
-      return PromotionRepository.create(promotionDataWithImage);
+      const newPromotion = await PromotionRepository.create(
+        promotionDataWithUser,
+      );
+      return newPromotion;
     } catch (error) {
       throw new InternalServerError(
         `게시글을 생성하는데 실패했습니다. ${error.message}`,
@@ -58,14 +53,24 @@ class PromotionService {
   async update(
     promotionNumber: number,
     updateData: UpdatePromotionDTO,
+    userId: string,
   ): Promise<IPromotion | null> {
+    // 게시글 조회
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    if (promotion.user_id["_id"].toString() !== userId.toString()) {
+      throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
+    }
+
     const updatedPromotion = await PromotionRepository.update(
       promotionNumber,
       updateData,
     );
-    if (!updatedPromotion) {
-      throw new NotFoundError("게시글을 찾을 수 없습니다.");
-    }
+
     return updatedPromotion;
   }
 

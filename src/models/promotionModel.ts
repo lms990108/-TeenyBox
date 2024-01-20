@@ -39,7 +39,7 @@ const promotionSchema = new Schema<IPromotion>(
     },
     poster_image: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   {

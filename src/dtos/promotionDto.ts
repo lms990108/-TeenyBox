@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MaxLength, IsOptional } from "class-validator";
+import {
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  IsOptional,
+  IsUrl,
+} from "class-validator";
 
 // 게시글 생성을 위한 DTO
 export class CreatePromotionDTO {
@@ -14,6 +20,10 @@ export class CreatePromotionDTO {
   content!: string;
 
   @IsOptional()
+  @IsUrl({}, { message: "이미지 URL은 유효한 웹 주소이어야 합니다." })
+  image_url?: string;
+
+  @IsOptional()
   tags?: string[] | string;
 }
 
@@ -27,6 +37,10 @@ export class UpdatePromotionDTO {
   @IsString({ message: "내용은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
+
+  @IsOptional()
+  @IsUrl({}, { message: "이미지 URL은 유효한 웹 주소이어야 합니다." })
+  image_url?: string;
 
   @IsOptional()
   tags?: string[] | string;

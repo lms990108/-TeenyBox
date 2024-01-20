@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import PromotionService from "../services/promotionService";
-import { MulterRequest } from "../interfaces/MulterRequest";
-import fs from "fs";
-// import { uploadImageToS3, deleteImageFromS3 } from "../common/utils/awsS3Utils";
 
 class PromotionController {
-  // 컨트롤러 - 게시글 생성
-  async createPromotion(req: MulterRequest, res: Response): Promise<void> {
+  async createPromotion(req: AuthRequest, res: Response): Promise<void> {
     // 인증된 사용자의 정보가 있는지 확인합니다.
     if (!req.user) {
       res.status(401).json({ message: "사용자 인증이 필요합니다." });
@@ -14,59 +11,26 @@ class PromotionController {
     }
 
     try {
-      // 이미지 파일이 있는지 확인하고, 서비스 메서드를 호출하여 게시글을 생성합니다.
-      const promotion = await PromotionService.create(
-        req.body,
-        req.user._id,
-        req.file,
-      );
-
+      const promotion = await PromotionService.create(req.body, req.user._id);
       res.status(201).json(promotion);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
 
-  async updatePromotionDefault(req: Request, res: Response): Promise<void> {
-    const promotionNumber = Number(req.params.promotionNumber);
-    const promotion = await PromotionService.update(promotionNumber, req.body);
-    res.status(200).json(promotion);
-  }
-
-  async updatePromotion(req: MulterRequest, res: Response): Promise<void> {
-    try {
-      const promotionNumber = Number(req.params.promotionNumber);
-      const updateData = req.body;
-
-      // 이미지가 새로 업로드되었는지 확인
-      if (req.body.poster_image) {
-        const newImagePath = req.body.poster_image;
-        updateData.poster_image = newImagePath; // 새 이미지 경로로 업데이트
-
-        // 기존 이미지 정보를 가져오고 파일 시스템에서 삭제
-        const currentPromotion =
-          await PromotionService.findByPromotionNumber(promotionNumber);
-        if (currentPromotion && currentPromotion.poster_image) {
-          // fs.promises 모듈을 사용하여 기존 이미지를 삭제
-          try {
-            await fs.promises.unlink(currentPromotion.poster_image);
-          } catch (unlinkError) {
-            console.error(`Error deleting old image: ${unlinkError}`);
-            // 이미지 삭제 중 오류가 발생했으나, 프로모션 업데이트는 계속 진행
-          }
-        }
-      }
-
-      // PromotionService의 update 메소드를 사용하여 업데이트
-      const updatedPromotion = await PromotionService.update(
-        promotionNumber,
-        updateData,
-      );
-
-      res.status(200).json(updatedPromotion);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  async updatePromotion(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
     }
+
+    const promotionNumber = Number(req.params.postNumber);
+    const promotion = await PromotionService.update(
+      promotionNumber,
+      req.body,
+      req.user._id,
+    );
+    res.status(200).json(promotion);
   }
 
   async getAllPromotions(req: Request, res: Response): Promise<void> {
