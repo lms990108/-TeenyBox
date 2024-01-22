@@ -2,6 +2,7 @@ import { Router } from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import reviewController from "../controllers/reviewController";
 import { authenticateUser } from "../middlewares/authUserMiddlewares";
+import multer from "multer";
 
 /**
  * @swagger
@@ -232,16 +233,19 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *                     deleted_at: "2024-01-14T10:05:15.453Z"
  */
 
+const upload = multer({ storage: multer.memoryStorage() });
 const reviewRouter = Router();
 
 reviewRouter.post(
   "/:showId",
   authenticateUser,
+  upload.array("review_images"),
   asyncHandler(reviewController.create),
 );
 reviewRouter.patch(
   "/:id",
   authenticateUser,
+  upload.array("review_images"),
   asyncHandler(reviewController.update),
 );
 reviewRouter.get("/", asyncHandler(reviewController.findAll));

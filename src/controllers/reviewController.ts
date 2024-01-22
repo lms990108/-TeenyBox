@@ -7,19 +7,30 @@ class ReviewController {
   async create(req: AuthRequest, res: Response): Promise<Response> {
     const userId = req.user.user_id;
     const showId = req.params.showId;
-    const reviewData = req.body;
+    const createReviewDto = req.body;
+    const detailImages = req.files as Express.Multer.File[];
 
-    const review = await reviewService.create(userId, showId, reviewData);
+    const review = await reviewService.create(
+      userId,
+      showId,
+      createReviewDto,
+      detailImages,
+    );
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
   async update(req: AuthRequest, res: Response): Promise<Response> {
     const reviewid = req.params.id as string;
-    const reviewData = req.body;
     const userId = req.user.user_id;
+    const updateReviewDto = req.body;
+    const detailImages = req.files as Express.Multer.File[];
 
-    const review = await reviewService.update(userId, reviewid, reviewData);
-
+    const review = await reviewService.update(
+      userId,
+      reviewid,
+      updateReviewDto,
+      detailImages,
+    );
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
