@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
+import { ReviewModel } from "../models/reviewModel";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
@@ -18,16 +19,45 @@ class ShowController {
       limit,
     );
 
-    return res
-      .status(200)
-      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
+    const showDtos = await Promise.all(
+      shows.map(async (show) => {
+        const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
+        let avgRating = 0;
+
+        if (reviews.length > 0) {
+          const totalRating = reviews.reduce(
+            (sum, review) => sum + review.rate,
+            0,
+          );
+          avgRating = totalRating / reviews.length;
+        }
+
+        const showResponseDto = new ShowResponseDto(show);
+        showResponseDto.avg_rating = avgRating;
+        return showResponseDto;
+      }),
+    );
+
+    return res.status(200).json({
+      shows: showDtos,
+    });
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
     const showId = req.params.id as string;
-
     const show = await showService.findShowByShowId(showId);
-    return res.status(200).json({ show: new ShowResponseDto(show) });
+    const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
+    let avgRating = 0;
+
+    if (reviews.length > 0) {
+      const totalRating = reviews.reduce((sum, review) => sum + review.rate, 0);
+      avgRating = totalRating / reviews.length;
+    }
+
+    const showResponseDto = new ShowResponseDto(show);
+    showResponseDto.avg_rating = avgRating;
+
+    return res.status(200).json({ show: showResponseDto });
   }
 
   async deleteByShowId(req: Request, res: Response): Promise<Response> {

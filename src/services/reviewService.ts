@@ -9,6 +9,7 @@ import userService from "./userService";
 import { ROLE } from "../common/enum/enum";
 import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 import NotFoundError from "../common/error/NotFoundError";
+import { IShow } from "../models/showModel";
 
 class reviewService {
   async create(
@@ -19,15 +20,9 @@ class reviewService {
   ): Promise<IReview> {
     const user = await userService.getUserById(userId);
     const show = await showService.findShowByShowId(showId);
-
     const review = { ...reviewData, detailImages: null };
 
-    const imagePromises = detailImages.map((image) =>
-      uploadImageToS3(image, `reviews/${Date.now()}_${image.originalname}`),
-    );
-
-    const imageUrls = await Promise.all(imagePromises);
-
+    const imageUrls = await this.uploadImages(detailImages);
     const createdReview = await reviewRepository.create(
       userId,
       showId,
@@ -35,12 +30,27 @@ class reviewService {
       imageUrls,
     );
 
+    this.updateShowAndUser(show, user, createdReview);
+
+    return createdReview;
+  }
+
+  private async uploadImages(detailImages: Express.Multer.File[]) {
+    const imagePromises = detailImages.map((image) =>
+      uploadImageToS3(image, `reviews/${Date.now()}_${image.originalname}`),
+    );
+    return Promise.all(imagePromises);
+  }
+
+  private async updateShowAndUser(
+    show: IShow,
+    user: IUser,
+    createdReview: IReview,
+  ) {
     user.review.push(createdReview._id);
     show.reviews.push(createdReview._id);
     await user.save();
     await show.save();
-
-    return createdReview;
   }
 
   async update(
