@@ -2,6 +2,7 @@ import { Router } from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import reviewController from "../controllers/reviewController";
 import { authenticateUser } from "../middlewares/authUserMiddlewares";
+import multer from "multer";
 
 /**
  * @swagger
@@ -18,11 +19,14 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *         description: 공연 아이디
  *         example: "PF227440"
  *     requestBody:
- *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *            properties:
+ *             title:
+ *              type: string
+ *              description: 리뷰 제목
+ *              example: "와!"
  *             content:
  *              type: string
  *              description: 리뷰 내용
@@ -31,6 +35,11 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *              type: number
  *              description: 평점 (0~5)
  *              example: 5
+ *             review_images:
+ *              type: array
+ *              items:
+ *               type: string
+ *               format: binary
  *     responses:
  *       201:
  *         description: 등록 성공
@@ -68,11 +77,14 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *         description: 리뷰 아이디
  *         example: "65a39e03a0f46b46abc87a32"
  *     requestBody:
- *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *            properties:
+ *             title:
+ *              type: string
+ *              description: 리뷰 제목
+ *              example: "와!"
  *             content:
  *              type: string
  *              description: 리뷰 내용
@@ -81,6 +93,11 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *              type: number
  *              description: 평점 (0~5)
  *              example: 5
+ *             review_images:
+ *              type: array
+ *              items:
+ *               type: string
+ *               format: binary
  *     responses:
  *       201:
  *         description: 등록 성공
@@ -232,16 +249,19 @@ import { authenticateUser } from "../middlewares/authUserMiddlewares";
  *                     deleted_at: "2024-01-14T10:05:15.453Z"
  */
 
+const upload = multer({ storage: multer.memoryStorage() });
 const reviewRouter = Router();
 
 reviewRouter.post(
   "/:showId",
   authenticateUser,
+  upload.array("review_images"),
   asyncHandler(reviewController.create),
 );
 reviewRouter.patch(
   "/:id",
   authenticateUser,
+  upload.array("review_images"),
   asyncHandler(reviewController.update),
 );
 reviewRouter.get("/", asyncHandler(reviewController.findAll));
