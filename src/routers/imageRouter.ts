@@ -27,7 +27,7 @@ export default router;
  *           schema:
  *             type: object
  *             properties:
- *               promotion_poster:
+ *               image_url:
  *                 type: string
  *                 format: binary
  *                 description: 업로드할 이미지 파일
@@ -39,7 +39,7 @@ export default router;
  *             schema:
  *               type: object
  *               properties:
- *                 imageUrl:
+ *                 image_url:
  *                   type: string
  *                   description: 업로드된 이미지의 URL
  *       '400':
