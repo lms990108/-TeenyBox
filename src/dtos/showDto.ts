@@ -60,6 +60,8 @@ export class ShowResponseDto {
   schedule?: string;
   poster?: string;
   detail_images?: string[];
+  avg_rating: number = 0;
+  review_num: number = 0;
 
   constructor(show: IShow) {
     this.showId = show.showId;
@@ -83,5 +85,6 @@ export class ShowResponseDto {
     this.schedule = show.schedule;
     this.poster = show.poster;
     this.detail_images = show.detail_images;
+    this.review_num = show.reviews?.length;
   }
 }

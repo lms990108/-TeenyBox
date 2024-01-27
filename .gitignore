@@ -221,4 +221,7 @@ secret.ts
 # 추가된 파일
 uploads/
 
+# .idea
+.idea
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,node
