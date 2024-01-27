@@ -33,7 +33,11 @@ router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
 router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
 // 게시글 삭제
-router.delete("/:postNumber", asyncHandler(postController.deletePostByNumber));
+router.delete(
+  "/:postNumber",
+  authenticateUser,
+  asyncHandler(postController.deletePostByNumber),
+);
 
 export default router;
 
