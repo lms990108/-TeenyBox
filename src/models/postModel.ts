@@ -26,6 +26,7 @@ const postSchema = new Schema<IPost>(
     title: {
       type: String,
       required: true,
+      index: true, // 검색기능을 위한 인덱싱
     },
     content: {
       type: String,

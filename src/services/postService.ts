@@ -98,6 +98,17 @@ class PostService {
 
     return deletedPost;
   }
+
+  // 게시글 제목 검색
+  async findByTitle(
+    title: string,
+    page: number,
+    limit: number,
+  ): Promise<IPost[]> {
+    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
+    const skip = (page - 1) * limit;
+    return await PostRepository.findByTitle(encodedTitle, skip, limit);
+  }
 }
 
 export default new PostService();

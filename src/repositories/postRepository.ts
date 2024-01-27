@@ -81,6 +81,18 @@ class PostRepository {
     });
     return postToDelete;
   }
+
+  async findByTitle(
+    title: string,
+    skip: number,
+    limit: number,
+  ): Promise<IPost[]> {
+    return await PostModel.find({ title: new RegExp(title, "i") })
+      .sort({ post_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
 }
 
 export default new PostRepository();
