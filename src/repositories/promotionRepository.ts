@@ -79,6 +79,18 @@ class promotionRepository {
     });
     return promotionToDelete;
   }
+
+  async findByTitle(
+    title: string,
+    skip: number,
+    limit: number,
+  ): Promise<IPromotion[]> {
+    return await PromotionModel.find({ title: new RegExp(title, "i") })
+      .sort({ promotion_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
 }
 
 export default new promotionRepository();

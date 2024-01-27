@@ -120,7 +120,7 @@ class PromotionService {
 
     // 2. 권한체크
     if (promotion.user_id["_id"].toString() !== userId.toString()) {
-      throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
+      throw new UnauthorizedError("게시글 삭제 권한이 없습니다.");
     }
 
     // 3. 삭제
@@ -128,6 +128,17 @@ class PromotionService {
       await PromotionRepository.deleteByPromotionNumber(promotionNumber);
 
     return deletedPromotion;
+  }
+
+  // 게시글 제목 검색
+  async findByTitle(
+    title: string,
+    page: number,
+    limit: number,
+  ): Promise<IPromotion[]> {
+    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
+    const skip = (page - 1) * limit;
+    return await PromotionRepository.findByTitle(encodedTitle, skip, limit);
   }
 }
 
