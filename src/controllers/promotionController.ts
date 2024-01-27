@@ -58,9 +58,18 @@ class PromotionController {
     res.status(200).json(promotions);
   }
 
-  async deletePromotionByNumber(req: Request, res: Response): Promise<void> {
+  async deletePromotionByNumber(
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> {
+    // 인증된 사용자의 정보가 있는지 확인합니다.
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
     const promotion = await PromotionService.deleteByPromotionNumber(
       Number(req.params.promotionNumber),
+      req.user._id,
     );
     res.status(200).json(promotion);
   }

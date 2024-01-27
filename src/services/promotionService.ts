@@ -105,12 +105,28 @@ class PromotionService {
   }
 
   // 게시글 삭제 (PromotionNumber를 기반으로)
-  async deleteByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
-    const deletedPromotion =
-      await PromotionRepository.deleteByPromotionNumber(promotionNumber);
-    if (!deletedPromotion) {
+  async deleteByPromotionNumber(
+    promotionNumber: number,
+    userId: string,
+  ): Promise<IPromotion> {
+    // 게시글 조회 -> 권한 확인 -> 삭제
+
+    // 1. 게시글 조회
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 2. 권한체크
+    if (promotion.user_id["_id"].toString() !== userId.toString()) {
+      throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
+    }
+
+    // 3. 삭제
+    const deletedPromotion =
+      await PromotionRepository.deleteByPromotionNumber(promotionNumber);
+
     return deletedPromotion;
   }
 }

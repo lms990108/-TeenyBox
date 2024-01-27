@@ -41,6 +41,7 @@ router.get(
 // 글 삭제
 router.delete(
   "/:promotionNumber",
+  authenticateUser,
   asyncHandler(promotionController.deletePromotionByNumber),
 );
 
