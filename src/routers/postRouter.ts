@@ -46,10 +46,6 @@ export default router;
  * tags:
  *   - name: Post
  *
- * @swagger
- * tags:
- *   - name: Post
- *
  * /posts:
  *   post:
  *     tags:
