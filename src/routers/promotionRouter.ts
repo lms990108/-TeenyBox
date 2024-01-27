@@ -104,6 +104,15 @@ export default router;
  *                 content:
  *                   type: string
  *                   description: 게시물 내용
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: 홍보게시글에 사용될 태그 배열
+ *                 image_url:
+ *                   type: string
+ *                   format: url
+ *                   description: 홍보게시글의 포스터 이미지 주소
  *                 _id:
  *                   type: string
  *                   description: 게시물의 고유 MongoDB ID
@@ -150,7 +159,7 @@ export default router;
  *                   - promotion_number: 1
  *                     title: "홍보게시글 제목"
  *                     content: "홍보게시글 내용"
- *                     poster_image: "/path/to/image.jpg"
+ *                     image_url: "/path/to/image.jpg"
  *                     tags: ["태그1", "태그2"]
  *                     createdAt: "2023-01-01T00:00:00.000Z"
  *                     updatedAt: "2023-01-01T00:00:00.000Z"

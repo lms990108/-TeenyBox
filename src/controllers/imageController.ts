@@ -6,7 +6,11 @@ export async function uploadImage(req, res) {
   }
 
   try {
-    const key = `promotions/${Date.now()}_${req.file.originalname}`;
+    const originalNameBuffer = Buffer.from(req.file.originalname, "utf-8");
+    const encodedOriginalName = encodeURIComponent(
+      originalNameBuffer.toString("utf-8"),
+    );
+    const key = `promotions/${Date.now()}_${encodedOriginalName}`;
     const imageUrl = await uploadImageToS3(req.file, key);
     res.status(201).json({ imageUrl });
   } catch (error) {
