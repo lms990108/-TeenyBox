@@ -24,7 +24,7 @@ class PromotionController {
       return;
     }
 
-    const promotionNumber = Number(req.params.postNumber);
+    const promotionNumber = Number(req.params.promotionNumber);
     const promotion = await PromotionService.update(
       promotionNumber,
       req.body,
