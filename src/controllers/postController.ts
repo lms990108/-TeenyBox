@@ -67,7 +67,7 @@ class PostController {
     res.status(200).json(post);
   }
 
-  async searchPromotions(req: Request, res: Response): Promise<void> {
+  async searchPosts(req: Request, res: Response): Promise<void> {
     console.log("0번");
 
     try {

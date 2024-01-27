@@ -26,6 +26,9 @@ router.put(
 // 글 리스트 조회
 router.get("/", asyncHandler(promotionController.getAllPromotions));
 
+// 글 제목으로 검색
+router.get("/search", asyncHandler(promotionController.searchPromotions));
+
 // 글 상세 조회
 router.get(
   "/:promotionNumber",
@@ -44,9 +47,6 @@ router.delete(
   authenticateUser,
   asyncHandler(promotionController.deletePromotionByNumber),
 );
-
-// 글 제목으로 검색
-router.get("/search", asyncHandler(promotionController.searchPromotions));
 
 export default router;
 

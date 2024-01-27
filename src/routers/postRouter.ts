@@ -26,6 +26,9 @@ router.put(
 // 모든 게시글 조회
 router.get("/", asyncHandler(postController.getAllPosts));
 
+// 글 제목으로 검색
+router.get("/search", asyncHandler(postController.searchPosts));
+
 // 게시글 상세 조회
 router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
 
@@ -38,9 +41,6 @@ router.delete(
   authenticateUser,
   asyncHandler(postController.deletePostByNumber),
 );
-
-// 글 제목으로 검색
-router.get("/search", asyncHandler(postController.searchPromotions));
 
 export default router;
 
