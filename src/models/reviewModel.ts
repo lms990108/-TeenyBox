@@ -7,6 +7,8 @@ export interface IReview extends Document {
   imageUrls?: string[] | null;
   userId: string;
   showId: string;
+  userNickname: string;
+  showTitle: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;
@@ -19,6 +21,8 @@ const ReviewSchema = new Schema<IReview>({
   imageUrls: [{ type: String }],
   userId: { type: String, required: true },
   showId: { type: String, required: true },
+  userNickname: { type: String, required: true },
+  showTitle: { type: String, required: true },
   createdAt: Date,
   updatedAt: Date,
   deletedAt: { type: Date, default: null },

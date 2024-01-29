@@ -14,8 +14,8 @@ export class UpdateReviewDto {
 
 export class ReviewResponseDto {
   _id: string;
-  user_id: string;
-  show_id: string;
+  user_nickname: string;
+  show_title: string;
   title: string;
   content: string;
   rate: number;
@@ -26,8 +26,8 @@ export class ReviewResponseDto {
 
   constructor(review: IReview) {
     this._id = review._id;
-    this.user_id = review.userId;
-    this.show_id = review.showId;
+    this.user_nickname = review.userNickname;
+    this.show_title = review.showTitle;
     this.title = review.title;
     this.content = review.content;
     this.rate = review.rate;

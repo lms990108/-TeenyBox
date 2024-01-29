@@ -24,7 +24,7 @@ class reviewRepository {
     reviewData: UpdateReviewDto,
     imageUrls: string[],
   ) {
-    return await ReviewModel.findOneAndUpdate(
+    return ReviewModel.findOneAndUpdate(
       { _id: reviewId },
       { ...reviewData, updatedAt: new Date(), imageUrls },
       {
@@ -34,30 +34,53 @@ class reviewRepository {
   }
 
   async findAll(page: number, limit: number) {
-    return await ReviewModel.find()
+    const reviewsPromise = ReviewModel.find()
       .limit(limit)
       .skip((page - 1) * limit)
       .lean();
+    const totalPromise = ReviewModel.countDocuments();
+
+    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+
+    return { reviews, total };
   }
 
   async findOne(reviewId: string) {
-    return await ReviewModel.findOne({
+    return ReviewModel.findOne({
       _id: reviewId,
     });
   }
 
   async findReviewsByUserId(page: number, limit: number, userId: string) {
-    return await ReviewModel.find({ userId, deletedAt: null })
+    const query = {
+      userId,
+      deletedAt: null,
+    };
+    const reviewsPromise = ReviewModel.find(query)
       .limit(limit)
       .skip((page - 1) * limit)
       .lean();
+    const totalPromise = ReviewModel.countDocuments(query);
+
+    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+
+    return { reviews, total };
   }
 
   async findReviewsByShowId(page: number, limit: number, showId: string) {
-    return await ReviewModel.find({ showId, deletedAt: null })
+    const query = {
+      showId,
+      deletedAt: null,
+    };
+    const reviewsPromise = ReviewModel.find(query)
       .limit(limit)
       .skip((page - 1) * limit)
       .lean();
+    const totalPromise = ReviewModel.countDocuments(query);
+
+    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+
+    return { reviews, total };
   }
 
   async findReviewsByUserIdAndShowId(
@@ -66,14 +89,24 @@ class reviewRepository {
     userId: string,
     showId: string,
   ) {
-    return await ReviewModel.find({ userId, showId, deletedAt: null })
+    const query = {
+      userId,
+      showId,
+      deletedAt: null,
+    };
+    const reviewsPromise = ReviewModel.find(query)
       .limit(limit)
       .skip((page - 1) * limit)
       .lean();
+    const totalPromise = ReviewModel.countDocuments(query);
+
+    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+
+    return { reviews, total };
   }
 
   async deleteOne(reviewId: string) {
-    return await ReviewModel.findOneAndUpdate(
+    return ReviewModel.findOneAndUpdate(
       { _id: reviewId },
       { deletedAt: new Date() },
       { new: true },

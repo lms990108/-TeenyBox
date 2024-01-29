@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import reviewService from "../services/reviewService";
 import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import { ReviewResponseDto } from "../dtos/reviewDto";
+import { IReview } from "../models/reviewModel";
 
 class ReviewController {
   async create(req: AuthRequest, res: Response): Promise<Response> {
@@ -46,7 +47,7 @@ class ReviewController {
     const reviewId = req.params.id;
 
     const review = await reviewService.findOne(reviewId);
-    return res.status(200).json({ review });
+    return res.status(200).json({ review: new ReviewResponseDto(review) });
   }
 
   async findAll(req: Request, res: Response): Promise<Response> {
@@ -54,23 +55,36 @@ class ReviewController {
     const limit = +req.query.limit;
     const userId = req.query.userId as string;
     const showId = req.query.showId as string;
-    let reviews;
+    let reviews: IReview[], total: number;
 
     if (userId && showId)
-      reviews = await reviewService.findReviewsByUserIdAndShowId(
+      ({ reviews, total } = await reviewService.findReviewsByUserIdAndShowId(
         page,
         limit,
         userId,
         showId,
-      );
+      ));
     else if (showId)
-      reviews = await reviewService.findReviewsByShowId(page, limit, showId);
+      ({ reviews, total } = await reviewService.findReviewsByShowId(
+        page,
+        limit,
+        showId,
+      ));
     else if (userId)
-      reviews = await reviewService.findReviewsByUserId(page, limit, userId);
-    else reviews = await reviewService.findAll(page, limit);
+      ({ reviews, total } = await reviewService.findReviewsByUserId(
+        page,
+        limit,
+        userId,
+      ));
+    else ({ reviews, total } = await reviewService.findAll(page, limit));
 
     return res.status(200).json({
-      reviews: reviews.map((review) => new ReviewResponseDto(review)),
+      reviews: reviews.map((review: IReview) => new ReviewResponseDto(review)),
+      meta: {
+        total,
+        page,
+        last_page: Math.ceil(total / limit),
+      },
     });
   }
 }

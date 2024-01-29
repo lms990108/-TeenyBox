@@ -10,7 +10,7 @@ import {
 } from "../common/utils/tokenUtils";
 import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 
-class UserService {
+export class UserService {
   // 회원가입
   async register(
     createUserRequestDTO: {
