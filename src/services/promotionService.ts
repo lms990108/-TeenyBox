@@ -95,9 +95,9 @@ class PromotionService {
     userId: string,
     page: number,
     limit: number,
-  ): Promise<IPromotion[]> {
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
     const skip = (page - 1) * limit;
-    return await PromotionRepository.findPromotionsByUserId(
+    return await PromotionRepository.findPromotionsByUserIdWithCount(
       userId,
       skip,
       limit,
@@ -105,13 +105,62 @@ class PromotionService {
   }
 
   // 게시글 삭제 (PromotionNumber를 기반으로)
-  async deleteByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
-    const deletedPromotion =
-      await PromotionRepository.deleteByPromotionNumber(promotionNumber);
-    if (!deletedPromotion) {
+  async deleteByPromotionNumber(
+    promotionNumber: number,
+    userId: string,
+  ): Promise<IPromotion> {
+    // 게시글 조회 -> 권한 확인 -> 삭제
+
+    // 1. 게시글 조회
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 2. 권한체크
+    if (promotion.user_id["_id"].toString() !== userId.toString()) {
+      throw new UnauthorizedError("게시글 삭제 권한이 없습니다.");
+    }
+
+    // 3. 삭제
+    const deletedPromotion =
+      await PromotionRepository.deleteByPromotionNumber(promotionNumber);
+
     return deletedPromotion;
+  }
+
+  // 게시글 제목 검색
+  async findByTitle(
+    title: string,
+    page: number,
+    limit: number,
+  ): Promise<IPromotion[]> {
+    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
+    const skip = (page - 1) * limit;
+    return await PromotionRepository.findByTitle(encodedTitle, skip, limit);
+  }
+
+  // 게시글 일괄 삭제
+  async deleteMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+    userId: string,
+  ): Promise<void> {
+    const posts =
+      await PromotionRepository.findMultipleByPromotionNumbers(
+        promotionNumbers,
+      );
+    const authorizedPosts = posts.filter(
+      (post) => post.user_id["_id"].toString() === userId.toString(),
+    );
+
+    if (authorizedPosts.length !== promotionNumbers.length) {
+      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    }
+
+    await PromotionRepository.deleteMultipleByPromotionNumbers(
+      promotionNumbers,
+    );
   }
 }
 

@@ -26,22 +26,32 @@ router.put(
 // 모든 게시글 조회
 router.get("/", asyncHandler(postController.getAllPosts));
 
+// 글 제목으로 검색
+router.get("/search", asyncHandler(postController.searchPosts));
+
 // 게시글 상세 조회
 router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
 
 // 사용자별 게시글 조회
 router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
+// 게시글 일괄 삭제
+router.delete(
+  "/bulk",
+  authenticateUser,
+  asyncHandler(postController.deleteMultiplePosts),
+);
+
 // 게시글 삭제
-router.delete("/:postNumber", asyncHandler(postController.deletePostByNumber));
+router.delete(
+  "/:postNumber",
+  authenticateUser,
+  asyncHandler(postController.deletePostByNumber),
+);
 
 export default router;
 
 /**
- * @swagger
- * tags:
- *   - name: Post
- *
  * @swagger
  * tags:
  *   - name: Post
@@ -275,11 +285,40 @@ export default router;
  *       '404':
  *         description: 게시물을 찾을 수 없음
  *
+ * /posts/bulk:
+ *   delete:
+ *     tags:
+ *       - Post
+ *     summary: 여러 게시물 일괄 삭제
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               postNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: 삭제할 게시물 번호들
+ *             example:
+ *               postNumbers: [1, 2, 3]
+ *     responses:
+ *       '200':
+ *         description: 게시물들이 성공적으로 삭제됨
+ *       '400':
+ *         description: 잘못된 요청
+ *       '401':
+ *         description: 인증 실패
+ *
  * /posts/user/{userId}:
  *   get:
  *     tags:
  *       - Post
- *     summary: 특정 사용자의 게시물 모두 조회
+ *     summary: 특정 사용자의 게시물 모두 조회, 이제 totalCounts도 제공
  *     parameters:
  *       - in: path
  *         name: userId
@@ -298,6 +337,46 @@ export default router;
  *                 $ref: '#/components/schemas/PostResponse'
  *       '404':
  *         description: 사용자를 찾을 수 없음
+ *
+ * /posts/search:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 게시글을 제목으로 검색
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: 검색할 게시글의 제목
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: 페이지당 게시글 수
+ *     responses:
+ *       200:
+ *         description: 검색 결과 반환
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   - promotion_number: 1
+ *                     title: "검색된 게시글 제목"
+ *                     content: "검색된 게시글 내용"
+ *                     createdAt: "2023-01-01T00:00:00.000Z"
+ *                     updatedAt: "2023-01-01T00:00:00.000Z"
+ *       404:
+ *         description: 검색 결과를 찾을 수 없음
  *
  * components:
  *   schemas:

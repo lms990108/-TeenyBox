@@ -73,18 +73,58 @@ class PostService {
     userId: string,
     page: number,
     limit: number,
-  ): Promise<IPost[]> {
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
     const skip = (page - 1) * limit;
-    return await PostRepository.findPostsByUserId(userId, skip, limit);
+    return await PostRepository.findPostsByUserIdWithCount(userId, skip, limit);
   }
 
   // 게시글 삭제 (postNumber를 기반으로)
-  async deleteByPostNumber(postNumber: number): Promise<IPost> {
-    const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
-    if (!deletedPost) {
+  async deleteByPostNumber(postNumber: number, userId: string): Promise<IPost> {
+    // 게시글 조회 -> 권한 확인 -> 삭제
+
+    // 1. 게시글 조회
+    const post = await PostRepository.findByPostNumber(postNumber);
+    if (!post) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 2. 권한체크
+    if (post.user_id["_id"].toString() !== userId.toString()) {
+      throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
+    }
+
+    // 3. 삭제
+    const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
+
     return deletedPost;
+  }
+
+  // 게시글 제목 검색
+  async findByTitle(
+    title: string,
+    page: number,
+    limit: number,
+  ): Promise<IPost[]> {
+    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
+    const skip = (page - 1) * limit;
+    return await PostRepository.findByTitle(encodedTitle, skip, limit);
+  }
+
+  // 게시글 일괄 삭제
+  async deleteMultipleByPostNumbers(
+    postNumbers: number[],
+    userId: string,
+  ): Promise<void> {
+    const posts = await PostRepository.findMultipleByPostNumbers(postNumbers);
+    const authorizedPosts = posts.filter(
+      (post) => post.user_id["_id"].toString() === userId.toString(),
+    );
+
+    if (authorizedPosts.length !== postNumbers.length) {
+      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    }
+
+    await PostRepository.deleteMultipleByPostNumbers(postNumbers);
   }
 }
 

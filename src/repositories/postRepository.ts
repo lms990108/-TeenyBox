@@ -55,13 +55,16 @@ class PostRepository {
       .exec();
   }
 
-  // userId로 게시글들 조회
-  async findPostsByUserId(
+  // userId로 게시글들 조회 + 갯수까지 추가
+  async findPostsByUserIdWithCount(
     userId: string,
     skip: number,
     limit: number,
-  ): Promise<IPost[]> {
-    return await PostModel.find({ user_id: userId })
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    // 게시글 총 갯수를 가져오는 쿼리
+    const totalCount = await PostModel.countDocuments({ user_id: userId });
+
+    const posts = await PostModel.find({ user_id: userId })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
@@ -70,6 +73,8 @@ class PostRepository {
         select: "nickname profile_url _id",
       })
       .exec();
+
+    return { posts, totalCount };
   }
 
   // 게시글 삭제 (postNumber를 기반으로)
@@ -80,6 +85,30 @@ class PostRepository {
       post_number: postNumber,
     });
     return postToDelete;
+  }
+
+  async findByTitle(
+    title: string,
+    skip: number,
+    limit: number,
+  ): Promise<IPost[]> {
+    return await PostModel.find({ title: new RegExp(title, "i") })
+      .sort({ post_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
+  async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
+    return await PostModel.find({ post_number: { $in: postNumbers } })
+      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .exec();
+  }
+
+  async deleteMultipleByPostNumbers(postNumbers: number[]): Promise<void> {
+    await PostModel.deleteMany({
+      post_number: { $in: postNumbers },
+    }).exec();
   }
 }
 

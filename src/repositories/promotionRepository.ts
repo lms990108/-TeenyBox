@@ -55,17 +55,22 @@ class promotionRepository {
   }
 
   // userId로 게시글들 조회
-  async findPromotionsByUserId(
+  async findPromotionsByUserIdWithCount(
     userId: string,
     skip: number,
     limit: number,
-  ): Promise<IPromotion[]> {
-    return await PromotionModel.find({ user_id: userId })
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    // 게시글 총 갯수를 가져오는 쿼리
+    const totalCount = await PromotionModel.countDocuments({ user_id: userId });
+
+    const promotions = await PromotionModel.find({ user_id: userId })
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user_id", "nickname profile_url")
       .exec();
+
+    return { promotions, totalCount };
   }
 
   // 게시글 삭제 (promotionNumber를 기반으로)
@@ -78,6 +83,36 @@ class promotionRepository {
       promotion_number: promotionNumber,
     });
     return promotionToDelete;
+  }
+
+  async findByTitle(
+    title: string,
+    skip: number,
+    limit: number,
+  ): Promise<IPromotion[]> {
+    return await PromotionModel.find({ title: new RegExp(title, "i") })
+      .sort({ promotion_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
+  async findMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+  ): Promise<IPromotion[]> {
+    return await PromotionModel.find({
+      promotion_number: { $in: promotionNumbers },
+    })
+      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .exec();
+  }
+
+  async deleteMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+  ): Promise<void> {
+    await PromotionModel.deleteMany({
+      promotion_number: { $in: promotionNumbers },
+    }).exec();
   }
 }
 

@@ -26,6 +26,9 @@ router.put(
 // 글 리스트 조회
 router.get("/", asyncHandler(promotionController.getAllPromotions));
 
+// 글 제목으로 검색
+router.get("/search", asyncHandler(promotionController.searchPromotions));
+
 // 글 상세 조회
 router.get(
   "/:promotionNumber",
@@ -38,9 +41,17 @@ router.get(
   asyncHandler(promotionController.getPromotionsByUserId),
 );
 
+// 게시글 일괄 삭제
+router.delete(
+  "/bulk",
+  authenticateUser,
+  asyncHandler(promotionController.deleteMultiplePromotions),
+);
+
 // 글 삭제
 router.delete(
   "/:promotionNumber",
+  authenticateUser,
   asyncHandler(promotionController.deletePromotionByNumber),
 );
 
@@ -258,6 +269,36 @@ export default router;
  *       404:
  *         description: 홍보게시글을 찾을 수 없음
  *
+ * /promotions/bulk:
+ *   delete:
+ *     tags:
+ *       - Promotion
+ *     summary: 여러 홍보게시글 일괄 삭제
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - promotionNumbers
+ *             properties:
+ *               promotionNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: 삭제할 홍보게시글 번호들
+ *             example:
+ *               promotionNumbers: [1, 2, 3]
+ *     responses:
+ *       '200':
+ *         description: 홍보게시글들이 성공적으로 삭제됨
+ *       '400':
+ *         description: 잘못된 요청
+ *       '401':
+ *         description: 인증 실패
  * /promotions/user/{userId}:
  *   get:
  *     tags:
@@ -287,4 +328,46 @@ export default router;
  *                     updatedAt: "2023-03-01T00:00:00.000Z"
  *       404:
  *         description: 사용자를 찾을 수 없음
+ *
+ * /promotions/search:
+ *   get:
+ *     tags:
+ *       - Promotion
+ *     summary: 홍보게시글을 제목으로 검색
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: 검색할 홍보게시글의 제목
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: 페이지당 게시글 수
+ *     responses:
+ *       200:
+ *         description: 검색 결과 반환
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   - promotion_number: 1
+ *                     title: "검색된 홍보게시글 제목"
+ *                     content: "검색된 홍보게시글 내용"
+ *                     image_url: "/path/to/image.jpg"
+ *                     tags: ["태그1", "태그2"]
+ *                     createdAt: "2023-01-01T00:00:00.000Z"
+ *                     updatedAt: "2023-01-01T00:00:00.000Z"
+ *       404:
+ *         description: 검색 결과를 찾을 수 없음
  */

@@ -28,6 +28,7 @@ const promotionSchema = new Schema<IPromotion>(
     title: {
       type: String,
       required: true,
+      index: true, // 검색기능을 위한 인덱싱
     },
     content: {
       type: String,
