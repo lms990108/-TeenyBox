@@ -93,7 +93,7 @@ class ReviewController {
     else ({ reviews, total } = await reviewService.findAll(page, limit));
 
     return res.status(200).json({
-      reviews: reviews.map((review: IReview) => new ReviewResponseDto(review)),
+      data: reviews.map((review: IReview) => new ReviewResponseDto(review)),
       meta: {
         total,
         page,
