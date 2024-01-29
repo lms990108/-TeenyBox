@@ -49,7 +49,7 @@ import multer from "multer";
  *               type: object
  *               properties:
  *                review:
- *                 type: obejct
+ *                 type: object
  *                 description: 리뷰
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
@@ -107,7 +107,7 @@ import multer from "multer";
  *               type: object
  *               properties:
  *                review:
- *                 type: obejct
+ *                 type: object
  *                 description: 리뷰
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
@@ -270,6 +270,11 @@ reviewRouter.delete(
   "/:id",
   authenticateUser,
   asyncHandler(reviewController.deleteOne),
+);
+reviewRouter.delete(
+  "",
+  authenticateUser,
+  asyncHandler(reviewController.deleteMany),
 );
 
 export default reviewRouter;

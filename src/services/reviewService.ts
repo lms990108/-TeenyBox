@@ -139,6 +139,13 @@ class reviewService {
 
     return await reviewRepository.deleteOne(reviewId);
   }
+
+  async deleteMany(user: IUser, reviewIds: string[]) {
+    if (user.role !== ROLE.ADMIN)
+      throw new ForbiddenError("리뷰 삭제는 관리자만 가능합니다.");
+
+    return await reviewRepository.deleteMany(reviewIds);
+  }
 }
 
 export default new reviewService();

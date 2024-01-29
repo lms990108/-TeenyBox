@@ -1,14 +1,29 @@
 import { IReview } from "../models/reviewModel";
+import { IsIn, IsInt, IsString, Length } from "class-validator";
 
 export class CreateReviewDto {
+  @IsString()
+  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이어야 합니다." })
   title: string;
+
+  @IsString()
   content: string;
+
+  @IsInt()
+  @IsIn([1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
   rate: number;
 }
 
 export class UpdateReviewDto {
+  @IsString()
+  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이어야 합니다." })
   title: string;
+
+  @IsString()
   content: string;
+
+  @IsInt()
+  @IsIn([1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
   rate: number;
 }
 

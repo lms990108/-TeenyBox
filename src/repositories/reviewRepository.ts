@@ -34,11 +34,14 @@ class reviewRepository {
   }
 
   async findAll(page: number, limit: number) {
-    const reviewsPromise = ReviewModel.find()
+    const query = {
+      deletedAt: null,
+    };
+    const reviewsPromise = ReviewModel.find(query)
       .limit(limit)
       .skip((page - 1) * limit)
       .lean();
-    const totalPromise = ReviewModel.countDocuments();
+    const totalPromise = ReviewModel.countDocuments(query);
 
     const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
 
@@ -111,6 +114,16 @@ class reviewRepository {
       { deletedAt: new Date() },
       { new: true },
     );
+  }
+
+  async deleteMany(reviewIds: string[]) {
+    const updateQuery = {
+      $set: {
+        deletedAt: new Date(),
+      },
+    };
+
+    return ReviewModel.updateMany({ _id: { $in: reviewIds } }, updateQuery);
   }
 }
 

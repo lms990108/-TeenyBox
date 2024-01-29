@@ -39,8 +39,22 @@ class ReviewController {
     const reviewId = req.params.id;
     const user = req.user;
 
-    const review = await reviewService.deleteOne(user, reviewId);
-    return res.status(200).json({ review: new ReviewResponseDto(review) });
+    await reviewService.deleteOne(user, reviewId);
+
+    return res
+      .status(200)
+      .json({ message: "리뷰가 성공적으로 삭제되었습니다." });
+  }
+
+  async deleteMany(req: AuthRequest, res: Response): Promise<Response> {
+    const user = req.user;
+    const reviewIds = req.body.review_ids;
+
+    await reviewService.deleteMany(user, reviewIds);
+
+    return res
+      .status(200)
+      .json({ message: "리뷰가 성공적으로 삭제되었습니다." });
   }
 
   async findOne(req: Request, res: Response): Promise<Response> {
