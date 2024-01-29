@@ -55,13 +55,16 @@ class PostRepository {
       .exec();
   }
 
-  // userId로 게시글들 조회
-  async findPostsByUserId(
+  // userId로 게시글들 조회 + 갯수까지 추가
+  async findPostsByUserIdWithCount(
     userId: string,
     skip: number,
     limit: number,
-  ): Promise<IPost[]> {
-    return await PostModel.find({ user_id: userId })
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    // 게시글 총 갯수를 가져오는 쿼리
+    const totalCount = await PostModel.countDocuments({ user_id: userId });
+
+    const posts = await PostModel.find({ user_id: userId })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
@@ -70,6 +73,8 @@ class PostRepository {
         select: "nickname profile_url _id",
       })
       .exec();
+
+    return { posts, totalCount };
   }
 
   // 게시글 삭제 (postNumber를 기반으로)

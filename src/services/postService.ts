@@ -73,9 +73,9 @@ class PostService {
     userId: string,
     page: number,
     limit: number,
-  ): Promise<IPost[]> {
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
     const skip = (page - 1) * limit;
-    return await PostRepository.findPostsByUserId(userId, skip, limit);
+    return await PostRepository.findPostsByUserIdWithCount(userId, skip, limit);
   }
 
   // 게시글 삭제 (postNumber를 기반으로)

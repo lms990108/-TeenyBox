@@ -46,12 +46,13 @@ class PostController {
   async getPostsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const posts = await PostService.findPostsByUserId(
+    const { posts, totalCount } = await PostService.findPostsByUserId(
       req.params.userId,
       page,
       limit,
     );
-    res.status(200).json(posts);
+
+    res.status(200).json({ posts, totalCount });
   }
 
   async deletePostByNumber(req: AuthRequest, res: Response): Promise<void> {
