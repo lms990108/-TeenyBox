@@ -318,7 +318,7 @@ export default router;
  *   get:
  *     tags:
  *       - Post
- *     summary: 특정 사용자의 게시물 모두 조회
+ *     summary: 특정 사용자의 게시물 모두 조회, 이제 totalCounts도 제공
  *     parameters:
  *       - in: path
  *         name: userId
