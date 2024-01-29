@@ -140,6 +140,28 @@ class PromotionService {
     const skip = (page - 1) * limit;
     return await PromotionRepository.findByTitle(encodedTitle, skip, limit);
   }
+
+  // 게시글 일괄 삭제
+  async deleteMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+    userId: string,
+  ): Promise<void> {
+    const posts =
+      await PromotionRepository.findMultipleByPromotionNumbers(
+        promotionNumbers,
+      );
+    const authorizedPosts = posts.filter(
+      (post) => post.user_id["_id"].toString() === userId.toString(),
+    );
+
+    if (authorizedPosts.length !== promotionNumbers.length) {
+      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    }
+
+    await PromotionRepository.deleteMultipleByPromotionNumbers(
+      promotionNumbers,
+    );
+  }
 }
 
 export default new PromotionService();

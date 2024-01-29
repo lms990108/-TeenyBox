@@ -103,6 +103,23 @@ class PromotionController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  async deleteMultiplePromotions(
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+    const promotionNumbers = req.body.promotionNumbers; // 게시글 번호 배열
+    const deletedPromotions =
+      await PromotionService.deleteMultipleByPromotionNumbers(
+        promotionNumbers,
+        req.user._id,
+      );
+    res.status(200).json(deletedPromotions);
+  }
 }
 
 export default new PromotionController();

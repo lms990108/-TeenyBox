@@ -91,6 +91,24 @@ class promotionRepository {
       .limit(limit)
       .exec();
   }
+
+  async findMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+  ): Promise<IPromotion[]> {
+    return await PromotionModel.find({
+      promotion_number: { $in: promotionNumbers },
+    })
+      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .exec();
+  }
+
+  async deleteMultipleByPromotionNumbers(
+    promotionNumbers: number[],
+  ): Promise<void> {
+    await PromotionModel.deleteMany({
+      promotion_number: { $in: promotionNumbers },
+    }).exec();
+  }
 }
 
 export default new promotionRepository();

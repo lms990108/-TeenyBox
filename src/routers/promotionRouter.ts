@@ -41,6 +41,13 @@ router.get(
   asyncHandler(promotionController.getPromotionsByUserId),
 );
 
+// 게시글 일괄 삭제
+router.delete(
+  "/bulk",
+  authenticateUser,
+  asyncHandler(promotionController.deleteMultiplePromotions),
+);
+
 // 글 삭제
 router.delete(
   "/:promotionNumber",
@@ -262,6 +269,36 @@ export default router;
  *       404:
  *         description: 홍보게시글을 찾을 수 없음
  *
+ * /promotions/bulk:
+ *   delete:
+ *     tags:
+ *       - Promotion
+ *     summary: 여러 홍보게시글 일괄 삭제
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - promotionNumbers
+ *             properties:
+ *               promotionNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: 삭제할 홍보게시글 번호들
+ *             example:
+ *               promotionNumbers: [1, 2, 3]
+ *     responses:
+ *       '200':
+ *         description: 홍보게시글들이 성공적으로 삭제됨
+ *       '400':
+ *         description: 잘못된 요청
+ *       '401':
+ *         description: 인증 실패
  * /promotions/user/{userId}:
  *   get:
  *     tags:
