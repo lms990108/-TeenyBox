@@ -92,6 +92,19 @@ class PostController {
       res.status(500).json({ message: error.message });
     }
   }
+
+  async deleteMultiplePosts(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+    const postNumbers = req.body.postNumbers; // 게시글 번호 배열
+    const deletedPosts = await PostService.deleteMultipleByPostNumbers(
+      postNumbers,
+      req.user._id,
+    );
+    res.status(200).json(deletedPosts);
+  }
 }
 
 export default new PostController();

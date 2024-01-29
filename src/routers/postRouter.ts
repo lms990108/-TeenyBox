@@ -35,6 +35,13 @@ router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
 // 사용자별 게시글 조회
 router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
+// 게시글 일괄 삭제
+router.delete(
+  "/delete-many",
+  authenticateUser,
+  asyncHandler(postController.deleteMultiplePosts),
+);
+
 // 게시글 삭제
 router.delete(
   "/:postNumber",
@@ -277,6 +284,35 @@ export default router;
  *         description: 게시물 삭제 성공
  *       '404':
  *         description: 게시물을 찾을 수 없음
+ *
+ * /posts/delete-many:
+ *   delete:
+ *     tags:
+ *       - Post
+ *     summary: 여러 게시물 일괄 삭제
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               postNumbers:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: 삭제할 게시물 번호들
+ *             example:
+ *               postNumbers: [1, 2, 3]
+ *     responses:
+ *       '200':
+ *         description: 게시물들이 성공적으로 삭제됨
+ *       '400':
+ *         description: 잘못된 요청
+ *       '401':
+ *         description: 인증 실패
  *
  * /posts/user/{userId}:
  *   get:

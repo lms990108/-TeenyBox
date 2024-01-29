@@ -93,6 +93,18 @@ class PostRepository {
       .limit(limit)
       .exec();
   }
+
+  async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
+    return await PostModel.find({ post_number: { $in: postNumbers } })
+      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .exec();
+  }
+
+  async deleteMultipleByPostNumbers(postNumbers: number[]): Promise<void> {
+    await PostModel.deleteMany({
+      post_number: { $in: postNumbers },
+    }).exec();
+  }
 }
 
 export default new PostRepository();

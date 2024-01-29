@@ -109,6 +109,23 @@ class PostService {
     const skip = (page - 1) * limit;
     return await PostRepository.findByTitle(encodedTitle, skip, limit);
   }
+
+  // 게시글 일괄 삭제
+  async deleteMultipleByPostNumbers(
+    postNumbers: number[],
+    userId: string,
+  ): Promise<void> {
+    const posts = await PostRepository.findMultipleByPostNumbers(postNumbers);
+    const authorizedPosts = posts.filter(
+      (post) => post.user_id["_id"].toString() === userId.toString(),
+    );
+
+    if (authorizedPosts.length !== postNumbers.length) {
+      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    }
+
+    await PostRepository.deleteMultipleByPostNumbers(postNumbers);
+  }
 }
 
 export default new PostService();
