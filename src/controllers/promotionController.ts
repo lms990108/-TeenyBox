@@ -50,12 +50,14 @@ class PromotionController {
   async getPromotionsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const promotions = await PromotionService.findPromotionsByUserId(
-      req.params.userId,
-      page,
-      limit,
-    );
-    res.status(200).json(promotions);
+    const { promotions, totalCount } =
+      await PromotionService.findPromotionsByUserId(
+        req.params.userId,
+        page,
+        limit,
+      );
+
+    res.status(200).json({ promotions, totalCount });
   }
 
   async deletePromotionByNumber(

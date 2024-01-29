@@ -95,9 +95,9 @@ class PromotionService {
     userId: string,
     page: number,
     limit: number,
-  ): Promise<IPromotion[]> {
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
     const skip = (page - 1) * limit;
-    return await PromotionRepository.findPromotionsByUserId(
+    return await PromotionRepository.findPromotionsByUserIdWithCount(
       userId,
       skip,
       limit,
