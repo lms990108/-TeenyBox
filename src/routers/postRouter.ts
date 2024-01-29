@@ -37,7 +37,7 @@ router.get("/user/:userId", asyncHandler(postController.getPostsByUserId));
 
 // 게시글 일괄 삭제
 router.delete(
-  "/delete-many",
+  "/bulk",
   authenticateUser,
   asyncHandler(postController.deleteMultiplePosts),
 );
@@ -285,7 +285,7 @@ export default router;
  *       '404':
  *         description: 게시물을 찾을 수 없음
  *
- * /posts/delete-many:
+ * /posts/bulk:
  *   delete:
  *     tags:
  *       - Post
