@@ -4,26 +4,21 @@ import PostModel from "../models/postModel";
 import PromotionModel from "../models/promotionModel";
 import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
-import { UserModel } from "../models/userModel";
+import userService from "./userService";
+import BadRequestError from "../common/error/BadRequestError";
 
 class CommentService {
   // 댓글 생성
   async createComment(dto: CreateCommentDTO, userId: string) {
-    // userId는 현재 접속한 사용자의 ID를 나타냅니다.
     try {
-      // 사용자 정보 조회
-      const user = await UserModel.findOne({ user_id: userId });
-      if (!user) {
-        throw new NotFoundError("사용자를 찾을 수 없습니다.");
-      }
+      const user = await userService.getUserById(userId);
 
-      // 사용자 닉네임을 DTO에 추가
       const commentData = {
         ...dto,
         user_id: userId,
+        user_nickname: user.nickname,
       };
 
-      // 댓글 생성
       const newComment = await CommentRepository.create(commentData);
       return newComment;
     } catch (error) {
@@ -100,12 +95,20 @@ class CommentService {
   }
 
   // 댓글 수정
-  async updateComment(id: string, dto: UpdateCommentDTO) {
+  async updateComment(userId: string, id: string, dto: UpdateCommentDTO) {
     try {
+      const comment = await CommentRepository.findOne(id);
+      if (comment.user_id.toString() !== userId.toString()) {
+        throw new BadRequestError(
+          "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
+        );
+      }
+
       const updatedComment = await CommentRepository.update(id, dto);
       if (!updatedComment) {
         throw new NotFoundError("댓글을 찾을 수 없습니다.");
       }
+
       return updatedComment;
     } catch (error) {
       throw new InternalServerError(
@@ -115,18 +118,43 @@ class CommentService {
   }
 
   // 댓글 삭제
-  async deleteComment(id: string) {
+  async deleteComment(userId: string, id: string) {
     try {
-      const deletedComment = await CommentRepository.delete(id);
-      if (!deletedComment) {
-        throw new NotFoundError("댓글을 찾을 수 없습니다.");
+      const comment = await CommentRepository.findOne(id);
+      if (comment.user_id.toString() !== userId.toString()) {
+        throw new BadRequestError(
+          "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
+        );
       }
-      return deletedComment;
+
+      await CommentRepository.delete(id);
     } catch (error) {
       throw new InternalServerError(
         `댓글 ${id}를 삭제하는데 실패했습니다: ${error.message}`,
       );
     }
+  }
+
+  // 선택 댓글 삭제 (마이페이지)
+  async deleteComments(userId: string, commentIds: string[]) {
+    await CommentRepository.deleteComments(userId, commentIds);
+  }
+
+  // 자유게시판 모든 댓글 조회 (페이징 처리)
+  async getAllComments(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    return await CommentRepository.getPostComments(skip, limit);
+  }
+
+  // 홍보게시판 모든 댓글 조회 (페이징 처리)
+  async getAllPromotionComments(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    return await CommentRepository.getPromotionComments(skip, limit);
+  }
+
+  // 선택 댓글 삭제 (관리자페이지)
+  async deleteCommentsByAdmin(commentIds: string[]) {
+    await CommentRepository.deleteCommentsByAdmin(commentIds);
   }
 }
 

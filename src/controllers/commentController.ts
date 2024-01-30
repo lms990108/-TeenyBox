@@ -5,13 +5,6 @@ import { AuthRequest } from "../middlewares/authUserMiddlewares";
 class CommentController {
   // 댓글 생성
   async createComment(req: AuthRequest, res: Response): Promise<void> {
-    // 인증된 사용자의 정보가 있는지 확인합니다.
-    if (!req.user) {
-      res.status(401).json({ message: "사용자 인증이 필요합니다." });
-      return;
-    }
-
-    // 서비스에게 DTO와 함께 사용자 ID를 전달합니다.
     try {
       const newComment = await CommentService.createComment(
         req.body,
@@ -27,12 +20,12 @@ class CommentController {
   async getCommentsByPostId(req: Request, res: Response): Promise<void> {
     const { postId } = req.params;
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    const limit = parseInt(req.query.limit as string) || 20;
 
     const comments = await CommentService.getCommentsByPostId(
       postId,
       page,
-      pageSize,
+      limit,
     );
     res.status(200).json(comments);
   }
@@ -41,42 +34,79 @@ class CommentController {
   async getCommentsByPromotionId(req: Request, res: Response): Promise<void> {
     const { promotionId } = req.params;
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    const limit = parseInt(req.query.limit as string) || 20;
 
     const comments = await CommentService.getCommentsByPromotionId(
       promotionId,
       page,
-      pageSize,
+      limit,
     );
     res.status(200).json(comments);
   }
 
   // 특정 사용자가 작성한 모든 댓글 조회 (페이징 처리 추가)
-  async getCommentsByUserId(req: Request, res: Response): Promise<void> {
+  async getCommentsByUserId(req: AuthRequest, res: Response): Promise<void> {
     const { userId } = req.params;
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    const limit = parseInt(req.query.limit as string) || 20;
 
     const comments = await CommentService.getCommentsByUserId(
       userId,
       page,
-      pageSize,
+      limit,
     );
     res.status(200).json(comments);
   }
 
   // 댓글 수정
-  async updateComment(req: Request, res: Response): Promise<void> {
+  async updateComment(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user.user_id;
     const { commentId } = req.params;
-    const comment = await CommentService.updateComment(commentId, req.body);
+    const comment = await CommentService.updateComment(
+      userId,
+      commentId,
+      req.body,
+    );
     res.status(200).json(comment);
   }
 
   // 댓글 삭제
-  async deleteComment(req: Request, res: Response): Promise<void> {
+  async deleteComment(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user.user_id;
     const { commentId } = req.params;
-    const deletedComment = await CommentService.deleteComment(commentId);
-    res.status(200).json(deletedComment);
+    await CommentService.deleteComment(userId, commentId);
+    res.status(200).json({ message: "댓글이 삭제되었습니다." });
+  }
+
+  // 선택 댓글 삭제 (마이페이지)
+  async deleteComments(req: AuthRequest, res: Response) {
+    const userId = req.user.user_id;
+    const { commentIds } = req.body;
+    await CommentService.deleteComments(userId, commentIds);
+    res.status(200).json({ message: "댓글이 삭제되었습니다." });
+  }
+
+  // 자유게시판 모든 댓글 조회 (페이징 처리)
+  async getAllComments(req: Request, res: Response) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const comments = await CommentService.getAllComments(page, limit);
+    res.status(200).json(comments);
+  }
+
+  // 홍보게시판 모든 댓글 조회 (페이징 처리)
+  async getAllPromotionComments(req: Request, res: Response) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const comments = await CommentService.getAllPromotionComments(page, limit);
+    res.status(200).json(comments);
+  }
+
+  // 선택 댓글 삭제 (관리자페이지)
+  async deleteCommentsByAdmin(req: Request, res: Response) {
+    const { commentIds } = req.body;
+    await CommentService.deleteCommentsByAdmin(commentIds);
+    res.status(200).json({ message: "댓글이 삭제되었습니다." });
   }
 }
 

@@ -1,5 +1,7 @@
 import CommentModel, { IComment } from "../models/commentModel";
 import { CreateCommentDTO, UpdateCommentDTO } from "../dtos/commentDto";
+import NotFoundError from "../common/error/NotFoundError";
+import BadRequestError from "../common/error/BadRequestError";
 
 export class CommentRepository {
   // 댓글 생성
@@ -8,29 +10,22 @@ export class CommentRepository {
     return await comment.save();
   }
 
-  // 사용자 아이디로 모든 댓글 조회 (페이징 추가)
-  async findByUserId(
-    userId: string,
-    skip: number,
-    limit: number = 20,
-  ): Promise<IComment[]> {
-    return await CommentModel.find({ user_id: userId })
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
-  }
   // 게시글 아이디로 모든 댓글 조회 (페이징 추가)
   async findByPostId(
     postId: string,
     skip: number,
     limit: number = 20,
-  ): Promise<IComment[]> {
-    return await CommentModel.find({ post: postId })
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+  ): Promise<{ comments: IComment[]; totalComments: number }> {
+    const [comments, totalComments] = await Promise.all([
+      CommentModel.find({ post: postId })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      CommentModel.countDocuments({ post: postId }),
+    ]);
+
+    return { comments, totalComments };
   }
 
   // 홍보 게시글 아이디로 모든 댓글 조회 (페이징 추가)
@@ -38,12 +33,44 @@ export class CommentRepository {
     promotionId: string,
     skip: number,
     limit: number = 20,
-  ): Promise<IComment[]> {
-    return await CommentModel.find({ promotion: promotionId })
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+  ): Promise<{ comments: IComment[]; totalComments: number }> {
+    const [comments, totalComments] = await Promise.all([
+      CommentModel.find({ promotion: promotionId })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      CommentModel.countDocuments({ promotion: promotionId }),
+    ]);
+
+    return { comments, totalComments };
+  }
+
+  // 사용자 아이디로 모든 댓글 조회 (페이징 추가)
+  async findByUserId(
+    userId: string,
+    skip: number,
+    limit: number = 20,
+  ): Promise<{ comments: IComment[]; totalComments: number }> {
+    const [comments, totalComments] = await Promise.all([
+      await CommentModel.find({ user_id: userId })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      CommentModel.countDocuments({ user_id: userId }),
+    ]);
+
+    return { comments, totalComments };
+  }
+
+  // 댓글 조회
+  async findOne(id: string): Promise<IComment> {
+    const comment = await CommentModel.findById(id);
+    if (!comment) {
+      throw new NotFoundError("댓글을 찾을 수 없습니다.");
+    }
+    return comment;
   }
 
   // 댓글 수정
@@ -52,8 +79,61 @@ export class CommentRepository {
   }
 
   // 댓글 삭제
-  async delete(id: string): Promise<IComment | null> {
-    return await CommentModel.findByIdAndDelete(id);
+  async delete(id: string): Promise<void> {
+    await CommentModel.findByIdAndDelete(id);
+  }
+
+  // 선택 댓글 삭제 (마이페이지)
+  async deleteComments(userId: string, commentIds: string[]): Promise<void> {
+    const comments = await CommentModel.find({ _id: { $in: commentIds } });
+
+    for (const comment of comments) {
+      if (comment.user_id.toString() !== userId.toString()) {
+        throw new BadRequestError(
+          "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
+        );
+      }
+    }
+    await CommentModel.deleteMany({ _id: { $in: commentIds } });
+  }
+
+  // 선택 댓글 삭제 (관리자페이지)
+  async deleteCommentsByAdmin(commentIds: string[]): Promise<void> {
+    await CommentModel.deleteMany({ _id: { $in: commentIds } });
+  }
+
+  // 게시글 아이디로 모든 댓글 조회 (페이징 추가)
+  async getPostComments(
+    skip: number,
+    limit: number = 20,
+  ): Promise<{ comments: IComment[]; totalComments: number }> {
+    const [comments, totalComments] = await Promise.all([
+      CommentModel.find({ post: { $exists: true } })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      CommentModel.countDocuments({ post: { $exists: true } }),
+    ]);
+
+    return { comments, totalComments };
+  }
+
+  // 홍보게시판 모든 댓글 조회 (페이징 처리)
+  async getPromotionComments(
+    skip: number,
+    limit: number = 20,
+  ): Promise<{ comments: IComment[]; totalComments: number }> {
+    const [comments, totalComments] = await Promise.all([
+      CommentModel.find({ promotion: { $exists: true } })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec(),
+      CommentModel.countDocuments({ promotion: { $exists: true } }),
+    ]);
+
+    return { comments, totalComments };
   }
 }
 

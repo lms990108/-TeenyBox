@@ -35,6 +35,7 @@ const commentSchema = new Schema<IComment>(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
