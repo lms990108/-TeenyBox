@@ -10,7 +10,7 @@ export class CreateReviewDto {
   content: string;
 
   @IsInt()
-  @IsIn([1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
+  @IsIn([0, 1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
   rate: number;
 }
 

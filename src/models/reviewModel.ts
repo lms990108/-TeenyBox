@@ -15,15 +15,24 @@ export interface IReview extends Document {
 }
 
 const ReviewSchema = new Schema<IReview>({
-  title: { type: String, required: true },
+  title: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (value: string) => {
+        return value.length >= 1 && value.length <= 30;
+      },
+      message: "제목은 1에서 30자 사이어야 합니다.",
+    },
+  },
   content: { type: String, required: true },
-  rate: { type: Number, required: true, index: true },
+  rate: { type: Number, required: true, enum: [0, 1, 2, 3, 4, 5] },
   imageUrls: [{ type: String }],
   userId: { type: String, required: true },
   showId: { type: String, required: true },
   userNickname: { type: String, required: true },
   showTitle: { type: String, required: true },
-  createdAt: Date,
+  createdAt: { type: Date, index: true },
   updatedAt: Date,
   deletedAt: { type: Date, default: null },
 });

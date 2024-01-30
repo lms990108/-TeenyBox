@@ -21,14 +21,14 @@ class ReviewController {
   }
 
   async update(req: AuthRequest, res: Response): Promise<Response> {
-    const reviewid = req.params.id as string;
+    const reviewId = req.params.id as string;
     const userId = req.user.user_id;
     const updateReviewDto = req.body;
     const detailImages = req.files as Express.Multer.File[];
 
     const review = await reviewService.update(
       userId,
-      reviewid,
+      reviewId,
       updateReviewDto,
       detailImages,
     );
