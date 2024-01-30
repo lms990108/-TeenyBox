@@ -274,18 +274,11 @@ const router = express.Router();
  */
 /**
  * @swagger
- * /comments/users/{userId}:
+ * /comments/users:
  *   get:
  *     tags: [comment]
  *     summary: 특정 사용자가 작성한 모든 댓글 조회 (페이징 처리)
  *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: 조회할 사용자의 ID
- *         example: "61576b28b4f03f08f95317ca"
  *       - in: query
  *         name: page
  *         schema:
@@ -764,7 +757,7 @@ router.get(
 
 // 특정 사용자가 작성한 모든 댓글 조회 (페이징 처리)
 router.get(
-  "/users/:userId",
+  "/users",
   authenticateUser,
   asyncHandler(commentController.getCommentsByUserId),
 );

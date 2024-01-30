@@ -46,7 +46,7 @@ class CommentController {
 
   // 특정 사용자가 작성한 모든 댓글 조회 (페이징 처리 추가)
   async getCommentsByUserId(req: AuthRequest, res: Response): Promise<void> {
-    const { userId } = req.params;
+    const userId = req.user.user_id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
 
