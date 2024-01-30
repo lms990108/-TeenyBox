@@ -47,10 +47,9 @@ class ReviewController {
   }
 
   async deleteMany(req: AuthRequest, res: Response): Promise<Response> {
-    const user = req.user;
     const reviewIds = req.body.review_ids;
 
-    await reviewService.deleteMany(user, reviewIds);
+    await reviewService.deleteMany(reviewIds);
 
     return res
       .status(200)

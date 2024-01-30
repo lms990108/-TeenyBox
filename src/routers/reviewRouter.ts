@@ -1,7 +1,10 @@
 import { Router } from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import reviewController from "../controllers/reviewController";
-import { authenticateUser } from "../middlewares/authUserMiddlewares";
+import {
+  authenticateAdmin,
+  authenticateUser,
+} from "../middlewares/authUserMiddlewares";
 import multer from "multer";
 
 /**
@@ -297,7 +300,7 @@ reviewRouter.delete(
 );
 reviewRouter.delete(
   "",
-  authenticateUser,
+  authenticateAdmin,
   asyncHandler(reviewController.deleteMany),
 );
 
