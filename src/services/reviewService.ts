@@ -20,7 +20,16 @@ class reviewService {
   ): Promise<IReview> {
     const user = await userService.getUserById(userId);
     const show = await showService.findShowByShowId(showId);
-    const review = { ...reviewData, detailImages: null };
+
+    const userNickname = user.nickname;
+    const showTitle = show.title;
+
+    const review = {
+      ...reviewData,
+      userNickname,
+      showTitle,
+      detailImages: null,
+    };
 
     const imageUrls = await this.uploadImages(detailImages);
     const createdReview = await reviewRepository.create(
@@ -30,7 +39,7 @@ class reviewService {
       imageUrls,
     );
 
-    this.updateShowAndUser(show, user, createdReview);
+    await this.updateShowAndUser(show, user, createdReview);
 
     return createdReview;
   }
@@ -129,6 +138,13 @@ class reviewService {
       throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
 
     return await reviewRepository.deleteOne(reviewId);
+  }
+
+  async deleteMany(user: IUser, reviewIds: string[]) {
+    if (user.role !== ROLE.ADMIN)
+      throw new ForbiddenError("리뷰 삭제는 관리자만 가능합니다.");
+
+    return await reviewRepository.deleteMany(reviewIds);
   }
 }
 

@@ -49,12 +49,13 @@ import multer from "multer";
  *               type: object
  *               properties:
  *                review:
- *                 type: obejct
- *                 description: 리뷰
+ *                 type: object
+ *                 description: 성공 응답
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "동현123"
+ *                     show_title: "'굿'바이 햄릿"
+ *                     title: "미쳤다!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 5
  *                     created_at: "2024-01-14T08:40:35.440Z"
@@ -107,14 +108,15 @@ import multer from "multer";
  *               type: object
  *               properties:
  *                review:
- *                 type: obejct
+ *                 type: object
  *                 description: 리뷰
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "은리123"
+ *                     show_title: "라이어"
+ *                     title: "역시 라이어!"
  *                     content: "재미있는 공연이에요!"
- *                     rate: 5
+ *                     rate: 4
  *                     created_at: "2024-01-14T08:40:35.440Z"
  *                     updated_at: "2024-01-14T08:40:35.440Z"
  *                     deleted_at: null
@@ -204,8 +206,9 @@ import multer from "multer";
  *                 description: 리뷰 내용
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "동현123"
+ *                     show_title: "'굿'바이 햄릿"
+ *                     title: "미쳤다!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 5
  *                     created_at: "2024-01-14T08:40:35.440Z"
@@ -235,18 +238,39 @@ import multer from "multer";
  *             schema:
  *               type: object
  *               properties:
- *                review:
- *                 type: object
- *                 description: 리뷰 내용
- *                 example:
- *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
- *                     content: "test4"
- *                     rate: 5
- *                     created_at: "2024-01-14T08:40:35.440Z"
- *                     updated_at: "2024-01-14T08:40:35.440Z"
- *                     deleted_at: "2024-01-14T10:05:15.453Z"
+ *                message:
+ *                 type: string
+ *                 description: 성공 메시지
+ *                 example: "리뷰가 성공적으로 삭제되었습니다."
+ */
+
+/**
+ * @swagger
+ * /reviews:
+ *   delete:
+ *     tags: [Review]
+ *     summary: 리뷰 선택 삭제
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *            properties:
+ *             reviewIds:
+ *              type: array
+ *              description: 리뷰 아이디 목록
+ *              example: ["65b80fffe06a9e12cf14fea4", "65b80ffee06a9e12cf14fe9d"]
+ *     responses:
+ *       200:
+ *         description: 삭제 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                message:
+ *                 type: string
+ *                 description: 성공 메시지
+ *                 example: "리뷰가 성공적으로 삭제되었습니다."
  */
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -270,6 +294,11 @@ reviewRouter.delete(
   "/:id",
   authenticateUser,
   asyncHandler(reviewController.deleteOne),
+);
+reviewRouter.delete(
+  "",
+  authenticateUser,
+  asyncHandler(reviewController.deleteMany),
 );
 
 export default reviewRouter;
