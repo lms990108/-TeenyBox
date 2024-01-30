@@ -50,11 +50,12 @@ import multer from "multer";
  *               properties:
  *                review:
  *                 type: object
- *                 description: 리뷰
+ *                 description: 성공 응답
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "동현123"
+ *                     show_title: "'굿'바이 햄릿"
+ *                     title: "미쳤다!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 5
  *                     created_at: "2024-01-14T08:40:35.440Z"
@@ -111,10 +112,11 @@ import multer from "multer";
  *                 description: 리뷰
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "은리123"
+ *                     show_title: "라이어"
+ *                     title: "역시 라이어!"
  *                     content: "재미있는 공연이에요!"
- *                     rate: 5
+ *                     rate: 4
  *                     created_at: "2024-01-14T08:40:35.440Z"
  *                     updated_at: "2024-01-14T08:40:35.440Z"
  *                     deleted_at: null
@@ -204,8 +206,9 @@ import multer from "multer";
  *                 description: 리뷰 내용
  *                 example:
  *                   - _id: "65a39e03a0f46b46abc87a32"
- *                     user_id: "3246926995"
- *                     show_id: "PF233351"
+ *                     user_nickname: "동현123"
+ *                     show_title: "'굿'바이 햄릿"
+ *                     title: "미쳤다!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 5
  *                     created_at: "2024-01-14T08:40:35.440Z"
