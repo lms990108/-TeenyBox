@@ -23,6 +23,7 @@ export interface IShow extends Document {
   schedule?: string;
   poster?: string;
   detail_images?: string[];
+  avg_rating: number;
   reviews?: mongoose.Schema.Types.ObjectId[] | null;
 }
 
@@ -57,6 +58,7 @@ const ShowSchema = new Schema<IShow>(
     schedule: String,
     poster: String,
     detail_images: [String],
+    avg_rating: { type: Number, default: 0 },
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,

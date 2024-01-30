@@ -1,18 +1,18 @@
 import showService from "../../../services/showService";
-import { updateShowsQuery } from "../../../types/updateShowsQuery";
 import logger from "../logger";
 import getBoxofficeInfoJob from "./getBoxofficeInfoJob";
+import { UpdateShowsQuery } from "../../../common/query/updateShowsQuery";
 
 export async function updateShowStatusJob() {
   const today = new Date();
   today.setHours(today.getHours() + 9); // Convert UTC to KST
 
-  const updateEndedShowsQuery: updateShowsQuery = {
+  const updateEndedShowsQuery: UpdateShowsQuery = {
     findQuery: { end_date: { $lt: today } },
     updateQuery: { state: "공연완료" },
   };
 
-  const updateOngoingShowsQuery: updateShowsQuery = {
+  const updateOngoingShowsQuery: UpdateShowsQuery = {
     findQuery: { start_date: { $lte: today }, end_date: { $gt: today } },
     updateQuery: { state: "공연중" },
   };
@@ -20,7 +20,7 @@ export async function updateShowStatusJob() {
   const boxofficeInfos = await getBoxofficeInfoJob(today);
   const updatePromises = boxofficeInfos.map((boxofficeInfo) => {
     const { showId, rank } = boxofficeInfo;
-    const updateRankQuery: updateShowsQuery = {
+    const updateRankQuery: UpdateShowsQuery = {
       findQuery: { showId },
       updateQuery: { rank },
     };

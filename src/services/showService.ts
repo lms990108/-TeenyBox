@@ -2,7 +2,7 @@ import { CreateShowDTO } from "../dtos/showDto";
 import showRepository from "../repositories/showRepository";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
-import { updateShowsQuery } from "../types/updateShowsQuery";
+import { UpdateShowsQuery } from "../common/query/updateShowsQuery";
 
 class showService {
   async createShow(showDetail: CreateShowDTO) {
@@ -26,7 +26,7 @@ class showService {
     return show;
   }
 
-  async updateShowsByQuery(updateShowsQuery: updateShowsQuery) {
+  async updateShowsByQuery(updateShowsQuery: UpdateShowsQuery) {
     const { findQuery, updateQuery } = updateShowsQuery;
 
     const shows = await showRepository.updateShowsByQuery(
@@ -45,19 +45,8 @@ class showService {
     return await showRepository.isShowExist(showId);
   }
 
-  async findShows(
-    title: string,
-    state: string,
-    region: string,
-    page: number,
-    limit: number,
-  ) {
-    const query = {};
-    if (title) query["title"] = { $regex: title, $options: "i" };
-    if (state) query["state"] = state;
-    if (region) query["region"] = region;
-
-    const shows = await showRepository.findShows(query, page, limit);
+  async findShows(match: object, sort, page: number, limit: number) {
+    const shows = await showRepository.findShows(match, sort, page, limit);
 
     if (!shows) {
       throw new NotFoundError(`검색 결과: 해당하는 공연을 찾을 수 없습니다.`);
