@@ -46,13 +46,22 @@ class showService {
   }
 
   async findShows(match: object, sort, page: number, limit: number) {
-    const shows = await showRepository.findShows(match, sort, page, limit);
+    const { shows, total } = await showRepository.findShows(
+      match,
+      sort,
+      page,
+      limit,
+    );
 
     if (!shows) {
       throw new NotFoundError(`검색 결과: 해당하는 공연을 찾을 수 없습니다.`);
     }
 
-    return shows;
+    return { shows, total };
+  }
+
+  async findShowsByRank() {
+    return await showRepository.findShowsByRank();
   }
 
   async findShowByShowId(showId: string) {

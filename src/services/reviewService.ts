@@ -56,8 +56,16 @@ class reviewService {
     user: IUser,
     createdReview: IReview,
   ) {
+    const rating = show.avg_rating;
+    const length = show.reviews.length;
+    const total = rating * length;
+    const newRate = createdReview.rate;
+
     user.review.push(createdReview._id);
     show.reviews.push(createdReview._id);
+
+    show.avg_rating = (total + newRate) / (length + 1);
+
     await user.save();
     await show.save();
   }

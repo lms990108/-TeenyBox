@@ -26,11 +26,22 @@ class showRepository {
   }
 
   async findShows(match: object, sort, page: number, limit: number) {
-    return ShowModel.aggregate([
+    const shows = await ShowModel.aggregate([
       { $match: match },
       { $sort: sort },
       { $limit: limit },
       { $skip: (page - 1) * limit },
+    ]);
+    const total = await ShowModel.countDocuments(match);
+
+    return { shows, total };
+  }
+
+  async findShowsByRank() {
+    return ShowModel.aggregate([
+      { $match: { state: "공연중", rank: { $exists: true } } },
+      { $sort: { rank: 1 } },
+      { $limit: 18 },
     ]);
   }
 

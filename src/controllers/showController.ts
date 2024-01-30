@@ -3,6 +3,8 @@ import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
 import { ReviewModel } from "../models/reviewModel";
 import { ShowOrder } from "../common/enum/showOrder.enum";
+import { IShow } from "../models/showModel";
+import ShowRepository from "../repositories/showRepository";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
@@ -56,45 +58,38 @@ class ShowController {
       }
     }
 
-    const shows = await showService.findShows(match, sort, page, limit);
+    const { shows, total } = await showService.findShows(
+      match,
+      sort,
+      page,
+      limit,
+    );
 
     const showDtos = await Promise.all(
-      shows.map(async (show) => {
-        const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
-        let avgRating = 0;
-
-        if (reviews.length > 0) {
-          const totalRating = reviews.reduce(
-            (sum, review) => sum + review.rate,
-            0,
-          );
-          avgRating = totalRating / reviews.length;
-        }
-
-        const showResponseDto = new ShowResponseDto(show);
-        showResponseDto.avg_rating = avgRating;
-        return showResponseDto;
-      }),
+      shows.map(async (show) => new ShowResponseDto(show)),
     );
 
     return res.status(200).json({
-      shows: showDtos,
+      data: showDtos,
+      meta: {
+        total,
+        page,
+        last_page: Math.ceil(total / limit),
+      },
     });
+  }
+
+  async findShowsByRank(req: Request, res: Response) {
+    const shows = await showService.findShowsByRank();
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
     const showId = req.params.id as string;
     const show = await showService.findShowByShowId(showId);
-    const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
-    let avgRating = 0;
-
-    if (reviews.length > 0) {
-      const totalRating = reviews.reduce((sum, review) => sum + review.rate, 0);
-      avgRating = totalRating / reviews.length;
-    }
-
     const showResponseDto = new ShowResponseDto(show);
-    showResponseDto.avg_rating = avgRating;
 
     return res.status(200).json({ show: showResponseDto });
   }

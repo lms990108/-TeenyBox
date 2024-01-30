@@ -250,6 +250,7 @@ const showRouter = Router();
  */
 
 showRouter.get("/", asyncHandler(ShowController.findShows));
+showRouter.get("/rank", asyncHandler(ShowController.findShowsByRank));
 showRouter.get("/:id", asyncHandler(ShowController.findShowByShowId));
 showRouter.delete(
   "/:id",
