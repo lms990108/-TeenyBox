@@ -1,4 +1,4 @@
-export interface updateShowsQuery {
+export interface UpdateShowsQuery {
   findQuery: object;
   updateQuery: object;
 }

@@ -1,61 +1,99 @@
 import { Request, Response } from "express";
 import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
-import { ReviewModel } from "../models/reviewModel";
+import { ShowOrder } from "../common/enum/showOrder.enum";
+import { IShow } from "../models/showModel";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+    const page = parseInt(req.query.page as string) || undefined;
+    const limit = parseInt(req.query.limit as string) || undefined;
     const title = req.query.title as string;
-    const state = req.query.state as string;
-    const region = req.query.region as string;
+    let state = req.query.state as string | string[];
+    let region = req.query.region as string | string[];
+    const order: ShowOrder = (req.query.order as ShowOrder) || ShowOrder.RECENT;
+    const lowPrice = req.query.lowPrice as string;
+    const highPrice = req.query.highPrice as string;
+    const date = req.query.date as string;
 
-    const shows = await showService.findShows(
-      title,
-      state,
-      region,
+    const match = {};
+    let sort;
+
+    if (title) match["title"] = { $regex: title, $options: "i" };
+
+    if (state && typeof state === "string") {
+      state = [state];
+      match["state"] = { $in: state };
+    } else if (state && Array.isArray(state) && state.length > 1) {
+      match["state"] = { $in: state };
+    }
+
+    if (region && typeof region === "string") {
+      region = [region];
+      match["region"] = { $in: region };
+    } else if (region && Array.isArray(region) && region.length > 1) {
+      match["region"] = { $in: region };
+    }
+
+    if (lowPrice || highPrice) {
+      match["price"] = {};
+      if (lowPrice) match["price"].$gte = lowPrice;
+      if (highPrice) match["price"].$lte = highPrice;
+    }
+
+    if (date) {
+      const parsedDate = new Date(date);
+      match["start_date"] = { $lte: parsedDate };
+      match["end_date"] = { $gte: parsedDate };
+    }
+
+    if (order) {
+      switch (order) {
+        case ShowOrder.RECENT:
+          sort = { created_at: 1 };
+          break;
+        case ShowOrder.HIGH_RATE:
+          sort = { avg_rating: 1 };
+          break;
+        case ShowOrder.LOW_PRICE:
+          sort = { price: 1 };
+          break;
+      }
+    }
+
+    const { shows, total } = await showService.findShows(
+      match,
+      sort,
       page,
       limit,
     );
 
     const showDtos = await Promise.all(
-      shows.map(async (show) => {
-        const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
-        let avgRating = 0;
-
-        if (reviews.length > 0) {
-          const totalRating = reviews.reduce(
-            (sum, review) => sum + review.rate,
-            0,
-          );
-          avgRating = totalRating / reviews.length;
-        }
-
-        const showResponseDto = new ShowResponseDto(show);
-        showResponseDto.avg_rating = avgRating;
-        return showResponseDto;
-      }),
+      shows.map(async (show: IShow) => new ShowResponseDto(show)),
     );
 
     return res.status(200).json({
-      shows: showDtos,
+      data: showDtos,
+      total,
     });
+  }
+
+  async findShowsByRank(req: Request, res: Response) {
+    const shows = await showService.findShowsByRank();
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
+  }
+
+  async findShowsNumberByDate(req: Request, res: Response) {
+    const showsNumberByDate = await showService.findShowsNumberByDate();
+    return res.status(200).json({ showsNumberByDate: showsNumberByDate });
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {
     const showId = req.params.id as string;
     const show = await showService.findShowByShowId(showId);
-    const reviews = await ReviewModel.find({ _id: { $in: show.reviews } });
-    let avgRating = 0;
-
-    if (reviews.length > 0) {
-      const totalRating = reviews.reduce((sum, review) => sum + review.rate, 0);
-      avgRating = totalRating / reviews.length;
-    }
-
     const showResponseDto = new ShowResponseDto(show);
-    showResponseDto.avg_rating = avgRating;
 
     return res.status(200).json({ show: showResponseDto });
   }
