@@ -33,7 +33,6 @@ const ShowSchema = new Schema<IShow>(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     title: { type: String, required: true },
     start_date: { type: Date, required: true },
@@ -49,7 +48,7 @@ const ShowSchema = new Schema<IShow>(
     runtime: String,
     age: String,
     company: String,
-    price: String,
+    price: { type: String },
     description: String,
     state: {
       type: String,
@@ -71,5 +70,7 @@ const ShowSchema = new Schema<IShow>(
     timestamps: true,
   },
 );
+
+ShowSchema.index({ created_at: -1, price: 1, avg_rating: 1 });
 
 export const ShowModel = mongoose.model<IShow>("Show", ShowSchema);
