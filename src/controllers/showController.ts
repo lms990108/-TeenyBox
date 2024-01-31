@@ -2,14 +2,15 @@ import { Request, Response } from "express";
 import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
 import { ShowOrder } from "../common/enum/showOrder.enum";
+import { IShow } from "../models/showModel";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
     const page = parseInt(req.query.page as string) || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const title = req.query.title as string;
-    let state = req.query.state as string | string[];
-    let region = req.query.region as string | string[];
+    const state = req.query.state as string | string[];
+    const region = req.query.region as string | string[];
     const order: ShowOrder = (req.query.order as ShowOrder) || ShowOrder.RECENT;
     const lowPrice = req.query.lowPrice as string;
     const highPrice = req.query.highPrice as string;
@@ -18,27 +19,17 @@ class ShowController {
     let sort;
 
     if (title) match["title"] = { $regex: title, $options: "i" };
-
-    if (state && typeof state === "string") {
-      state = [state];
-      match["state"] = { $in: state };
-    } else if (state && Array.isArray(state) && state.length > 1) {
-      match["state"] = { $in: state };
+    if (state) {
+      match["state"] = Array.isArray(state) ? { $in: state } : [state];
+    }
+    if (region) {
+      match["region"] = Array.isArray(region) ? { $in: region } : [region];
     }
 
-    if (region && typeof region === "string") {
-      region = [region];
-      match["region"] = { $in: region };
-    } else if (region && Array.isArray(region) && region.length > 1) {
-      match["region"] = { $in: region };
-    }
-
-    if (lowPrice && !highPrice) {
-      match["price"] = { $gte: lowPrice };
-    } else if (highPrice && !lowPrice) {
-      match["price"] = { $lte: highPrice };
-    } else if (lowPrice && highPrice) {
-      match["price"] = { $gte: lowPrice, $lte: highPrice };
+    if (lowPrice || highPrice) {
+      match["price"] = {};
+      if (lowPrice) match["price"].$gte = lowPrice;
+      if (highPrice) match["price"].$lte = highPrice;
     }
 
     if (order) {
@@ -63,7 +54,7 @@ class ShowController {
     );
 
     const showDtos = await Promise.all(
-      shows.map(async (show) => new ShowResponseDto(show)),
+      shows.map(async (show: IShow) => new ShowResponseDto(show)),
     );
 
     return res.status(200).json({
