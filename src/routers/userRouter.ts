@@ -502,39 +502,57 @@ const router = express.Router();
  *               type: object
  *               properties:
  *                 bookmarks:
- *                   type: array
- *                   example:
- *                     - showId: "PF229302"
- *                       title: "R.U.R 인류를 삭제하다"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229380_231106_134408.jpg"
- *                       region: "경기/인천"
- *                       company: "이리떼고찰소"
- *                     - showId: "PF228934"
- *                       title: "7층의 섬"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF232481_231214_093851.gif"
- *                       region: "서울"
- *                       company: ""
- *                     - showId: "PF232481"
- *                       title: "2호선 세입자 [대구]"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228269_231020_141133.gif"
- *                       region: "대구"
- *                       company: ""
- *                     - showId: "PF185284"
- *                       title: "12인의 성난 사람들 [부산]"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228558_231025_100855.jpg"
- *                       region: "부산"
- *                       company: ""
- *                     - showId: "PF233557"
- *                       title: "1 HOUR"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF233557_240108_130948.jpg"
- *                       region: "서울"
- *                       company: ""
- *                     - showId: "PF230920"
- *                       title: "(당)신의 재판 [창원]"
- *                       poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229206_231102_135513.jpg"
- *                       region: "경상"
- *                       company: ""
- *
+ *                   type: object
+ *                   properties:
+ *                     validShows:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           showId:
+ *                             type: string
+ *                             description: 공연 ID
+ *                           title:
+ *                             type: string
+ *                             description: 공연 제목
+ *                           poster:
+ *                             type: string
+ *                             description: 포스터 URL
+ *                           location:
+ *                             type: string
+ *                             description: 장소
+ *                           startDate:
+ *                             type: string
+ *                             format: date-time
+ *                             description: 시작 날짜
+ *                           endDate:
+ *                             type: string
+ *                             format: date-time
+ *                             description: 종료 날짜
+ *                           state:
+ *                             type: string
+ *                             description: 공연 상태
+ *                     totalCount:
+ *                       type: number
+ *                       description: 전체 찜 목록의 항목 수
+ *         example:
+ *           bookmarks:
+ *             validShows:
+ *               - showId: "PF185284"
+ *                 title: "2호선 세입자 [서울]"
+ *                 poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF185284_211230_095855.gif"
+ *                 location: "바탕골소극장 (바탕골소극장)"
+ *                 startDate: "2022-01-14T00:00:00.000Z"
+ *                 endDate: "2024-02-29T00:00:00.000Z"
+ *                 state: "공연중"
+ *               - showId: "PF228269"
+ *                 title: "2호선 세입자 [대구]"
+ *                 poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF228269_231020_141133.gif"
+ *                 location: "송죽씨어터 (송죽씨어터)"
+ *                 startDate: "2023-11-22T00:00:00.000Z"
+ *                 endDate: "2024-01-07T00:00:00.000Z"
+ *                 state: "공연완료"
+ *             totalCount: 7
  */
 /**
  * @swagger
