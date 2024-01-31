@@ -291,7 +291,7 @@ reviewRouter.patch(
   upload.array("review_images"),
   asyncHandler(reviewController.update),
 );
-reviewRouter.get("/", asyncHandler(reviewController.findAll));
+reviewRouter.get("/", asyncHandler(reviewController.findReviews));
 reviewRouter.get("/:id", asyncHandler(reviewController.findOne));
 reviewRouter.delete(
   "/:id",

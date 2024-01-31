@@ -33,19 +33,8 @@ class reviewRepository {
     );
   }
 
-  async findAll(page: number, limit: number) {
-    const query = {
-      deletedAt: null,
-    };
-    const reviewsPromise = ReviewModel.find(query)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
-    const totalPromise = ReviewModel.countDocuments(query);
-
-    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
-
-    return { reviews, total };
+  async existByUserIdAndShowId(userId: string, showId: string) {
+    return ReviewModel.exists({ userId, showId });
   }
 
   async findOne(reviewId: string) {
@@ -54,56 +43,21 @@ class reviewRepository {
     });
   }
 
-  async findReviewsByUserId(page: number, limit: number, userId: string) {
-    const query = {
-      userId,
-      deletedAt: null,
-    };
-    const reviewsPromise = ReviewModel.find(query)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
-    const totalPromise = ReviewModel.countDocuments(query);
-
-    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+  async findReviews(match: object, page?: number, limit?: number) {
+    const reviews = await ReviewModel.aggregate([
+      { $match: match },
+      { $sort: { created_at: -1 } },
+      { $skip: (page - 1) * limit },
+      { $limit: limit },
+    ]);
+    const total = await ReviewModel.countDocuments(match);
 
     return { reviews, total };
   }
 
-  async findReviewsByShowId(page: number, limit: number, showId: string) {
-    const query = {
-      showId,
-      deletedAt: null,
-    };
-    const reviewsPromise = ReviewModel.find(query)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
-    const totalPromise = ReviewModel.countDocuments(query);
-
-    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
-
-    return { reviews, total };
-  }
-
-  async findReviewsByUserIdAndShowId(
-    page: number,
-    limit: number,
-    userId: string,
-    showId: string,
-  ) {
-    const query = {
-      userId,
-      showId,
-      deletedAt: null,
-    };
-    const reviewsPromise = ReviewModel.find(query)
-      .limit(limit)
-      .skip((page - 1) * limit)
-      .lean();
-    const totalPromise = ReviewModel.countDocuments(query);
-
-    const [reviews, total] = await Promise.all([reviewsPromise, totalPromise]);
+  async findReviewsWithoutPaging(match: object) {
+    const reviews = await ReviewModel.aggregate([{ $match: match }]);
+    const total = await ReviewModel.countDocuments(match);
 
     return { reviews, total };
   }

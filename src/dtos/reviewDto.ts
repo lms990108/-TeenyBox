@@ -31,6 +31,8 @@ export class ReviewResponseDto {
   _id: string;
   user_nickname: string;
   show_title: string;
+  show_id: string;
+  user_id: string;
   title: string;
   content: string;
   rate: number;
@@ -43,6 +45,8 @@ export class ReviewResponseDto {
     this._id = review._id;
     this.user_nickname = review.userNickname;
     this.show_title = review.showTitle;
+    this.show_id = review.showId;
+    this.user_id = review.userId;
     this.title = review.title;
     this.content = review.content;
     this.rate = review.rate;

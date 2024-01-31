@@ -48,8 +48,8 @@ class ReviewController {
 
   async deleteMany(req: AuthRequest, res: Response): Promise<Response> {
     const reviewIds = req.body.review_ids;
-
-    await reviewService.deleteMany(reviewIds);
+    const user = req.user;
+    await reviewService.deleteMany(user, reviewIds);
 
     return res
       .status(200)
@@ -63,41 +63,26 @@ class ReviewController {
     return res.status(200).json({ review: new ReviewResponseDto(review) });
   }
 
-  async findAll(req: Request, res: Response): Promise<Response> {
-    const page = +req.query.page;
-    const limit = +req.query.limit;
+  async findReviews(req: Request, res: Response): Promise<Response> {
+    const page = parseInt(req.query.page as string) || undefined;
+    const limit = parseInt(req.query.limit as string) || undefined;
     const userId = req.query.userId as string;
     const showId = req.query.showId as string;
-    let reviews: IReview[], total: number;
 
-    if (userId && showId)
-      ({ reviews, total } = await reviewService.findReviewsByUserIdAndShowId(
-        page,
-        limit,
-        userId,
-        showId,
-      ));
-    else if (showId)
-      ({ reviews, total } = await reviewService.findReviewsByShowId(
-        page,
-        limit,
-        showId,
-      ));
-    else if (userId)
-      ({ reviews, total } = await reviewService.findReviewsByUserId(
-        page,
-        limit,
-        userId,
-      ));
-    else ({ reviews, total } = await reviewService.findAll(page, limit));
+    const match = {};
+
+    if (userId) match["userId"] = userId;
+    if (showId) match["showId"] = showId;
+
+    const { reviews, total } = await reviewService.findReviews(
+      match,
+      page,
+      limit,
+    );
 
     return res.status(200).json({
       data: reviews.map((review: IReview) => new ReviewResponseDto(review)),
-      meta: {
-        total,
-        page,
-        last_page: Math.ceil(total / limit),
-      },
+      total,
     });
   }
 }

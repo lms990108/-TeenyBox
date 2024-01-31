@@ -6,10 +6,10 @@ import { IUser } from "../models/userModel";
 import reviewRepository from "../repositories/reviewRepository";
 import showService from "./showService";
 import userService from "./userService";
-import { ROLE } from "../common/enum/enum";
 import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 import NotFoundError from "../common/error/NotFoundError";
 import { IShow } from "../models/showModel";
+import ConflictError from "../common/error/ConflictError";
 
 class reviewService {
   async create(
@@ -18,6 +18,9 @@ class reviewService {
     reviewData: CreateReviewDto,
     detailImages: Express.Multer.File[],
   ): Promise<IReview> {
+    if (await reviewRepository.existByUserIdAndShowId(userId, showId))
+      throw new ConflictError("이미 리뷰를 작성한 공연입니다.");
+
     const user = await userService.getUserById(userId);
     const show = await showService.findShowByShowId(showId);
 
@@ -64,7 +67,10 @@ class reviewService {
     user.review.push(createdReview._id);
     show.reviews.push(createdReview._id);
 
-    show.avg_rating = (total + newRate) / (length + 1);
+    // 소수점 2자리
+    const avgRating = (total + newRate) / (length + 1);
+    const formattedRating = avgRating.toFixed(2);
+    show.avg_rating = parseFloat(formattedRating);
 
     await user.save();
     await show.save();
@@ -77,6 +83,7 @@ class reviewService {
     detailImages: Express.Multer.File[],
   ) {
     const review = await this.findOne(reviewId);
+    const originalRating = review.rate;
 
     if (userId !== review.userId)
       throw new ForbiddenError("리뷰 수정은 작성자만 가능합니다.");
@@ -84,14 +91,38 @@ class reviewService {
     const imagePromises = detailImages.map((image) =>
       uploadImageToS3(image, `reviews/${Date.now()}_${image.originalname}`),
     );
-
     const imageUrls = await Promise.all(imagePromises);
 
-    return await reviewRepository.update(reviewId, reviewData, imageUrls);
+    const updatedReview = await reviewRepository.update(
+      reviewId,
+      reviewData,
+      imageUrls,
+    );
+    const updatedRating = updatedReview.rate;
+
+    if (originalRating !== updatedRating) {
+      const show = await showService.findShowByShowId(updatedReview.showId);
+      await this.updateShowAvgRating(originalRating, updatedRating, show);
+    }
+
+    return updatedReview;
   }
 
-  async findAll(page: number = 0, limit: number = 20) {
-    return await reviewRepository.findAll(page, limit);
+  private async updateShowAvgRating(
+    originalRating: number,
+    updatedRating: number,
+    show: IShow,
+  ) {
+    const rating = show.avg_rating;
+    const length = show.reviews.length;
+    const originalTotal = rating * length;
+    const newTotal = originalTotal - originalRating + updatedRating;
+
+    const avgRating = newTotal / length;
+    const formattedRating = avgRating.toFixed(2);
+    show.avg_rating = parseFloat(formattedRating);
+
+    await show.save();
   }
 
   async findOne(reviewId: string): Promise<IReview> {
@@ -104,51 +135,42 @@ class reviewService {
     return review;
   }
 
-  async findReviewsByUserId(
-    page: number = 0,
-    limit: number = 20,
-    userId: string,
-  ) {
-    await userService.getUserById(userId);
-    return await reviewRepository.findReviewsByUserId(page, limit, userId);
-  }
+  async findReviews(match: object, page?: number, limit?: number) {
+    let reviews, total;
 
-  async findReviewsByShowId(
-    page: number = 0,
-    limit: number = 20,
-    showId: string,
-  ) {
-    await showService.findShowByShowId(showId);
-    return await reviewRepository.findReviewsByShowId(page, limit, showId);
-  }
+    if (page !== undefined && limit !== undefined) {
+      const result = await reviewRepository.findReviews(match, page, limit);
+      reviews = result.reviews;
+      total = result.total;
+    } else {
+      const result = await reviewRepository.findReviewsWithoutPaging(match);
+      reviews = result.reviews;
+      total = result.total;
+    }
 
-  async findReviewsByUserIdAndShowId(
-    page: number = 0,
-    limit: number = 20,
-    userId: string,
-    showId: string,
-  ) {
-    await userService.getUserById(userId);
-    await showService.findShowByShowId(showId);
+    if (!reviews) {
+      throw new NotFoundError(`검색 결과: 해당하는 리뷰를 찾을 수 없습니다.`);
+    }
 
-    return await reviewRepository.findReviewsByUserIdAndShowId(
-      page,
-      limit,
-      userId,
-      showId,
-    );
+    return { reviews, total };
   }
 
   async deleteOne(user: IUser, reviewId: string) {
     const review = await this.findOne(reviewId);
 
-    if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
-      throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
+    if (user.user_id !== review.userId)
+      throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
 
     return await reviewRepository.deleteOne(reviewId);
   }
 
-  async deleteMany(reviewIds: string[]) {
+  async deleteMany(user: IUser, reviewIds: string[]) {
+    for (const reviewId of reviewIds) {
+      const review = await this.findOne(reviewId);
+      if (user.user_id !== review.userId)
+        throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
+    }
+
     return await reviewRepository.deleteMany(reviewIds);
   }
 }
