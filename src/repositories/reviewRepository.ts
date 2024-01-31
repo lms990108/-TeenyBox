@@ -1,6 +1,5 @@
 import { CreateReviewDto, UpdateReviewDto } from "../dtos/reviewDto";
 import { IReview, ReviewModel } from "../models/reviewModel";
-import { ShowModel } from "../models/showModel";
 
 class reviewRepository {
   async create(
