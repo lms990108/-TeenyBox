@@ -9,21 +9,30 @@ class ShowController {
     const page = parseInt(req.query.page as string) || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
     const title = req.query.title as string;
-    const state = req.query.state as string | string[];
-    const region = req.query.region as string | string[];
+    let state = req.query.state as string | string[];
+    let region = req.query.region as string | string[];
     const order: ShowOrder = (req.query.order as ShowOrder) || ShowOrder.RECENT;
     const lowPrice = req.query.lowPrice as string;
     const highPrice = req.query.highPrice as string;
+    const date = req.query.date as string;
 
     const match = {};
     let sort;
 
     if (title) match["title"] = { $regex: title, $options: "i" };
-    if (state) {
-      match["state"] = Array.isArray(state) ? { $in: state } : [state];
+
+    if (state && typeof state === "string") {
+      state = [state];
+      match["state"] = { $in: state };
+    } else if (state && Array.isArray(state) && state.length > 1) {
+      match["state"] = { $in: state };
     }
-    if (region) {
-      match["region"] = Array.isArray(region) ? { $in: region } : [region];
+
+    if (region && typeof region === "string") {
+      region = [region];
+      match["region"] = { $in: region };
+    } else if (region && Array.isArray(region) && region.length > 1) {
+      match["region"] = { $in: region };
     }
 
     if (lowPrice || highPrice) {
@@ -32,10 +41,16 @@ class ShowController {
       if (highPrice) match["price"].$lte = highPrice;
     }
 
+    if (date) {
+      const parsedDate = new Date(date);
+      match["start_date"] = { $lte: parsedDate };
+      match["end_date"] = { $gte: parsedDate };
+    }
+
     if (order) {
       switch (order) {
         case ShowOrder.RECENT:
-          sort = { created_at: -1 };
+          sort = { created_at: 1 };
           break;
         case ShowOrder.HIGH_RATE:
           sort = { avg_rating: 1 };
@@ -67,14 +82,6 @@ class ShowController {
 
   async findShowsByRank(req: Request, res: Response) {
     const shows = await showService.findShowsByRank();
-    return res
-      .status(200)
-      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
-  }
-
-  async findShowsByDate(req: Request, res: Response) {
-    const date = req.query.date as string;
-    const shows = await showService.findShowsByDate(new Date(date));
     return res
       .status(200)
       .json({ shows: shows.map((show) => new ShowResponseDto(show)) });

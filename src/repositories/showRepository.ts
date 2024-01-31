@@ -55,12 +55,6 @@ class showRepository {
     ]);
   }
 
-  async findShowsByDate(date: Date) {
-    return ShowModel.aggregate([
-      { $match: { start_date: { $lte: date }, end_date: { $gte: date } } },
-    ]);
-  }
-
   async findShowsNumberByDate() {
     const startDate = new Date();
     const endDate = new Date();
@@ -108,7 +102,8 @@ class showRepository {
     const currentDate = new Date(start);
 
     while (currentDate <= end) {
-      dateRange.push(new Date(currentDate));
+      const formattedDate = currentDate.toISOString().split("T")[0];
+      dateRange.push(new Date(formattedDate));
       currentDate.setDate(currentDate.getDate() + 1);
     }
 

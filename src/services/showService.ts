@@ -71,10 +71,6 @@ class showService {
     return await showRepository.findShowsByRank();
   }
 
-  async findShowsByDate(date: Date) {
-    return await showRepository.findShowsByDate(date);
-  }
-
   async findShowsNumberByDate() {
     return await showRepository.findShowsNumberByDate();
   }
