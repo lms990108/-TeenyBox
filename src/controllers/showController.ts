@@ -5,8 +5,8 @@ import { ShowOrder } from "../common/enum/showOrder.enum";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+    const page = parseInt(req.query.page as string) || undefined;
+    const limit = parseInt(req.query.limit as string) || undefined;
     const title = req.query.title as string;
     let state = req.query.state as string | string[];
     let region = req.query.region as string | string[];
@@ -50,7 +50,7 @@ class ShowController {
           sort = { avg_rating: 1 };
           break;
         case ShowOrder.LOW_PRICE:
-          sort = { price: -1 };
+          sort = { price: 1 };
           break;
       }
     }
@@ -70,8 +70,6 @@ class ShowController {
       data: showDtos,
       meta: {
         total,
-        page,
-        last_page: Math.ceil(total / limit),
       },
     });
   }

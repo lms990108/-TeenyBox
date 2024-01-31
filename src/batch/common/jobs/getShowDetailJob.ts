@@ -8,6 +8,11 @@ function convertToDate(dateStr: string) {
   return new Date(formattedDate);
 }
 
+export function parsePrice(priceStr: string) {
+  if (priceStr === "전석무료") return "0";
+  return priceStr.replace(/\D/g, "");
+}
+
 function parseShowData(
   xmlData: string,
   latitude: number,
@@ -21,6 +26,7 @@ function parseShowData(
   const show = jsonObj["dbs"]["db"];
   const start_date = convertToDate(show["prfpdfrom"]);
   const end_date = convertToDate(show["prfpdto"]);
+  const price = parsePrice(show["pcseguidance"]);
   const detail_images = show["styurls"] ? show["styurls"]["styurl"] : [];
 
   return {
@@ -38,7 +44,7 @@ function parseShowData(
     runtime: show["prfruntime"],
     age: show["prfage"],
     company: show["entrpsnm"],
-    price: show["pcseguidance"],
+    price: price,
     description: show["sty"],
     state: show["prfstate"],
     schedule: show["dtguidance"],

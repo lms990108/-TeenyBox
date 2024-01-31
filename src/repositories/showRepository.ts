@@ -25,12 +25,22 @@ class showRepository {
     return ShowModel.findOne({ showId });
   }
 
-  async findShows(match: object, sort, page: number, limit: number) {
+  async findShows(match: object, sort, page?: number, limit?: number) {
     const shows = await ShowModel.aggregate([
       { $match: match },
       { $sort: sort },
       { $limit: limit },
       { $skip: (page - 1) * limit },
+    ]);
+    const total = await ShowModel.countDocuments(match);
+
+    return { shows, total };
+  }
+
+  async findShowsWithoutPaging(match: object, sort) {
+    const shows = await ShowModel.aggregate([
+      { $match: match },
+      { $sort: sort },
     ]);
     const total = await ShowModel.countDocuments(match);
 

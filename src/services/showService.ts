@@ -45,13 +45,20 @@ class showService {
     return await showRepository.isShowExist(showId);
   }
 
-  async findShows(match: object, sort, page: number, limit: number) {
-    const { shows, total } = await showRepository.findShows(
-      match,
-      sort,
-      page,
-      limit,
-    );
+  async findShows(match: object, sort, page?: number, limit?: number) {
+    let shows, total;
+
+    if (page !== undefined && limit !== undefined) {
+      // 페이지네이션을 수행하는 코드
+      const result = await showRepository.findShows(match, sort, page, limit);
+      shows = result.shows;
+      total = result.total;
+    } else {
+      // 페이지네이션 없이 모든 결과를 가져오는 코드
+      const result = await showRepository.findShowsWithoutPaging(match, sort);
+      shows = result.shows;
+      total = result.total;
+    }
 
     if (!shows) {
       throw new NotFoundError(`검색 결과: 해당하는 공연을 찾을 수 없습니다.`);
