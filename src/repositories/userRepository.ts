@@ -52,10 +52,14 @@ class UserRepository {
   }
 
   // 유저 찜 목록
-  async getBookmarks(userId: string, page: number, limit: number) {
+  async getBookmarks(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<{ validShows: Array<object>; totalCount: number }> {
     const user = await UserModel.findById(userId);
-
     const showIds = user.dibs.reverse();
+    const totalCount = showIds.length;
 
     const paginatedShowIds = showIds.slice((page - 1) * limit, page * limit);
 
@@ -68,8 +72,10 @@ class UserRepository {
             showId: show.showId,
             title: show.title,
             poster: show.poster,
-            region: show.region,
-            company: show.company,
+            location: show.location,
+            startDate: show.start_date,
+            endDate: show.end_date,
+            state: show.state,
           };
         } else {
           return null;
@@ -79,7 +85,7 @@ class UserRepository {
 
     const validShows = shows.filter((show) => show !== null);
 
-    return validShows;
+    return { validShows, totalCount };
   }
 
   // 찜 여부

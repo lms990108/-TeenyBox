@@ -12,7 +12,7 @@ export function generateToken(user: IUser): string {
     nickname: user.nickname,
   };
   const token = jwt.sign(payload, SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "3600000", // 1시간
   });
   return token;
 }
@@ -25,7 +25,7 @@ export function generateRefreshToken(user: IUser): string {
     nickname: user.nickname,
   };
   const refreshToken = jwt.sign(payload, SECRET_KEY, {
-    expiresIn: "14d",
+    expiresIn: "1209600000", // 14일
   });
   return refreshToken;
 }

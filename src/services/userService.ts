@@ -346,7 +346,11 @@ export class UserService {
   }
 
   // 유저 찜 목록
-  async getBookmarks(userId: string, page: number, limit: number) {
+  async getBookmarks(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<{ validShows: Array<object>; totalCount: number }> {
     const bookmarks = await UserRepository.getBookmarks(userId, page, limit);
     if (!bookmarks) {
       throw new NotFoundError("찜 목록을 조회할 수 없습니다.");
