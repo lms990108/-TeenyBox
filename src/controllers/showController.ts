@@ -53,7 +53,7 @@ class ShowController {
           sort = { created_at: 1 };
           break;
         case ShowOrder.HIGH_RATE:
-          sort = { avg_rating: 1 };
+          sort = { avg_rating: -1 };
           break;
         case ShowOrder.LOW_PRICE:
           sort = { price: 1 };
