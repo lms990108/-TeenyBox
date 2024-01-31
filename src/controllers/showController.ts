@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
-import { ReviewModel } from "../models/reviewModel";
 import { ShowOrder } from "../common/enum/showOrder.enum";
-import { IShow } from "../models/showModel";
-import ShowRepository from "../repositories/showRepository";
 
 class ShowController {
   async findShows(req: Request, res: Response): Promise<Response> {
@@ -47,7 +44,7 @@ class ShowController {
     if (order) {
       switch (order) {
         case ShowOrder.RECENT:
-          sort = { updated_at: -1 };
+          sort = { created_at: -1 };
           break;
         case ShowOrder.HIGH_RATE:
           sort = { avg_rating: 1 };
@@ -84,6 +81,19 @@ class ShowController {
     return res
       .status(200)
       .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
+  }
+
+  async findShowsByDate(req: Request, res: Response) {
+    const date = req.query.date as string;
+    const shows = await showService.findShowsByDate(new Date(date));
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
+  }
+
+  async findShowsNumberByDate(req: Request, res: Response) {
+    const showsNumberByDate = await showService.findShowsNumberByDate();
+    return res.status(200).json({ showsNumberByDate: showsNumberByDate });
   }
 
   async findShowByShowId(req: Request, res: Response): Promise<Response> {

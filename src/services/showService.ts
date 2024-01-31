@@ -64,6 +64,14 @@ class showService {
     return await showRepository.findShowsByRank();
   }
 
+  async findShowsByDate(date: Date) {
+    return await showRepository.findShowsByDate(date);
+  }
+
+  async findShowsNumberByDate() {
+    return await showRepository.findShowsNumberByDate();
+  }
+
   async findShowByShowId(showId: string) {
     const show = await showRepository.findShowByShowId(showId);
 
