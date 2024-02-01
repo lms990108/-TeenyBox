@@ -29,8 +29,8 @@ class showRepository {
     const shows = await ShowModel.aggregate([
       { $match: match },
       { $sort: sort },
-      { $limit: limit },
       { $skip: (page - 1) * limit },
+      { $limit: limit },
     ]);
     const total = await ShowModel.countDocuments(match);
 
