@@ -105,7 +105,17 @@ class UserController {
   async getUser(req: AuthRequest, res: Response) {
     const userId: string = req.user.user_id;
     const user = await UserService.getUserById(userId);
-    return res.status(200).json({ user });
+
+    const userData: UserDto.UserResponseDTO = {
+      _id: user._id,
+      user_id: user.user_id,
+      social_provider: user.social_provider,
+      nickname: user.nickname,
+      profile_url: user.profile_url,
+      interested_area: user.interested_area,
+      role: user.role,
+    };
+    return res.status(200).json({ user: userData });
   }
 
   async updateUser(req: AuthRequest, res: Response) {

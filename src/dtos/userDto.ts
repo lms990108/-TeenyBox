@@ -1,15 +1,7 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsEnum,
-  IsDate,
-  IsOptional,
-} from "class-validator";
-import { ROLE, STATE, SOCIAL } from "../common/enum/enum";
+import { IsString, IsNotEmpty, IsEnum, IsOptional } from "class-validator";
+import { SOCIAL } from "../common/enum/enum";
 import { Union } from "../common/enum/CustomUnion";
 
-type Role = Union<typeof ROLE>;
-type State = Union<typeof STATE>;
 type Social = Union<typeof SOCIAL>;
 
 export class UserRequestDTO {
@@ -37,46 +29,13 @@ export class UserRequestDTO {
 }
 
 export class UserResponseDTO {
-  @IsString()
-  @IsNotEmpty()
   _id: string;
-
-  @IsString()
-  @IsNotEmpty()
   user_id: string;
-
-  @IsEnum(SOCIAL)
-  @IsNotEmpty()
-  social_provider: Social;
-
-  @IsString()
-  @IsNotEmpty()
+  social_provider: string;
   nickname: string;
-
-  @IsString()
-  @IsNotEmpty()
   profile_url: string;
-
-  @IsString()
-  @IsNotEmpty()
   interested_area: string;
-
-  @IsEnum(ROLE)
-  @IsNotEmpty()
-  role: Role;
-
-  @IsEnum(STATE)
-  @IsNotEmpty()
-  state: State;
-
-  @IsDate()
-  created_at: Date;
-
-  @IsDate()
-  updated_at: Date;
-
-  @IsDate()
-  deleted_at: Date | null;
+  role: string;
 }
 
 export class SocialUserDataDTO {
