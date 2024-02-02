@@ -1,4 +1,3 @@
-import BadRequestError from "../common/error/BadRequestError";
 import ForbiddenError from "../common/error/ForbiddenError";
 import { CreateReviewDto, UpdateReviewDto } from "../dtos/reviewDto";
 import { IReview } from "../models/reviewModel";
@@ -10,6 +9,8 @@ import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 import NotFoundError from "../common/error/NotFoundError";
 import { IShow } from "../models/showModel";
 import ConflictError from "../common/error/ConflictError";
+import { Schema } from "mongoose";
+import { ROLE } from "../common/enum/enum";
 
 class reviewService {
   async create(
@@ -130,23 +131,13 @@ class reviewService {
     if (!review) {
       throw new NotFoundError("존재하지 않는 리뷰입니다.");
     }
-    if (review.deletedAt != null)
-      throw new BadRequestError("이미 삭제된 리뷰입니다.");
     return review;
   }
 
   async findReviews(match: object, page?: number, limit?: number) {
-    let reviews, total;
-
-    if (page !== undefined && limit !== undefined) {
-      const result = await reviewRepository.findReviews(match, page, limit);
-      reviews = result.reviews;
-      total = result.total;
-    } else {
-      const result = await reviewRepository.findReviewsWithoutPaging(match);
-      reviews = result.reviews;
-      total = result.total;
-    }
+    const { reviews, total } = limit
+      ? await reviewRepository.findReviews(match, page, limit)
+      : await reviewRepository.findReviewsWithoutPaging(match);
 
     if (!reviews) {
       throw new NotFoundError(`검색 결과: 해당하는 리뷰를 찾을 수 없습니다.`);
@@ -158,20 +149,69 @@ class reviewService {
   async deleteOne(user: IUser, reviewId: string) {
     const review = await this.findOne(reviewId);
 
-    if (user.user_id !== review.userId)
-      throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
+    if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
+      throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
 
-    return await reviewRepository.deleteOne(reviewId);
+    // 리뷰를 삭제하기 전, 총 평점 기록
+    const showId = review.showId;
+    const show = await showService.findShowByShowId(showId);
+
+    const { totalRating, notExcludedReviewIds } =
+      await this.calculateTotalRating(show.reviews, reviewId);
+
+    await reviewRepository.deleteOne(reviewId);
+    await this.updateRating(show, totalRating, notExcludedReviewIds);
   }
 
   async deleteMany(user: IUser, reviewIds: string[]) {
     for (const reviewId of reviewIds) {
       const review = await this.findOne(reviewId);
-      if (user.user_id !== review.userId)
-        throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
+      if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
+        throw new ForbiddenError(
+          "리뷰 삭제는 작성자 또는 관리자만 가능합니다.",
+        );
+
+      const showId = review.showId;
+      const show = await showService.findShowByShowId(showId);
+
+      const { totalRating, notExcludedReviewIds } =
+        await this.calculateTotalRating(show.reviews, reviewId);
+
+      await reviewRepository.deleteOne(reviewId);
+      await this.updateRating(show, totalRating, notExcludedReviewIds);
+    }
+  }
+
+  private async calculateTotalRating(
+    reviewIds: Schema.Types.ObjectId[],
+    excludedReviewId: string,
+  ) {
+    const notExcludedReviewIds = [];
+    let totalRating = 0;
+
+    for (const rId of reviewIds) {
+      const reviewIdStr = rId.toString();
+      if (reviewIdStr !== excludedReviewId) {
+        const r = await this.findOne(reviewIdStr.toString());
+        totalRating += r.rate;
+        notExcludedReviewIds.push(rId);
+      }
     }
 
-    return await reviewRepository.deleteMany(reviewIds);
+    return { totalRating, notExcludedReviewIds };
+  }
+
+  private async updateRating(
+    show: IShow,
+    totalRating: number,
+    notExcludedReviews: Schema.Types.ObjectId[],
+  ) {
+    const length = notExcludedReviews.length;
+
+    show.reviews = notExcludedReviews;
+    show.avg_rating = length > 0 ? totalRating / length : 0;
+
+    await show.save();
   }
 }
 

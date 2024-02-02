@@ -30,14 +30,6 @@ export class CreateShowDTO {
   detail_images?: string[];
 }
 
-export class SearchShowDTO {
-  public title: string = "";
-  public status: string = "";
-  public region: string = "";
-  public page: number = 1;
-  public limit: number = 20;
-}
-
 export class ShowResponseDto {
   showId: string;
   title: string;
@@ -62,6 +54,8 @@ export class ShowResponseDto {
   detail_images?: string[];
   avg_rating: number;
   review_num: number = 0;
+  created_at: Date;
+  updated_at: Date;
 
   constructor(show: IShow) {
     this.showId = show.showId;
@@ -87,5 +81,7 @@ export class ShowResponseDto {
     this.detail_images = show.detail_images;
     this.review_num = show.reviews?.length;
     this.avg_rating = show.avg_rating;
+    this.created_at = show.created_at;
+    this.updated_at = show.updated_at;
   }
 }

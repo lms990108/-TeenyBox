@@ -34,12 +34,13 @@ class reviewRepository {
   }
 
   async existByUserIdAndShowId(userId: string, showId: string) {
-    return ReviewModel.exists({ userId, showId });
+    return ReviewModel.exists({ userId, showId, deletedAt: null });
   }
 
   async findOne(reviewId: string) {
     return ReviewModel.findOne({
       _id: reviewId,
+      deletedAt: null,
     });
   }
 
