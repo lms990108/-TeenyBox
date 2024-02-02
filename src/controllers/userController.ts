@@ -176,8 +176,8 @@ class UserController {
 
   async getAllUsers(req: Request, res: Response) {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const users = await UserService.getAllUsers(page);
-    return res.status(200).json({ users });
+    const { users, totalUsers } = await UserService.getAllUsers(page);
+    return res.status(200).json({ users, totalUsers });
   }
 
   async deleteUsers(req: Request, res: Response) {

@@ -601,6 +601,13 @@ const router = express.Router();
  *   get:
  *     tags: [user]
  *     summary: 전체 회원 조회(관리자 페이지)
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: |
+ *           페이지 번호 (기본값: 1)
  *     responses:
  *       200:
  *         description: 전체 회원 조회 성공
@@ -611,29 +618,36 @@ const router = express.Router();
  *               properties:
  *                 users:
  *                   type: array
- *                   example:
- *                     - user_id: "3145587907"
- *                       social_provider: "kakao"
- *                       nickname: "아아아"
- *                       profile_url: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                       interested_area: "제주"
- *                       role: "user"
- *                       state: "가입"
- *                     - user_id: "0000000000"
- *                       social_provider: "kakao"
- *                       nickname: "햄거버"
- *                       profile_url: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                       interested_area: "제주"
- *                       role: "user"
- *                       state: "가입"
- *                     - user_id: "0000000000"
- *                       social_provider: "kakao"
- *                       nickname: "햄거버"
- *                       profile_url: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                       interested_area: "제주"
- *                       role: "user"
- *                       state: "가입"
- *
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       user_id:
+ *                         type: string
+ *                         example: "3145587907"
+ *                       social_provider:
+ *                         type: string
+ *                         example: "kakao"
+ *                       nickname:
+ *                         type: string
+ *                         example: "은리카카오"
+ *                       role:
+ *                         type: string
+ *                         example: "admin"
+ *                       state:
+ *                         type: string
+ *                         example: "가입"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-01-31T13:57:30.983Z"
+ *                       deletedAt:
+ *                         type: string
+ *                         nullable: true
+ *                         format: date-time
+ *                         example: null
+ *                 totalUsers:
+ *                   type: integer
+ *                   example: 14
  */
 /**
  * @swagger
