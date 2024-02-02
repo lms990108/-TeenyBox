@@ -40,6 +40,7 @@ class reviewRepository {
   async findOne(reviewId: string) {
     return ReviewModel.findOne({
       _id: reviewId,
+      deletedAt: null,
     });
   }
 

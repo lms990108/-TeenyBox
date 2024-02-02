@@ -1,4 +1,3 @@
-import BadRequestError from "../common/error/BadRequestError";
 import ForbiddenError from "../common/error/ForbiddenError";
 import { CreateReviewDto, UpdateReviewDto } from "../dtos/reviewDto";
 import { IReview } from "../models/reviewModel";
@@ -132,8 +131,6 @@ class reviewService {
     if (!review) {
       throw new NotFoundError("존재하지 않는 리뷰입니다.");
     }
-    if (review.deletedAt != null)
-      throw new BadRequestError("이미 삭제된 리뷰입니다.");
     return review;
   }
 
