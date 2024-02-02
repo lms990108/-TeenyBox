@@ -4,6 +4,7 @@ export interface IComment extends Document {
   content: string;
   user_id: mongoose.Schema.Types.ObjectId;
   user_nickname: string;
+  user_profile_url: string;
   post: mongoose.Schema.Types.ObjectId;
   promotion: mongoose.Schema.Types.ObjectId;
   createdAt?: Date;
@@ -21,6 +22,10 @@ const commentSchema = new Schema<IComment>(
       required: true,
     },
     user_nickname: {
+      type: String,
+      required: true,
+    },
+    user_profile_url: {
       type: String,
       required: true,
     },
