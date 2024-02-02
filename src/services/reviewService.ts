@@ -10,6 +10,8 @@ import { uploadImageToS3 } from "../common/utils/awsS3Utils";
 import NotFoundError from "../common/error/NotFoundError";
 import { IShow } from "../models/showModel";
 import ConflictError from "../common/error/ConflictError";
+import { Schema } from "mongoose";
+import { ROLE } from "../common/enum/enum";
 
 class reviewService {
   async create(
@@ -159,19 +161,68 @@ class reviewService {
     const review = await this.findOne(reviewId);
 
     if (user.user_id !== review.userId)
-      throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
+      throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
 
-    return await reviewRepository.deleteOne(reviewId);
+    // 리뷰를 삭제하기 전, 총 평점 기록
+    const showId = review.showId;
+    const show = await showService.findShowByShowId(showId);
+
+    const { totalRating, notExcludedReviewIds } =
+      await this.calculateTotalRating(show.reviews, reviewId);
+
+    await reviewRepository.deleteOne(reviewId);
+    await this.updateRating(show, totalRating, notExcludedReviewIds);
   }
 
   async deleteMany(user: IUser, reviewIds: string[]) {
     for (const reviewId of reviewIds) {
       const review = await this.findOne(reviewId);
-      if (user.user_id !== review.userId)
-        throw new ForbiddenError("리뷰 삭제는 작성자만 가능합니다.");
+      if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
+        throw new ForbiddenError(
+          "리뷰 삭제는 작성자 또는 관리자만 가능합니다.",
+        );
+
+      const showId = review.showId;
+      const show = await showService.findShowByShowId(showId);
+
+      const { totalRating, notExcludedReviewIds } =
+        await this.calculateTotalRating(show.reviews, reviewId);
+
+      await reviewRepository.deleteOne(reviewId);
+      await this.updateRating(show, totalRating, notExcludedReviewIds);
+    }
+  }
+
+  private async calculateTotalRating(
+    reviewIds: Schema.Types.ObjectId[],
+    excludedReviewId: string,
+  ) {
+    const notExcludedReviewIds = [];
+    let totalRating = 0;
+
+    for (const rId of reviewIds) {
+      const reviewIdStr = rId.toString();
+      if (reviewIdStr !== excludedReviewId) {
+        const r = await this.findOne(reviewIdStr.toString());
+        totalRating += r.rate;
+        notExcludedReviewIds.push(rId);
+      }
     }
 
-    return await reviewRepository.deleteMany(reviewIds);
+    return { totalRating, notExcludedReviewIds };
+  }
+
+  private async updateRating(
+    show: IShow,
+    totalRating: number,
+    notExcludedReviews: Schema.Types.ObjectId[],
+  ) {
+    const length = notExcludedReviews.length;
+
+    show.reviews = notExcludedReviews;
+    show.avg_rating = length > 0 ? totalRating / length : 0;
+
+    await show.save();
   }
 }
 
