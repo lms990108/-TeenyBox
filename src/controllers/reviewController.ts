@@ -69,7 +69,7 @@ class ReviewController {
     const userId = req.query.userId as string;
     const showId = req.query.showId as string;
 
-    const match = {};
+    const match = { deletedAt: null };
 
     if (userId) match["userId"] = userId;
     if (showId) match["showId"] = showId;

@@ -142,18 +142,6 @@ class reviewService {
       ? await reviewRepository.findReviews(match, page, limit)
       : await reviewRepository.findReviewsWithoutPaging(match);
 
-    // let reviews, total;
-    //
-    // if (page !== undefined && limit !== undefined) {
-    //   const result = await reviewRepository.findReviews(match, page, limit);
-    //   reviews = result.reviews;
-    //   total = result.total;
-    // } else {
-    //   const result = await reviewRepository.findReviewsWithoutPaging(match);
-    //   reviews = result.reviews;
-    //   total = result.total;
-    // }
-
     if (!reviews) {
       throw new NotFoundError(`검색 결과: 해당하는 리뷰를 찾을 수 없습니다.`);
     }
