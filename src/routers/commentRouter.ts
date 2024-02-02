@@ -59,6 +59,10 @@ const router = express.Router();
  *                   type: string
  *                   description: 사용자 닉네임
  *                   example: "john_doe"
+ *                 user_profile_url:
+ *                   type: string
+ *                   description: 사용자 프로필 url
+ *                   example: "https://elice-5th.s3.amazonaws.com/users/1706709450528_KakaoTalk_Photo_2023-08-25-20-53-41 003.jpeg"
  *                 post:
  *                   type: string
  *                   description: 게시글 ID
@@ -136,6 +140,10 @@ const router = express.Router();
  *                         type: string
  *                         description: 사용자 닉네임
  *                         example: "user123"
+ *                       user_profile_url:
+ *                         type: string
+ *                         description: 사용자 프로필 url
+ *                         example: "https://elice-5th.s3.amazonaws.com/users/1706709450528_KakaoTalk_Photo_2023-08-25-20-53-41 003.jpeg"
  *                       post:
  *                         type: string
  *                         description: 게시글 ID
@@ -232,6 +240,10 @@ const router = express.Router();
  *                         type: string
  *                         description: 사용자 닉네임
  *                         example: "user123"
+ *                       user_profile_url:
+ *                         type: string
+ *                         description: 사용자 프로필 url
+ *                         example: "https://elice-5th.s3.amazonaws.com/users/1706709450528_KakaoTalk_Photo_2023-08-25-20-53-41 003.jpeg"
  *                       post:
  *                         type: string
  *                         description: 게시글 ID
@@ -321,6 +333,10 @@ const router = express.Router();
  *                         type: string
  *                         description: 댓글 작성자의 닉네임
  *                         example: "user123"
+ *                       user_profile_url:
+ *                         type: string
+ *                         description: 사용자 프로필 url
+ *                         example: "https://elice-5th.s3.amazonaws.com/users/1706709450528_KakaoTalk_Photo_2023-08-25-20-53-41 003.jpeg"
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -387,6 +403,10 @@ const router = express.Router();
  *                   type: string
  *                   description: 댓글 작성자의 닉네임
  *                   example: "user123"
+ *                 user_profile_url:
+ *                   type: string
+ *                   description: 사용자 프로필 url
+ *                   example: "https://elice-5th.s3.amazonaws.com/users/1706709450528_KakaoTalk_Photo_2023-08-25-20-53-41 003.jpeg"
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -580,6 +600,9 @@ const router = express.Router();
  *                       user_nickname:
  *                         type: string
  *                         description: 작성자의 닉네임
+ *                       user_profile_url:
+ *                         type: string
+ *                         description: 사용자 프로필 url
  *                       post:
  *                         type: string
  *                         description: 댓글이 작성된 게시글의 ID
@@ -658,6 +681,9 @@ const router = express.Router();
  *                       user_nickname:
  *                         type: string
  *                         description: 작성자의 닉네임
+ *                       user_profile_url:
+ *                         type: string
+ *                         description: 사용자 프로필 url
  *                       post:
  *                         type: string
  *                         description: 댓글이 작성된 게시글의 ID

@@ -378,17 +378,19 @@ export class UserService {
   }
 
   // 전체 회원 목록 조회(관리자 페이지)
-  async getAllUsers(page: number): Promise<IUser[]> {
+  async getAllUsers(
+    page: number,
+  ): Promise<{ users: IUser[]; totalUsers: number }> {
     const limit = 20;
     const skip = (page - 1) * limit;
 
-    const users = await UserRepository.getUsers(skip, limit);
+    const { users, totalUsers } = await UserRepository.getUsers(skip, limit);
 
     if (!users) {
       throw new NotFoundError("전체 회원 목록을 조회할 수 없습니다.");
     }
 
-    return users;
+    return { users, totalUsers };
   }
 
   // 선택한 회원 탈퇴(관리자 페이지)

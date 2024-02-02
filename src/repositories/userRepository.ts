@@ -115,8 +115,19 @@ class UserRepository {
   }
 
   // 전체 회원 목록 조회(관리자 페이지)
-  async getUsers(skip: number, limit: number): Promise<IUser[]> {
-    return await UserModel.find().skip(skip).limit(limit);
+  async getUsers(
+    skip: number,
+    limit: number,
+  ): Promise<{ users: IUser[]; totalUsers: number }> {
+    const users = await UserModel.find()
+      .skip(skip)
+      .limit(limit)
+      .select(
+        "_id user_id social_provider nickname role state createdAt deletedAt",
+      );
+    const totalUsers = await UserModel.countDocuments();
+
+    return { users, totalUsers };
   }
 
   // 선택한 회원 탈퇴(관리자 페이지)
