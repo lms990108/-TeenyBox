@@ -23,6 +23,7 @@ const router = express.Router();
  *       content:
  *         multipart/form-data:
  *           schema:
+ *             type: object
  *             properties:
  *               user_id:
  *                 type: string
@@ -373,6 +374,7 @@ const router = express.Router();
  *       content:
  *         multipart/form-data:
  *           schema:
+ *             type: object
  *             properties:
  *               user_id:
  *                 type: string
