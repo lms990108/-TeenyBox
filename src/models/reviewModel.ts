@@ -26,7 +26,11 @@ const ReviewSchema = new Schema<IReview>({
     },
   },
   content: { type: String, required: true },
-  rate: { type: Number, required: true, enum: [0, 1, 2, 3, 4, 5] },
+  rate: {
+    type: Number,
+    required: true,
+    enum: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+  },
   imageUrls: [{ type: String }],
   userId: { type: String, required: true },
   showId: { type: String, required: true },
