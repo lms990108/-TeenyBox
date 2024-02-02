@@ -17,6 +17,7 @@ class CommentService {
         ...dto,
         user_id: userId,
         user_nickname: user.nickname,
+        user_profile_url: user.profile_url,
       };
 
       const newComment = await CommentRepository.create(commentData);
