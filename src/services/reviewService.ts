@@ -138,17 +138,21 @@ class reviewService {
   }
 
   async findReviews(match: object, page?: number, limit?: number) {
-    let reviews, total;
+    const { reviews, total } = limit
+      ? await reviewRepository.findReviews(match, page, limit)
+      : await reviewRepository.findReviewsWithoutPaging(match);
 
-    if (page !== undefined && limit !== undefined) {
-      const result = await reviewRepository.findReviews(match, page, limit);
-      reviews = result.reviews;
-      total = result.total;
-    } else {
-      const result = await reviewRepository.findReviewsWithoutPaging(match);
-      reviews = result.reviews;
-      total = result.total;
-    }
+    // let reviews, total;
+    //
+    // if (page !== undefined && limit !== undefined) {
+    //   const result = await reviewRepository.findReviews(match, page, limit);
+    //   reviews = result.reviews;
+    //   total = result.total;
+    // } else {
+    //   const result = await reviewRepository.findReviewsWithoutPaging(match);
+    //   reviews = result.reviews;
+    //   total = result.total;
+    // }
 
     if (!reviews) {
       throw new NotFoundError(`검색 결과: 해당하는 리뷰를 찾을 수 없습니다.`);
@@ -160,7 +164,7 @@ class reviewService {
   async deleteOne(user: IUser, reviewId: string) {
     const review = await this.findOne(reviewId);
 
-    if (user.user_id !== review.userId)
+    if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
       throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
 
     // 리뷰를 삭제하기 전, 총 평점 기록
