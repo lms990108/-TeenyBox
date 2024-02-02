@@ -1,5 +1,5 @@
 import { IReview } from "../models/reviewModel";
-import { IsIn, IsInt, IsString, Length } from "class-validator";
+import { IsIn, IsNumber, IsString, Length } from "class-validator";
 
 export class CreateReviewDto {
   @IsString()
@@ -9,8 +9,10 @@ export class CreateReviewDto {
   @IsString()
   content: string;
 
-  @IsInt()
-  @IsIn([0, 1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
+  @IsNumber()
+  @IsIn([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], {
+    message: "Invalid Rate",
+  })
   rate: number;
 }
 
@@ -22,8 +24,10 @@ export class UpdateReviewDto {
   @IsString()
   content: string;
 
-  @IsInt()
-  @IsIn([1, 2, 3, 4, 5], { message: "평점은 1부터 5까지만 가능합니다." })
+  @IsNumber()
+  @IsIn([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], {
+    message: "Invalid Rate",
+  })
   rate: number;
 }
 
