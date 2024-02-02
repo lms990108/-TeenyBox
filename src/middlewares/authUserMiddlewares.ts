@@ -10,36 +10,6 @@ export interface AuthRequest extends Request {
   user: IUser | null;
 }
 
-// 로그인 상태 확인 미들웨어
-export const checkLoginStatus = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const accessToken = req.cookies.token as string;
-    if (!accessToken) {
-      res.status(401).json({ isLoggedIn: false });
-      return;
-    }
-    const foundUser = await findByToken(accessToken);
-    if (!foundUser) {
-      res.status(401).json({ isLoggedIn: false });
-      return;
-    }
-    req.isLoggedIn = true;
-    req.user = foundUser;
-    if (req.user) {
-      res.status(200).json({ isLoggedIn: true, user: req.user });
-    } else {
-      res.status(401).json({ isLoggedIn: false });
-    }
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
-
 // 사용자 인증 미들웨어
 export const authenticateUser = async (
   req: AuthRequest,

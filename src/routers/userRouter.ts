@@ -1,7 +1,6 @@
 import express from "express";
 import UserController from "../controllers/userController";
 import {
-  checkLoginStatus,
   authenticateUser,
   authenticateAdmin,
 } from "../middlewares/authUserMiddlewares";
@@ -293,55 +292,6 @@ const router = express.Router();
  *                   type: string
  *                   description: Description of the property
  *                   example: "로그아웃 되었습니다."
- */
-/**
- * @swagger
- * /users/login-status:
- *   get:
- *     tags: [user]
- *     summary: 사용자 로그인상태 확인
- *     responses:
- *       200:
- *         description: 로그인 true
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 isLoggedIn:
- *                   type: boolean
- *                   description: Description of the property
- *                   example: true
- *                 user:
- *                   properties:
- *                     user_id:
- *                       type: string
- *                       description: Description of the property
- *                       example: "3145587907"
- *                     social_provider:
- *                       type: string
- *                       description: Description of the property
- *                       example: "kakao"
- *                     nickname:
- *                       type: string
- *                       description: Description of the property
- *                       example: "아아아"
- *                     profile_url:
- *                       type: string
- *                       description: Description of the property
- *                       example: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202306/25/488f9638-800c-4bac-ad65-82877fbff79b.jpg"
- *                     interested_area:
- *                       type: string
- *                       description: Description of the property
- *                       example: "제주"
- *                     role:
- *                       type: string
- *                       description: Description of the property
- *                       example: "user"
- *                     state:
- *                       type: string
- *                       description: Description of the property
- *                       example: "가입"
  */
 /**
  * @swagger
@@ -727,7 +677,6 @@ router.post("/nickname", asyncHandler(UserController.checkNickname));
 router.post("/login/kakao", asyncHandler(UserController.kakaoLogin));
 router.post("/login/naver", asyncHandler(UserController.naverLogin));
 router.post("/login/google", asyncHandler(UserController.googleLogin));
-router.get("/login-status", checkLoginStatus);
 router.post("/logout", asyncHandler(UserController.logout));
 router.get("/", authenticateUser, asyncHandler(UserController.getUser));
 router.put(
