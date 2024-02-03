@@ -12,12 +12,13 @@ const showRouter = Router();
  *     tags: [Show]
  *     summary: 공연 전체 조회 및 검색
  *     description: |
- *      제목, 지역, 공연 상태, 가격, 날짜로 검색이 가능합니다. 최신순, 평점순, 가격순으로 필터링이 가능합니다
+ *      제목, 지역, 공연 상태, 가격, 날짜, 장소로 검색이 가능합니다. 최신순, 평점순, 가격순으로 필터링이 가능합니다
  *      - 예시:
  *        - 지역: 서울, 경기/인천, 부산, 대구, 광주, 대전, 울산, 세종, 강원, 충청, 전라, 경상, 제주
  *        - 공연 상태: 공연예정, 공연중, 공연완료
  *        - 가격(최소, 최대)
  *        - 날짜
+ *        - 위치 (location)
  *        - 순서: recent(최신순), price(낮은 가격순), rate(높은 평점순)
  *     parameters:
  *      - in: query
@@ -65,6 +66,12 @@ const showRouter = Router();
  *         type: string
  *         description: 날짜
  *         example: 2024-01-31
+ *      - in: query
+ *        name: location
+ *        schema:
+ *         type: string
+ *         description: 공연 장소
+ *         example: "국립극장"
  *      - in: query
  *        name: order
  *        schema:
@@ -164,6 +171,73 @@ const showRouter = Router();
  *     summary: 인기순(예매 높은 순) 공연 조회
  *     description: |
  *      rank 값으로 공연을 조회합니다. 18개 값을 리스트로 반환합니다.
+ *     responses:
+ *       200:
+ *         description: 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                shows:
+ *                 type: array
+ *                 example:
+ *                   - _id: "6544bbb57fb7a9ce3075c52f"
+ *                     showId: "PF227440"
+ *                     title: "가장 보통의 연애"
+ *                     start_date: "2023-10-30T00:00:00.000Z"
+ *                     end_date: "2023-12-31T00:00:00.000Z"
+ *                     region: "서울"
+ *                     location: "연극플레이스 혜화 (연극플레이스 혜화)"
+ *                     latitude: 37.5809723
+ *                     longitude: 127.003528
+ *                     cast: ["박시안, 박은경, 문서우, 김유경, 이현재, 김대우, 문준혁 등"]
+ *                     creator: ""
+ *                     runtime: "1시간 30분"
+ *                     age: "만 13세 이상"
+ *                     company: "(주)네오, 씨제스컬처 ((주)씨제스엔터테인먼트)"
+ *                     price: "40,000"
+ *                     description: ""
+ *                     state: "공연중"
+ *                     schedule: "월요일 ~ 금요일(17:00,19:30), 토요일 ~ 일요일(15:00,17:30), HOL(17:00,19:30)"
+ *                     poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF229026_231031_141835.gif"
+ *                     detail_images: ["http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF229026_231031_0218351.jpg", "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF229026_231031_0218350.jpg"]
+ *                     reviews: []
+ *                     createdAt: "2023-11-06T15:55:24.610Z"
+ *                     updatedAt: "2023-11-07T15:03:22.659Z"
+ *                   - _id: "65490c7df46670b5a4f028dd"
+ *                     showId: "PF225815"
+ *                     title: "연애하기 좋은 날: 당근거래편 [대학로]"
+ *                     start_date: "2023-09-22T00:00:00.000Z"
+ *                     end_date: "2024-01-01T00:00:00.000Z"
+ *                     region: "서울"
+ *                     location: "우리소극장 [대학로] (우리소극장 [대학로])"
+ *                     latitude: 37.5792262
+ *                     longitude: 127.0051573
+ *                     cast: ["오진영, 박현하, 박민서, 진주희, 김부연, 김이슬"]
+ *                     creator: ""
+ *                     runtime: "1시간 30분"
+ *                     age: "만 13세 이상"
+ *                     company: ""
+ *                     price: "35,000"
+ *                     description: ""
+ *                     state: "공연중"
+ *                     schedule: "월요일(19:30), 수요일 ~ 금요일(19:30), 토요일(15:00,17:00,19:00), 일요일(15:00,17:00)"
+ *                     poster: "http://www.kopis.or.kr/upload/pfmPoster/PF_PF225815_230926_131717.gif"
+ *                     detail_images: ["http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF225815_230926_0117171.jpg"]
+ *                     reviews: []
+ *                     createdAt: "2023-11-06T15:55:41.991Z"
+ *                     updatedAt: "2023-11-06T16:07:32.102Z"
+ */
+
+/**
+ * @swagger
+ * /shows/children:
+ *   get:
+ *     tags: [Show]
+ *     summary: 가족 공연 조회
+ *     description: |
+ *      age 필드가 "전체 관람가", "만 5세 이상", "만 6세 이상", "만 7세 이상" 값으로 공연을 조회합니다. 18개 값을 리스트로 반환합니다.
  *     responses:
  *       200:
  *         description: 조회 성공
@@ -373,6 +447,7 @@ const showRouter = Router();
 
 showRouter.get("/", asyncHandler(ShowController.findShows));
 showRouter.get("/rank", asyncHandler(ShowController.findShowsByRank));
+showRouter.get("/children", asyncHandler(ShowController.findShowsForChildren));
 showRouter.get("/calendar", asyncHandler(ShowController.findShowsNumberByDate));
 showRouter.get("/:id", asyncHandler(ShowController.findShowByShowId));
 showRouter.delete(

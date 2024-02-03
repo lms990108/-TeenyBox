@@ -71,6 +71,10 @@ class showService {
     return await showRepository.findShowsByRank();
   }
 
+  async findShowsForChildren() {
+    return await showRepository.findShowsForChildren();
+  }
+
   async findShowsNumberByDate() {
     return await showRepository.findShowsNumberByDate();
   }

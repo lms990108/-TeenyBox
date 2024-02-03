@@ -18,6 +18,7 @@ export interface IShow extends Document {
   age?: string;
   company?: string;
   price?: string;
+  price_number?: number;
   description?: string;
   state?: StatusType;
   schedule?: string;
@@ -50,6 +51,7 @@ const ShowSchema = new Schema<IShow>({
   age: String,
   company: String,
   price: { type: String },
+  price_number: Number,
   description: String,
   state: {
     type: String,
@@ -75,6 +77,6 @@ ShowSchema.pre("save", function (next) {
   next();
 });
 
-ShowSchema.index({ created_at: -1, avg_rating: -1 });
+ShowSchema.index({ start_date: 1, avg_rating: -1, price: 1 });
 
 export const ShowModel = mongoose.model<IShow>("Show", ShowSchema);

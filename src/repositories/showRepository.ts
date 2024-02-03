@@ -55,6 +55,19 @@ class showRepository {
     ]);
   }
 
+  async findShowsForChildren() {
+    return ShowModel.aggregate([
+      {
+        $match: {
+          age: {
+            $in: ["전체 관람가", "만 5세 이상", "만 6세 이상", "만 6세 이상"],
+          },
+        },
+      },
+      { $sample: { size: 18 } }, // 랜덤하게 18개
+    ]);
+  }
+
   async findShowsNumberByDate() {
     const startDate = new Date();
     const endDate = new Date();

@@ -15,6 +15,7 @@ class ShowController {
     const lowPrice = req.query.lowPrice as string;
     const highPrice = req.query.highPrice as string;
     const date = req.query.date as string;
+    const location = req.query.location as string;
 
     const match = {};
     let sort;
@@ -36,9 +37,9 @@ class ShowController {
     }
 
     if (lowPrice || highPrice) {
-      match["price"] = {};
-      if (lowPrice) match["price"].$gte = lowPrice;
-      if (highPrice) match["price"].$lte = highPrice;
+      match["price_number"] = {};
+      if (lowPrice) match["price_number"].$gte = +lowPrice;
+      if (highPrice) match["price_number"].$lte = +highPrice;
     }
 
     if (date) {
@@ -47,13 +48,18 @@ class ShowController {
       match["end_date"] = { $gte: parsedDate };
     }
 
+    if (location) match["location"] = { $regex: location };
+
     if (order) {
       switch (order) {
         case ShowOrder.RECENT:
-          sort = { created_at: -1 };
+          sort = { start_date: 1 };
           break;
         case ShowOrder.HIGH_RATE:
           sort = { avg_rating: -1 };
+          break;
+        case ShowOrder.LOW_PRICE:
+          sort = { price_number: 1 };
           break;
       }
     }
@@ -77,6 +83,13 @@ class ShowController {
 
   async findShowsByRank(req: Request, res: Response) {
     const shows = await showService.findShowsByRank();
+    return res
+      .status(200)
+      .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
+  }
+
+  async findShowsForChildren(req: Request, res: Response) {
+    const shows = await showService.findShowsForChildren();
     return res
       .status(200)
       .json({ shows: shows.map((show) => new ShowResponseDto(show)) });
