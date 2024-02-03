@@ -92,9 +92,12 @@ export default router;
  *                   type: string
  *                 description: 홍보게시글에 사용될 태그 배열
  *               image_url:
- *                 type: string
- *                 format: url
- *                 description: 홍보게시글의 포스터 이미지 주소
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: url
+ *                 description: 홍보게시글의 포스터 이미지 주소 배열
+ *
  *     responses:
  *       201:
  *         description: 홍보게시글이 성공적으로 추가됨
@@ -121,9 +124,11 @@ export default router;
  *                     type: string
  *                   description: 홍보게시글에 사용될 태그 배열
  *                 image_url:
- *                   type: string
- *                   format: url
- *                   description: 홍보게시글의 포스터 이미지 주소
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     format: url
+ *                   description: 홍보게시글의 포스터 이미지 주소 배열
  *                 _id:
  *                   type: string
  *                   description: 게시물의 고유 MongoDB ID
@@ -212,9 +217,11 @@ export default router;
  *                   type: string
  *                 description: 업데이트된 홍보게시글의 태그들
  *               image_url:
- *                 type: string
- *                 format: url
- *                 description: 업데이트될 홍보게시글의 포스터 이미지 주소
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: url
+ *                 description: 홍보게시글의 포스터 이미지 주소 배열
  *     responses:
  *       200:
  *         description: 홍보게시글이 성공적으로 업데이트됨

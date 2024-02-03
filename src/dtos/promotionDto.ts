@@ -3,7 +3,7 @@ import {
   IsString,
   MaxLength,
   IsOptional,
-  IsUrl,
+  IsArray,
 } from "class-validator";
 
 // 게시글 생성을 위한 DTO
@@ -20,8 +20,8 @@ export class CreatePromotionDTO {
   content!: string;
 
   @IsOptional()
-  @IsUrl({}, { message: "이미지 URL은 유효한 웹 주소이어야 합니다." })
-  image_url?: string;
+  @IsArray({ message: "이미지 URL은 배열이어야 합니다." })
+  image_url?: string[];
 
   @IsOptional()
   tags?: string[] | string;
@@ -39,8 +39,8 @@ export class UpdatePromotionDTO {
   content!: string;
 
   @IsOptional()
-  @IsUrl({}, { message: "이미지 URL은 유효한 웹 주소이어야 합니다." })
-  image_url?: string;
+  @IsArray({ message: "이미지 URL은 배열이어야 합니다." })
+  image_url?: string[];
 
   @IsOptional()
   tags?: string[] | string;
