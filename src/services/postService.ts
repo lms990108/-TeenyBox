@@ -112,7 +112,7 @@ class PostService {
     title: string,
     page: number,
     limit: number,
-  ): Promise<IPost[]> {
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
     const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
     const skip = (page - 1) * limit;
     return await PostRepository.findByTitle(encodedTitle, skip, limit);
