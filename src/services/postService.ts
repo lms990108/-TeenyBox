@@ -54,9 +54,17 @@ class PostService {
   }
 
   // 게시글 전체 조회 & 페이징
-  async findAll(page: number, limit: number): Promise<IPost[]> {
+  async findAllWithCommentsCount(
+    page: number,
+    limit: number,
+  ): Promise<Array<IPost & { commentsCount: number }>> {
     const skip = (page - 1) * limit;
-    return await PostRepository.findAll(skip, limit);
+    const postsWithComments = await PostRepository.findAllWithCommentsCount(
+      skip,
+      limit,
+    );
+
+    return postsWithComments;
   }
 
   // 게시글 번호로 조회

@@ -31,17 +31,31 @@ class PostRepository {
     );
   }
 
-  // 게시글 전체 조회 & 페이징
-  async findAll(skip: number, limit: number): Promise<IPost[]> {
-    return await PostModel.find()
-      .sort({ post_number: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate({
-        path: "user_id",
-        select: "nickname profile_url _id",
-      })
-      .exec();
+  // 게시글 전체 조회 & 페이징 + 게시글 댓글
+  async findAllWithCommentsCount(skip: number, limit: number): Promise<any[]> {
+    return await PostModel.aggregate([
+      {
+        $lookup: {
+          from: "comments", // `CommentModel`의 컬렉션 이름 (MongoDB에서는 보통 소문자 및 복수형으로 표기)
+          localField: "_id", // `PostModel`의 참조 필드
+          foreignField: "post", // `CommentModel`의 게시글 참조 필드
+          as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
+        },
+      },
+      {
+        $addFields: {
+          commentsCount: { $size: "$comments" }, // 각 게시글에 대한 댓글 수 계산
+        },
+      },
+      {
+        $project: {
+          comments: 0, // 댓글 데이터는 결과에서 제외, 댓글 수만 포함
+        },
+      },
+      { $sort: { post_number: -1 } }, // 게시글 번호 내림차순 정렬
+      { $skip: skip }, // 페이지네이션을 위한 스킵
+      { $limit: limit }, // 페이지네이션을 위한 제한
+    ]).exec();
   }
 
   // 게시글 번호로 조회

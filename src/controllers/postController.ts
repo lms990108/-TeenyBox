@@ -32,7 +32,7 @@ class PostController {
   async getAllPosts(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const posts = await PostService.findAll(page, limit);
+    const posts = await PostService.findAllWithCommentsCount(page, limit);
     res.status(200).json(posts);
   }
 
