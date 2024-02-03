@@ -18,6 +18,7 @@ export interface IShow extends Document {
   age?: string;
   company?: string;
   price?: string;
+  price_number?: number;
   description?: string;
   state?: StatusType;
   schedule?: string;
@@ -50,6 +51,7 @@ const ShowSchema = new Schema<IShow>({
   age: String,
   company: String,
   price: { type: String },
+  price_number: Number,
   description: String,
   state: {
     type: String,
