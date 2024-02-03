@@ -80,22 +80,16 @@ class PromotionController {
   }
 
   async searchPromotions(req: Request, res: Response): Promise<void> {
-    console.log("0번");
-
     try {
       const title = req.query.title as string;
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 10);
-
-      console.log("1번" + title);
 
       // 검색어가 없는 경우, 빈 리스트 반환
       if (!title) {
         res.status(200).json([]);
         return;
       }
-
-      console.log("2번" + title);
 
       // 검색어가 있는 경우, 검색 결과 반환
       const searchResults = await PromotionService.findByTitle(
