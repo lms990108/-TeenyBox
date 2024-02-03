@@ -102,16 +102,26 @@ class promotionRepository {
     return promotionToDelete;
   }
 
+  // 게시글 제목으로 검색
   async findByTitle(
     title: string,
     skip: number,
     limit: number,
-  ): Promise<IPromotion[]> {
-    return await PromotionModel.find({ title: new RegExp(title, "i") })
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    const promotions = await PromotionModel.find({
+      title: new RegExp(title, "i"),
+    })
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PromotionModel.countDocuments({
+      title: new RegExp(title, "i"),
+    });
+
+    return { promotions, totalCount };
   }
 
   async findMultipleByPromotionNumbers(

@@ -142,10 +142,8 @@ class PromotionService {
     title: string,
     page: number,
     limit: number,
-  ): Promise<IPromotion[]> {
-    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
-    const skip = (page - 1) * limit;
-    return await PromotionRepository.findByTitle(encodedTitle, skip, limit);
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    return await PromotionRepository.findByTitle(title, page, limit);
   }
 
   // 게시글 일괄 삭제
