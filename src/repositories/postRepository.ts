@@ -105,12 +105,19 @@ class PostRepository {
     title: string,
     skip: number,
     limit: number,
-  ): Promise<IPost[]> {
-    return await PostModel.find({ title: new RegExp(title, "i") })
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const posts = await PostModel.find({ title: new RegExp(title, "i") })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PostModel.countDocuments({
+      title: new RegExp(title, "i"),
+    });
+
+    return { posts, totalCount };
   }
 
   async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
