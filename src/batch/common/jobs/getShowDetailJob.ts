@@ -8,6 +8,22 @@ function convertToDate(dateStr: string) {
   return new Date(formattedDate);
 }
 
+function parsePrice(priceStr: string) {
+  if (priceStr === "전석무료" || priceStr === "" || !priceStr) return 0;
+  const priceStrWithoutString = priceStr.replace(/\D/g, "");
+
+  const priceChunks = priceStrWithoutString.match(/.{1,5}/g) || [];
+  const parsedPrices = priceChunks.map((chunk: string) => parseInt(chunk));
+
+  if (parsedPrices && parsedPrices.length < 2) {
+    return parsedPrices[0];
+  } else if (parsedPrices && parsedPrices.length > 1) {
+    return Math.min(...parsedPrices);
+  }
+
+  return 0;
+}
+
 function parseShowData(
   xmlData: string,
   latitude: number,
@@ -22,6 +38,9 @@ function parseShowData(
   const start_date = convertToDate(show["prfpdfrom"]);
   const end_date = convertToDate(show["prfpdto"]);
   const detail_images = show["styurls"] ? show["styurls"]["styurl"] : [];
+
+  const priceStr = show["pcseguidance"];
+  const priceNum = parsePrice(priceStr);
 
   return {
     showId: show["mt20id"],
@@ -38,7 +57,8 @@ function parseShowData(
     runtime: show["prfruntime"],
     age: show["prfage"],
     company: show["entrpsnm"],
-    price: show["pcseguidance"],
+    price: priceStr,
+    price_number: priceNum,
     description: show["sty"],
     state: show["prfstate"],
     schedule: show["dtguidance"],

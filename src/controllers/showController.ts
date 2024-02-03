@@ -37,9 +37,9 @@ class ShowController {
     }
 
     if (lowPrice || highPrice) {
-      match["price"] = {};
-      if (lowPrice) match["price"].$gte = lowPrice;
-      if (highPrice) match["price"].$lte = highPrice;
+      match["price_number"] = {};
+      if (lowPrice) match["price_number"].$gte = +lowPrice;
+      if (highPrice) match["price_number"].$lte = +highPrice;
     }
 
     if (date) {
@@ -57,6 +57,9 @@ class ShowController {
           break;
         case ShowOrder.HIGH_RATE:
           sort = { avg_rating: -1 };
+          break;
+        case ShowOrder.LOW_PRICE:
+          sort = { price_number: 1 };
           break;
       }
     }

@@ -22,44 +22,36 @@ async function changePrice() {
   logger.info(`Shows length: ${shows.length}`);
 
   for (const show of shows) {
-    const priceChunks = show.price.match(/.{1,5}/g) || []; // Split into chunks of 5 characters
-    const parsedPrices = priceChunks.map((chunk) => parseInt(chunk));
+    const priceStr = show.price;
+    if (priceStr === "전석무료" || priceStr === "" || !priceStr) {
+      show.price_number = 0;
+      await show.save();
+      continue;
+    }
+
+    const priceStrWithoutString = priceStr.replace(/\D/g, "");
+    const priceChunks = priceStrWithoutString.match(/.{1,5}/g) || []; // Split into chunks of 5 characters
+    const parsedPrices = priceChunks.map((chunk: string) => parseInt(chunk));
 
     if (parsedPrices && parsedPrices.length < 2) {
       logger.info(`Show title: ${show.title}, parsedPrice: ${parsedPrices[0]}`);
-      show.price = String(parsedPrices[0]);
+      show.price_number = parsedPrices[0];
     } else if (parsedPrices && parsedPrices.length > 1) {
       const minPrice = Math.min(...parsedPrices);
       logger.info(
         `Show title: ${show.title}, Length: ${parsedPrices.length}, minPrice: ${minPrice}, array: ${parsedPrices}`,
       );
-      show.price = String(minPrice);
+      show.price_number = minPrice;
     } else {
       logger.info(
         `Show title: ${show.title}, Length: ${parsedPrices.length}, array: ${parsedPrices}`,
       );
-      show.price = String(0);
+      show.price_number = 0;
     }
 
     await show.save();
   }
 }
-
-// async function changeStringToNumber() {
-//   const shows = await ShowModel.find();
-//   for (const show of shows) {
-//     if (typeof show.price === "string") {
-//       // Check if show.price is a valid number string
-//       const parsedPrice = parseFloat(show.price);
-//
-//       if (!isNaN(parsedPrice)) {
-//         // If parsing is successful, update the field
-//         show.price = parsedPrice;
-//         await show.save();
-//       }
-//     }
-//   }
-// }
 
 async function main() {
   await connectToMongo();
