@@ -125,6 +125,26 @@ class PromotionController {
       );
     res.status(200).json(deletedPromotions);
   }
+
+  // 게시글 추천
+  async likePromotion(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      return;
+    }
+
+    const promotionNumber = Number(req.params.promotionNumber);
+
+    try {
+      const updatedPromotion = await PromotionService.likePromotion(
+        promotionNumber,
+        req.user._id,
+      );
+      res.status(200).json(updatedPromotion);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
 
 export default new PromotionController();
