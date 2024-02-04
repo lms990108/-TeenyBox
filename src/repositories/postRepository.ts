@@ -35,13 +35,16 @@ class PostRepository {
   async findAllWithCommentsCount(
     skip: number,
     limit: number,
-  ): Promise<{ posts: any[]; totalCount: number }> {
+  ): Promise<{
+    posts: Array<IPost & { commentsCount: number }>;
+    totalCount: number;
+  }> {
     const totalCount = await PostModel.countDocuments();
 
-    const posts = await PostModel.aggregate([
+    const aggregationResult = await PostModel.aggregate([
       {
         $lookup: {
-          from: "comments", // `CommentModel`의 컬렉션 이름 (MongoDB에서는 보통 소문자 및 복수형으로 표기)
+          from: "comments", // `CommentModel`의 컬렉션 이름
           localField: "_id", // `PostModel`의 참조 필드
           foreignField: "post", // `CommentModel`의 게시글 참조 필드
           as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
@@ -61,6 +64,13 @@ class PostRepository {
       { $skip: skip }, // 페이지네이션을 위한 스킵
       { $limit: limit }, // 페이지네이션을 위한 제한
     ]).exec();
+
+    // MongoDB 집계 결과를 명시적으로 타입 변환
+    const posts: Array<IPost & { commentsCount: number }> =
+      aggregationResult.map((post) => ({
+        ...post,
+        commentsCount: post.commentsCount,
+      }));
 
     return { posts, totalCount };
   }
