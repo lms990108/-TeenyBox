@@ -3,6 +3,7 @@ import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import PromotionService from "../services/promotionService";
 
 class PromotionController {
+  // 게시글 생성
   async createPromotion(req: AuthRequest, res: Response): Promise<void> {
     // 인증된 사용자의 정보가 있는지 확인합니다.
     if (!req.user) {
@@ -18,6 +19,7 @@ class PromotionController {
     }
   }
 
+  // 게시글 수정
   async updatePromotion(req: AuthRequest, res: Response): Promise<void> {
     if (!req.user) {
       res.status(401).json({ message: "사용자 인증이 필요합니다." });
@@ -33,6 +35,7 @@ class PromotionController {
     res.status(200).json(promotion);
   }
 
+  // 게시글 전체 조회
   async getAllPromotions(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
@@ -50,6 +53,7 @@ class PromotionController {
     res.status(200).json(promotion);
   }
 
+  // 유저 id로 게시글 검색 (리스트반환)
   async getPromotionsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
@@ -63,6 +67,7 @@ class PromotionController {
     res.status(200).json({ promotions, totalCount });
   }
 
+  // 게시글 삭제
   async deletePromotionByNumber(
     req: AuthRequest,
     res: Response,
@@ -103,6 +108,7 @@ class PromotionController {
     }
   }
 
+  // 게시글 일괄 삭제
   async deleteMultiplePromotions(
     req: AuthRequest,
     res: Response,
