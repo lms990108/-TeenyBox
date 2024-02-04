@@ -85,6 +85,8 @@ export default router;
  *             required:
  *               - title
  *               - content
+ *               - start_date
+ *               - end_date
  *             properties:
  *               title:
  *                 type: string
@@ -104,7 +106,14 @@ export default router;
  *                   type: string
  *                   format: url
  *                 description: 홍보게시글의 포스터 이미지 주소 배열
- *
+ *               start_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: 상영 시작일
+ *               end_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: 상영 종료일
  *     responses:
  *       201:
  *         description: 홍보게시글이 성공적으로 추가됨
@@ -113,7 +122,7 @@ export default router;
  *             schema:
  *               type: object
  *               properties:
- *                 post_number:
+ *                 promotion_number:
  *                   type: integer
  *                   description: 게시물 고유 식별자
  *                 user_id:
@@ -136,6 +145,20 @@ export default router;
  *                     type: string
  *                     format: url
  *                   description: 홍보게시글의 포스터 이미지 주소 배열
+ *                 start_date:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 상영 시작일
+ *                 end_date:
+ *                   type: string
+ *                   format: date-time
+ *                   description: 상영 종료일
+ *                 likes:
+ *                   type: integer
+ *                   description: 게시글의 추천수
+ *                 views:
+ *                   type: integer
+ *                   description: 게시글의 조회수
  *                 _id:
  *                   type: string
  *                   description: 게시물의 고유 MongoDB ID
@@ -150,20 +173,6 @@ export default router;
  *                 __v:
  *                   type: integer
  *                   description: 버전
- *               example:
- *                 promotion_number: 42,
- *                 user_id: "654a4cfc2a8ed874281b68b1"
- *                 title: "응답 확인 예시용 제목"
- *                 content: "응답 확인 예시용 내용"
- *                 tags: [
- *                   "태그1",
- *                   "태그2",
- *                 ]
- *                 image_url: "https://elice-5th.s3.ap-northeast-2.amazonaws.com/promotions/1705331263225_catimage.jpeg"
- *                 _id: "65a89e82c3180cd22b2fdf2c"
- *                 createdAt: "2024-01-18T03:44:02.952Z"
- *                 updatedAt: "2024-01-18T03:44:02.952Z"
- *                 __v: 0
  *       400:
  *         description: 잘못된 요청 데이터
  *
@@ -384,4 +393,26 @@ export default router;
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
  *         description: 검색 결과를 찾을 수 없음
+ *
+ * /promotions/{promotionNumber}/like:
+ *   post:
+ *     tags:
+ *       - Promotion
+ *     summary: 특정 홍보게시글 추천
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: promotionNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: 추천할 홍보게시글의 번호
+ *     responses:
+ *       200:
+ *         description: 홍보게시글이 성공적으로 추천됨
+ *       400:
+ *         description: 잘못된 요청
+ *       404:
+ *         description: 홍보게시글을 찾을 수 없음
  */
