@@ -57,7 +57,10 @@ class PostService {
   async findAllWithCommentsCount(
     page: number,
     limit: number,
-  ): Promise<Array<IPost & { commentsCount: number }>> {
+  ): Promise<{
+    posts: Array<IPost & { commentsCount: number }>;
+    totalCount: number;
+  }> {
     const skip = (page - 1) * limit;
     const postsWithComments = await PostRepository.findAllWithCommentsCount(
       skip,
