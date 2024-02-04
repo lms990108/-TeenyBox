@@ -53,7 +53,7 @@ class ShowController {
     if (order) {
       switch (order) {
         case ShowOrder.RECENT:
-          sort = { start_date: 1 };
+          sort = { start_date: -1 };
           break;
         case ShowOrder.HIGH_RATE:
           sort = { avg_rating: -1 };

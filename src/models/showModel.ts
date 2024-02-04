@@ -77,6 +77,6 @@ ShowSchema.pre("save", function (next) {
   next();
 });
 
-ShowSchema.index({ start_date: 1, avg_rating: -1, price: 1 });
+ShowSchema.index({ start_date: -1, avg_rating: -1, price: 1 });
 
 export const ShowModel = mongoose.model<IShow>("Show", ShowSchema);
