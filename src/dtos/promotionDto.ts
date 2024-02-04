@@ -4,10 +4,13 @@ import {
   MaxLength,
   IsOptional,
   IsArray,
+  IsInt,
+  IsDate,
 } from "class-validator";
 
-// 게시글 생성을 위한 DTO
 export class CreatePromotionDTO {
+  @IsOptional()
+  @IsInt({ message: "프로모션 번호는 정수여야 합니다." })
   promotion_number?: number;
 
   @IsString({ message: "제목은 문자열이어야 합니다." })
@@ -25,18 +28,33 @@ export class CreatePromotionDTO {
 
   @IsOptional()
   tags?: string[] | string;
+
+  @IsDate({ message: "시작일은 날짜여야 합니다." })
+  @IsNotEmpty({ message: "시작일은 반드시 입력되어야 합니다." })
+  start_date!: Date;
+
+  @IsDate({ message: "종료일은 날짜여야 합니다." })
+  @IsNotEmpty({ message: "종료일은 반드시 입력되어야 합니다." })
+  end_date!: Date;
+
+  @IsOptional()
+  @IsInt({ message: "추천수는 정수여야 합니다." })
+  likes?: number;
+
+  @IsOptional()
+  @IsInt({ message: "조회수는 정수여야 합니다." })
+  views?: number;
 }
 
-// 게시글 수정을 위한 DTO
 export class UpdatePromotionDTO {
+  @IsOptional()
   @IsString({ message: "제목은 문자열이어야 합니다." })
-  @IsNotEmpty({ message: "제목은 반드시 입력되어야 합니다." })
   @MaxLength(30, { message: "제목은 30자를 초과할 수 없습니다." })
-  title!: string;
+  title?: string;
 
+  @IsOptional()
   @IsString({ message: "내용은 문자열이어야 합니다." })
-  @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
-  content!: string;
+  content?: string;
 
   @IsOptional()
   @IsArray({ message: "이미지 URL은 배열이어야 합니다." })
@@ -44,4 +62,20 @@ export class UpdatePromotionDTO {
 
   @IsOptional()
   tags?: string[] | string;
+
+  @IsOptional()
+  @IsDate({ message: "시작일은 날짜여야 합니다." })
+  start_date?: Date;
+
+  @IsOptional()
+  @IsDate({ message: "종료일은 날짜여야 합니다." })
+  end_date?: Date;
+
+  @IsOptional()
+  @IsInt({ message: "추천수는 정수여야 합니다." })
+  likes?: number;
+
+  @IsOptional()
+  @IsInt({ message: "조회수는 정수여야 합니다." })
+  views?: number;
 }
