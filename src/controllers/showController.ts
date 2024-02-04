@@ -76,7 +76,7 @@ class ShowController {
     );
 
     return res.status(200).json({
-      data: showDtos,
+      shows: showDtos,
       total,
     });
   }
