@@ -55,6 +55,13 @@ router.delete(
   asyncHandler(promotionController.deletePromotionByNumber),
 );
 
+// 게시글 추천
+router.post(
+  "/:promotionNumber/like",
+  authenticateUser,
+  asyncHandler(promotionController.likePromotion),
+);
+
 export default router;
 
 /**

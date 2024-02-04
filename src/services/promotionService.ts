@@ -172,6 +172,25 @@ class PromotionService {
       promotionNumbers,
     );
   }
+
+  // 게시글 추천
+  async likePromotion(
+    promotionNumber: number,
+    userId: string,
+  ): Promise<IPromotion> {
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    // 추천 로직 구현 (예: 추천 중복 검사, 추천 수 업데이트 등)
+    // 예제 코드에서는 단순히 추천 수를 1 증가시키는 것으로 가정
+    promotion.likes = (promotion.likes || 0) + 1;
+    await promotion.save();
+
+    return promotion;
+  }
 }
 
 export default new PromotionService();
