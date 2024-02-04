@@ -39,7 +39,7 @@ class PromotionController {
   async getAllPromotions(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const promotions = await PromotionService.findfindAllWithCommentsCountAll(
+    const promotions = await PromotionService.findAllWithCommentsCountAll(
       page,
       limit,
     );

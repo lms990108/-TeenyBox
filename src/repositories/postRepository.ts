@@ -32,8 +32,13 @@ class PostRepository {
   }
 
   // 게시글 전체 조회 & 페이징 + 게시글 댓글
-  async findAllWithCommentsCount(skip: number, limit: number): Promise<any[]> {
-    return await PostModel.aggregate([
+  async findAllWithCommentsCount(
+    skip: number,
+    limit: number,
+  ): Promise<{ posts: any[]; totalCount: number }> {
+    const totalCount = await PostModel.countDocuments();
+
+    const posts = await PostModel.aggregate([
       {
         $lookup: {
           from: "comments", // `CommentModel`의 컬렉션 이름 (MongoDB에서는 보통 소문자 및 복수형으로 표기)
@@ -56,6 +61,8 @@ class PostRepository {
       { $skip: skip }, // 페이지네이션을 위한 스킵
       { $limit: limit }, // 페이지네이션을 위한 제한
     ]).exec();
+
+    return { posts, totalCount };
   }
 
   // 게시글 번호로 조회

@@ -75,16 +75,16 @@ class PromotionService {
   }
 
   // 게시글 전체 조회 & 페이징
-  async findfindAllWithCommentsCountAll(
+  async findAllWithCommentsCountAll(
     page: number,
     limit: number,
-  ): Promise<Array<IPromotion & { commentsCount: number }>> {
+  ): Promise<{
+    promotions: Array<IPromotion & { commentsCount: number }>;
+    totalCount: number;
+  }> {
     const skip = (page - 1) * limit;
 
-    const promotionsWithComments =
-      await PromotionRepository.findAllWithCommentsCount(skip, limit);
-
-    return promotionsWithComments;
+    return await PromotionRepository.findAllWithCommentsCount(skip, limit);
   }
 
   // 게시글 번호로 조회
