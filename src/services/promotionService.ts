@@ -87,13 +87,18 @@ class PromotionService {
     return await PromotionRepository.findAllWithCommentsCount(skip, limit);
   }
 
-  // 게시글 번호로 조회
+  // 게시글 번호로 조회하며 조회수 증가
   async findByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
     if (!promotion) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 조회수 증가 로직 추가
+    promotion.views = (promotion.views || 0) + 1;
+    await promotion.save(); // 변경된 조회수 저장
+
     return promotion;
   }
 
