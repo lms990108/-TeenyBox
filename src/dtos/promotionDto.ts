@@ -7,6 +7,7 @@ import {
   IsInt,
   IsDate,
 } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreatePromotionDTO {
   @IsOptional()
@@ -29,10 +30,12 @@ export class CreatePromotionDTO {
   @IsOptional()
   tags?: string[] | string;
 
+  @Type(() => Date)
   @IsDate({ message: "시작일은 날짜여야 합니다." })
   @IsNotEmpty({ message: "시작일은 반드시 입력되어야 합니다." })
   start_date!: Date;
 
+  @Type(() => Date)
   @IsDate({ message: "종료일은 날짜여야 합니다." })
   @IsNotEmpty({ message: "종료일은 반드시 입력되어야 합니다." })
   end_date!: Date;
@@ -63,10 +66,12 @@ export class UpdatePromotionDTO {
   @IsOptional()
   tags?: string[] | string;
 
+  @Type(() => Date)
   @IsOptional()
   @IsDate({ message: "시작일은 날짜여야 합니다." })
   start_date?: Date;
 
+  @Type(() => Date)
   @IsOptional()
   @IsDate({ message: "종료일은 날짜여야 합니다." })
   end_date?: Date;
