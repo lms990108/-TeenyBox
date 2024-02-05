@@ -39,14 +39,6 @@ export class CreatePromotionDTO {
   @IsDate({ message: "종료일은 날짜여야 합니다." })
   @IsNotEmpty({ message: "종료일은 반드시 입력되어야 합니다." })
   end_date!: Date;
-
-  @IsOptional()
-  @IsInt({ message: "추천수는 정수여야 합니다." })
-  likes?: number;
-
-  @IsOptional()
-  @IsInt({ message: "조회수는 정수여야 합니다." })
-  views?: number;
 }
 
 export class UpdatePromotionDTO {
@@ -75,12 +67,4 @@ export class UpdatePromotionDTO {
   @IsOptional()
   @IsDate({ message: "종료일은 날짜여야 합니다." })
   end_date?: Date;
-
-  @IsOptional()
-  @IsInt({ message: "추천수는 정수여야 합니다." })
-  likes?: number;
-
-  @IsOptional()
-  @IsInt({ message: "조회수는 정수여야 합니다." })
-  views?: number;
 }
