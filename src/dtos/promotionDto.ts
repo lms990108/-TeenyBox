@@ -4,14 +4,11 @@ import {
   MaxLength,
   IsOptional,
   IsArray,
-  IsInt,
   IsDate,
 } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreatePromotionDTO {
-  @IsOptional()
-  @IsInt({ message: "프로모션 번호는 정수여야 합니다." })
   promotion_number?: number;
 
   @IsString({ message: "제목은 문자열이어야 합니다." })
