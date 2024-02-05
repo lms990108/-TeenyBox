@@ -39,33 +39,42 @@ class promotionRepository {
   async findAllWithCommentsCount(
     skip: number,
     limit: number,
-  ): Promise<{ promotions: any[]; totalCount: number }> {
-    // 전체 게시글 수를 계산
+  ): Promise<{
+    promotions: Array<IPromotion & { commentsCount: number }>;
+    totalCount: number;
+  }> {
     const totalCount = await PromotionModel.countDocuments();
 
-    const promotions = await PromotionModel.aggregate([
+    const aggregationResult = await PromotionModel.aggregate([
       {
         $lookup: {
           from: "comments", // `comments` 컬렉션과 조인
-          localField: "_id",
-          foreignField: "promotion",
-          as: "comments",
+          localField: "_id", // `PromotionModel`의 참조 필드
+          foreignField: "promotion", // `comments` 컬렉션의 게시글 참조 필드
+          as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
         },
       },
       {
         $addFields: {
-          commentsCount: { $size: "$comments" }, // 댓글 수 계산
+          commentsCount: { $size: "$comments" }, // 각 게시글에 대한 댓글 수 계산
         },
       },
       {
         $project: {
-          comments: 0, // 결과에서 댓글 데이터 제외
+          comments: 0, // 댓글 데이터는 결과에서 제외, 댓글 수만 포함
         },
       },
-      { $sort: { promotion_number: -1 } }, // 게시글 번호로 내림차순 정렬
-      { $skip: skip }, // 스킵
-      { $limit: limit }, // 리밋
+      { $sort: { promotion_number: -1 } }, // 게시글 번호 내림차순 정렬
+      { $skip: skip }, // 페이지네이션을 위한 스킵
+      { $limit: limit }, // 페이지네이션을 위한 제한
     ]).exec();
+
+    // MongoDB 집계 결과를 명시적으로 타입 변환
+    const promotions: Array<IPromotion & { commentsCount: number }> =
+      aggregationResult.map((promotion) => ({
+        ...promotion,
+        commentsCount: promotion.commentsCount,
+      }));
 
     return { promotions, totalCount };
   }
