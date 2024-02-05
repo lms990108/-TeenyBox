@@ -8,6 +8,9 @@ export interface IPost extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   comments: (typeof mongoose.Schema.Types.ObjectId)[];
+  likes: number; // 추천수
+  views: number; // 조회수
+  likedUsers: string[]; // 추천한 사용자의 ID 목록
 }
 
 const postSchema = new Schema<IPost>(
@@ -31,6 +34,22 @@ const postSchema = new Schema<IPost>(
     content: {
       type: String,
       required: true,
+    },
+    likes: {
+      type: Number,
+      required: true,
+      default: 0, // 기본값을 0으로 설정
+    },
+    views: {
+      type: Number,
+      required: true,
+      default: 0, // 기본값을 0으로 설정
+    },
+    likedUsers: {
+      type: [String],
+      ref: "User",
+      required: true,
+      default: [],
     },
   },
   {
