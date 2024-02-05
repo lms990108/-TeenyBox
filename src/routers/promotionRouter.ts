@@ -238,6 +238,14 @@ export default router;
  *                   type: string
  *                   format: url
  *                 description: 홍보게시글의 포스터 이미지 주소 배열
+ *               start_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: 상영 시작일
+ *               end_date:
+ *                 type: string
+ *                 format: date-time
+ *                 description: 상영 종료일
  *     responses:
  *       200:
  *         description: 홍보게시글이 성공적으로 업데이트됨
