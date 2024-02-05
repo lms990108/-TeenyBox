@@ -129,7 +129,9 @@ class PromotionController {
   // 게시글 추천
   async likePromotion(req: AuthRequest, res: Response): Promise<void> {
     if (!req.user) {
-      res.status(401).json({ message: "사용자 인증이 필요합니다." });
+      res
+        .status(401)
+        .json({ message: "로그인한 사용자만 추천할 수 있습니다." });
       return;
     }
 
