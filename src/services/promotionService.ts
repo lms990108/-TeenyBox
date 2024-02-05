@@ -184,11 +184,18 @@ class PromotionService {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
-    // 추천 로직 구현 (예: 추천 중복 검사, 추천 수 업데이트 등)
-    // 예제 코드에서는 단순히 추천 수를 1 증가시키는 것으로 가정
-    promotion.likes = (promotion.likes || 0) + 1;
-    await promotion.save();
+    // 사용자가 이미 추천했는지 확인
+    if (promotion.likedUsers.includes(userId)) {
+      throw new Error("이미 추천한 게시글입니다.");
+    }
 
+    // 중복 추천이 아닌 경우, 사용자 ID를 배열에 추가
+    promotion.likedUsers.push(userId);
+
+    // 클라이언트에는 추천 수를 배열의 크기로 제공
+
+    promotion.likes = promotion.likedUsers.length;
+    await promotion.save();
     return promotion;
   }
 }
