@@ -118,6 +118,7 @@ class PostRepository {
     return postToDelete;
   }
 
+  // 게시글 제목으로 검색
   async findByTitle(
     title: string,
     skip: number,
