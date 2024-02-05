@@ -76,6 +76,11 @@ class PostService {
     if (!post) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 조회수 증가 로직 추가
+    post.views = (post.views || 0) + 1;
+    await post.save(); // 변경된 조회수 저장
+
     return post;
   }
 
@@ -136,6 +141,28 @@ class PostService {
     }
 
     await PostRepository.deleteMultipleByPostNumbers(postNumbers);
+  }
+
+  // 게시글 추천
+  async likePost(postNumber: number, userId: string): Promise<IPost> {
+    const post = await PostRepository.findByPostNumber(postNumber);
+    if (!post) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    // 사용자가 이미 추천했는지 확인
+    if (post.likedUsers.includes(userId)) {
+      throw new Error("이미 추천한 게시글입니다.");
+    }
+
+    // 중복 추천이 아닌 경우, 사용자 ID를 배열에 추가
+    post.likedUsers.push(userId);
+
+    // 클라이언트에는 추천 수를 배열의 크기로 제공
+
+    post.likes = post.likedUsers.length;
+    await post.save();
+    return post;
   }
 }
 
