@@ -63,27 +63,23 @@ class UserRepository {
 
     const paginatedShowIds = showIds.slice((page - 1) * limit, page * limit);
 
-    const shows = await Promise.all(
-      paginatedShowIds.map(async (showId) => {
-        const show = await ShowModel.findOne({ showId });
-
-        if (show) {
-          return {
-            showId: show.showId,
-            title: show.title,
-            poster: show.poster,
-            location: show.location,
-            startDate: show.start_date,
-            endDate: show.end_date,
-            state: show.state,
-          };
-        } else {
-          return null;
-        }
-      }),
-    );
-
-    const validShows = shows.filter((show) => show !== null);
+    const validShows = [];
+    for (const showId of paginatedShowIds) {
+      const show = await ShowModel.findOne({ showId });
+      if (show) {
+        validShows.push({
+          showId: show.showId,
+          title: show.title,
+          poster: show.poster,
+          location: show.location,
+          startDate: show.start_date,
+          endDate: show.end_date,
+          state: show.state,
+        });
+      } else {
+        await UserModel.findByIdAndUpdate(userId, { $pull: { dibs: showId } });
+      }
+    }
 
     return { validShows, totalCount };
   }
