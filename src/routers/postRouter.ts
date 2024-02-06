@@ -27,7 +27,10 @@ router.put(
 router.get("/", asyncHandler(postController.getAllPosts));
 
 // 글 제목으로 검색
-router.get("/search", asyncHandler(postController.searchPosts));
+router.get("/searchByTitle", asyncHandler(postController.searchPostsByTitle));
+
+// 글 태그로 검색
+router.get("/searchByTag", asyncHandler(postController.searchPostsByTag));
 
 // 게시글 상세 조회
 router.get("/:postNumber", asyncHandler(postController.getPostByNumber));
@@ -352,7 +355,7 @@ export default router;
  *       '404':
  *         description: 사용자를 찾을 수 없음
  *
- * /posts/search:
+ * /posts/searchByTitle:
  *   get:
  *     tags:
  *       - Post
@@ -364,6 +367,47 @@ export default router;
  *         schema:
  *           type: string
  *         description: 검색할 게시글의 제목
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: 페이지당 게시글 수
+ *     responses:
+ *       200:
+ *         description: 검색 결과 반환
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   - promotion_number: 1
+ *                     title: "검색된 게시글 제목"
+ *                     content: "검색된 게시글 내용"
+ *                     tags: ["태그1", "태그2"]
+ *                     createdAt: "2023-01-01T00:00:00.000Z"
+ *                     updatedAt: "2023-01-01T00:00:00.000Z"
+ *       404:
+ *         description: 검색 결과를 찾을 수 없음
+ *
+ * /posts/searchByTag:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: 게시글을 태그로 검색
+ *     parameters:
+ *       - in: query
+ *         name: tag
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: 검색할 게시글의 태그
  *       - in: query
  *         name: page
  *         schema:

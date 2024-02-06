@@ -68,15 +68,12 @@ class PostController {
     res.status(200).json(post);
   }
 
-  async searchPosts(req: Request, res: Response): Promise<void> {
-    console.log("0번");
-
+  // 게시글 제목으로 검색
+  async searchPostsByTitle(req: Request, res: Response): Promise<void> {
     try {
       const title = req.query.title as string;
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 10);
-
-      console.log("1번" + title);
 
       // 검색어가 없는 경우, 빈 리스트 반환
       if (!title) {
@@ -84,10 +81,29 @@ class PostController {
         return;
       }
 
-      console.log("2번" + title);
-
       // 검색어가 있는 경우, 검색 결과 반환
       const searchResults = await PostService.findByTitle(title, page, limit);
+      res.status(200).json(searchResults);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // 게시글 태그로 검색
+  async searchPostsByTag(req: Request, res: Response): Promise<void> {
+    try {
+      const tag = req.query.tag as string;
+      const page = Number(req.query.page || 1);
+      const limit = Number(req.query.limit || 10);
+
+      // 검색어가 없는 경우, 빈 리스트 반환
+      if (!tag) {
+        res.status(200).json([]);
+        return;
+      }
+
+      // 검색어가 있는 경우, 검색 결과 반환
+      const searchResults = await PostService.findByTag(tag, page, limit);
       res.status(200).json(searchResults);
     } catch (error) {
       res.status(500).json({ message: error.message });

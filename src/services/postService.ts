@@ -135,6 +135,16 @@ class PostService {
     return await PostRepository.findByTitle(title, skip, limit);
   }
 
+  // 게시글 제목 검색
+  async findByTag(
+    tag: string,
+    page: number,
+    limit: number,
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    return await PostRepository.findByTag(tag, skip, limit);
+  }
+
   // 게시글 일괄 삭제
   async deleteMultipleByPostNumbers(
     postNumbers: number[],

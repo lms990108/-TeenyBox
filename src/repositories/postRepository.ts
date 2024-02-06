@@ -160,6 +160,28 @@ class PostRepository {
     return { posts, totalCount };
   }
 
+  // 게시글 태그로 검색
+  async findByTag(
+    tag: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const query = {
+      tags: { $regex: tag, $options: "i" },
+    };
+
+    const posts = await PostModel.find(query)
+      .sort({ post_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PostModel.countDocuments(query);
+
+    return { posts, totalCount };
+  }
+
   async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
     return await PostModel.find({ post_number: { $in: postNumbers } })
       .populate({ path: "user_id", select: "nickname profile_url _id" })
