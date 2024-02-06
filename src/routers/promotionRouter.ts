@@ -63,11 +63,10 @@ router.post(
 );
 
 export default router;
-
 /**
  * @swagger
  * tags:
- *   name: Promotion
+ *   - name: Promotion
  *
  * /promotions:
  *   post:
@@ -123,7 +122,7 @@ export default router;
  *                 description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
  *               runtime:
  *                 type: string
- *                 description: 연극의 런타임 (예: "2시간 30분")
+ *                 description: 연극의 런타임
  *               location:
  *                 type: string
  *                 description: 연극의 장소
@@ -184,7 +183,7 @@ export default router;
  *                   description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
  *                 runtime:
  *                   type: string
- *                   description: 연극의 런타임 (예: "2시간 30분")
+ *                   description: 연극의 런타임
  *                 location:
  *                   type: string
  *                   description: 연극의 장소
@@ -296,7 +295,7 @@ export default router;
  *                 description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
  *               runtime:
  *                 type: string
- *                 description: 연극의 런타임 (예: "2시간 30분")
+ *                 description: 연극의 런타임
  *               location:
  *                 type: string
  *                 description: 연극의 장소
@@ -396,6 +395,7 @@ export default router;
  *         description: 잘못된 요청
  *       '401':
  *         description: 인증 실패
+ *
  * /promotions/user/{userId}:
  *   get:
  *     tags:
