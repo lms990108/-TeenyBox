@@ -44,10 +44,10 @@ class reviewRepository {
     });
   }
 
-  async findReviews(match: object, page?: number, limit?: number) {
+  async findReviews(match: object, sort, page?: number, limit?: number) {
     const reviews = await ReviewModel.aggregate([
       { $match: match },
-      { $sort: { created_at: -1 } },
+      { $sort: sort },
       { $skip: (page - 1) * limit },
       { $limit: limit },
     ]);
@@ -56,8 +56,11 @@ class reviewRepository {
     return { reviews, total };
   }
 
-  async findReviewsWithoutPaging(match: object) {
-    const reviews = await ReviewModel.aggregate([{ $match: match }]);
+  async findReviewsWithoutPaging(match: object, sort) {
+    const reviews = await ReviewModel.aggregate([
+      { $match: match },
+      { $sort: sort },
+    ]);
     const total = await ReviewModel.countDocuments(match);
 
     return { reviews, total };

@@ -3,10 +3,11 @@ import { IsIn, IsNumber, IsString, Length } from "class-validator";
 
 export class CreateReviewDto {
   @IsString()
-  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이어야 합니다." })
+  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이여야 합니다." })
   title: string;
 
   @IsString()
+  @Length(1, 500, { message: "리뷰 내용은 1~500자 사이여야 합니다." })
   content: string;
 
   @IsNumber()
@@ -18,7 +19,7 @@ export class CreateReviewDto {
 
 export class UpdateReviewDto {
   @IsString()
-  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이어야 합니다." })
+  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이여야 합니다." })
   title: string;
 
   @IsString()

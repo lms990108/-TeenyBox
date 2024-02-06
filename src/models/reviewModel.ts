@@ -22,10 +22,19 @@ const ReviewSchema = new Schema<IReview>({
       validator: (value: string) => {
         return value.length >= 1 && value.length <= 30;
       },
-      message: "제목은 1에서 30자 사이어야 합니다.",
+      message: "리뷰 제목은 1~30자 사이여야 합니다.",
     },
   },
-  content: { type: String, required: true },
+  content: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (value: string) => {
+        return value.length >= 1 && value.length <= 500;
+      },
+      message: "리뷰 내용은 1~500자 사이여야 합니다.",
+    },
+  },
   rate: {
     type: Number,
     required: true,
@@ -40,5 +49,7 @@ const ReviewSchema = new Schema<IReview>({
   updatedAt: Date,
   deletedAt: { type: Date, default: null },
 });
+
+ReviewSchema.index({ createdAt: -1, rate: -1 });
 
 export const ReviewModel = mongoose.model<IReview>("Review", ReviewSchema);
