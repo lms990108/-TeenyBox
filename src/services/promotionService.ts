@@ -163,6 +163,12 @@ class PromotionService {
         skip,
         limit,
       );
+    } else if (type === "play_title") {
+      return await PromotionRepository.findByQuery(
+        { play_title: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
     }
 
     throw new Error("Invalid search type");

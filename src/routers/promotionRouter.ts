@@ -264,7 +264,7 @@ export default router;
  *     get:
  *       tags:
  *         - Promotion
- *       summary: 홍보게시글을 제목 또는 태그로 검색
+ *       summary: 홍보게시글을 제목, 태그, 연극 제목중에 하나로 검색
  *       parameters:
  *         - in: query
  *           name: type
