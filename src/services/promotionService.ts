@@ -142,24 +142,30 @@ class PromotionService {
     return deletedPromotion;
   }
 
-  // 게시글 제목 검색
-  async findByTitle(
-    title: string,
+  // 통합 검색
+  async searchPromotions(
+    type: string,
+    query: string,
     page: number,
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
     const skip = (page - 1) * limit;
-    return await PromotionRepository.findByTitle(title, skip, limit);
-  }
 
-  // 게시글 태그 검색
-  async findByTag(
-    tag: string,
-    page: number,
-    limit: number,
-  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
-    const skip = (page - 1) * limit;
-    return await PromotionRepository.findByTag(tag, skip, limit);
+    if (type === "title") {
+      return await PromotionRepository.findByQuery(
+        { title: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    } else if (type === "tag") {
+      return await PromotionRepository.findByQuery(
+        { tags: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    }
+
+    throw new Error("Invalid search type");
   }
 
   // 게시글 일괄 삭제

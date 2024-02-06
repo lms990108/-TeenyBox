@@ -26,17 +26,8 @@ router.put(
 // 글 리스트 조회
 router.get("/", asyncHandler(promotionController.getAllPromotions));
 
-// 글 제목으로 검색
-router.get(
-  "/searchByTitle",
-  asyncHandler(promotionController.searchPromotionsByTitle),
-);
-
-// 글 태그로 검색
-router.get(
-  "/searchByTag",
-  asyncHandler(promotionController.searchPromotionsByTag),
-);
+// 통합검색
+router.get("/search", asyncHandler(promotionController.searchPromotions));
 
 // 글 상세 조회
 router.get(
@@ -269,52 +260,24 @@ export default router;
  *                 items:
  *                   $ref: '#/components/schemas/Promotion'
  *
- *   /promotions/searchByTitle:
+ *   /promotions/search:
  *     get:
  *       tags:
  *         - Promotion
- *       summary: 홍보게시글을 제목으로 검색
+ *       summary: 홍보게시글을 제목 또는 태그로 검색
  *       parameters:
  *         - in: query
- *           name: title
- *           required: false
+ *           name: type
+ *           required: true
  *           schema:
  *             type: string
- *             description: 검색할 홍보게시글의 제목
+ *             description: 검색할 유형
  *         - in: query
- *           name: page
- *           schema:
- *             type: integer
- *             default: 1
- *             description: 페이지 번호
- *         - in: query
- *           name: limit
- *           schema:
- *             type: integer
- *             default: 10
- *             description: 페이지당 게시글 수
- *       responses:
- *         '200':
- *           description: 검색 결과 반환
- *           content:
- *             application/json:
- *               schema:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/Promotion'
- *
- *   /promotions/searchByTag:
- *     get:
- *       tags:
- *         - Promotion
- *       summary: 홍보게시글을 태그로 검색
- *       parameters:
- *         - in: query
- *           name: tag
- *           required: false
+ *           name: query
+ *           required: true
  *           schema:
  *             type: string
- *             description: 검색할 태그
+ *             description: 검색어
  *         - in: query
  *           name: page
  *           schema:
