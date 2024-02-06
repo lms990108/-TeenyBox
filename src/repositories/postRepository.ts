@@ -36,7 +36,12 @@ class PostRepository {
     skip: number,
     limit: number,
   ): Promise<{
-    posts: Array<IPost & { commentsCount: number }>;
+    posts: Array<
+      IPost & {
+        commentsCount: number;
+        user: { nickname: string; profile_url: string };
+      }
+    >;
     totalCount: number;
   }> {
     const totalCount = await PostModel.countDocuments();
@@ -44,33 +49,51 @@ class PostRepository {
     const aggregationResult = await PostModel.aggregate([
       {
         $lookup: {
-          from: "comments", // `CommentModel`의 컬렉션 이름
-          localField: "_id", // `PostModel`의 참조 필드
-          foreignField: "post", // `CommentModel`의 게시글 참조 필드
-          as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
+          from: "comments",
+          localField: "_id",
+          foreignField: "post",
+          as: "comments",
         },
       },
       {
         $addFields: {
-          commentsCount: { $size: "$comments" }, // 각 게시글에 대한 댓글 수 계산
+          commentsCount: { $size: "$comments" },
+        },
+      },
+      // 사용자 정보를 가져오는 $lookup 추가
+      {
+        $lookup: {
+          from: "users", // `users` 컬렉션의 이름을 정확히 맞춰야 합니다.
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      // 배열로 반환된 사용자 정보를 단일 객체로 변환
+      {
+        $unwind: {
+          path: "$user",
         },
       },
       {
         $project: {
-          comments: 0, // 댓글 데이터는 결과에서 제외, 댓글 수만 포함
+          comments: 0,
         },
       },
-      { $sort: { post_number: -1 } }, // 게시글 번호 내림차순 정렬
-      { $skip: skip }, // 페이지네이션을 위한 스킵
-      { $limit: limit }, // 페이지네이션을 위한 제한
+      { $sort: { post_number: -1 } },
+      { $skip: skip },
+      { $limit: limit },
     ]).exec();
 
     // MongoDB 집계 결과를 명시적으로 타입 변환
-    const posts: Array<IPost & { commentsCount: number }> =
-      aggregationResult.map((post) => ({
-        ...post,
-        commentsCount: post.commentsCount,
-      }));
+    const posts = aggregationResult.map((post) => ({
+      ...post,
+      user: {
+        nickname: post.user.nickname,
+        profile_url: post.user.profile_url,
+      },
+      commentsCount: post.commentsCount,
+    }));
 
     return { posts, totalCount };
   }
@@ -79,10 +102,7 @@ class PostRepository {
   async findByPostNumber(postNumber: number): Promise<IPost | null> {
     // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
     return await PostModel.findOne({ post_number: postNumber })
-      .populate({
-        path: "user_id",
-        select: "nickname profile_url _id",
-      })
+      .populate("user_id", "nickname profile_url")
       .exec();
   }
 
