@@ -10,11 +10,16 @@ export interface IPromotion extends Document {
   createdAt?: Date;
   updatedAt?: Date;
   comments: mongoose.Schema.Types.ObjectId[];
-  start_date: Date; // 상영 시작일
-  end_date: Date; // 상영 종료일
-  likes: number; // 추천수
-  views: number; // 조회수
-  likedUsers: string[]; // 추천한 사용자의 ID 목록
+  start_date: Date;
+  end_date: Date;
+  likes: number;
+  views: number;
+  likedUsers: string[];
+  category: "연극" | "기타"; // 카테고리 필드 추가
+  play_title?: string; // 연극제목 필드 추가
+  runtime?: string; // 런타임 필드 추가
+  location?: string; // 장소 필드 추가
+  host?: string; // 주최 필드 추가
 }
 
 const promotionSchema = new Schema<IPromotion>(
@@ -33,7 +38,7 @@ const promotionSchema = new Schema<IPromotion>(
     title: {
       type: String,
       required: true,
-      index: true, // 검색기능을 위한 인덱싱
+      index: true,
     },
     content: {
       type: String,
@@ -41,11 +46,9 @@ const promotionSchema = new Schema<IPromotion>(
     },
     tags: {
       type: [String],
-      required: false,
     },
     image_url: {
       type: [String],
-      required: false,
     },
     start_date: {
       type: Date,
@@ -57,19 +60,33 @@ const promotionSchema = new Schema<IPromotion>(
     },
     likes: {
       type: Number,
-      required: true,
-      default: 0, // 기본값을 0으로 설정
+      default: 0,
     },
     views: {
       type: Number,
-      required: true,
-      default: 0, // 기본값을 0으로 설정
+      default: 0,
     },
     likedUsers: {
       type: [String],
       ref: "User",
-      required: true,
       default: [],
+    },
+    category: {
+      type: String,
+      enum: ["연극", "기타"],
+      required: true,
+    },
+    play_title: {
+      type: String,
+    },
+    runtime: {
+      type: String,
+    },
+    location: {
+      type: String,
+    },
+    host: {
+      type: String,
     },
   },
   {
