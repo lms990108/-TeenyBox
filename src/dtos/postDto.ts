@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength, IsOptional } from "class-validator";
 
 // 게시글 생성을 위한 DTO
 export class CreatePostDTO {
@@ -12,6 +12,9 @@ export class CreatePostDTO {
   @IsString({ message: "내용은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
+
+  @IsOptional()
+  tags?: string[] | string;
 }
 
 // 게시글 수정을 위한 DTO
@@ -24,4 +27,7 @@ export class UpdatePostDTO {
   @IsString({ message: "내용은 문자열이어야 합니다." })
   @IsNotEmpty({ message: "내용은 반드시 입력되어야 합니다." })
   content!: string;
+
+  @IsOptional()
+  tags?: string[] | string;
 }
