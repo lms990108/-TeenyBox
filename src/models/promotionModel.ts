@@ -6,10 +6,15 @@ export interface IPromotion extends Document {
   title: string;
   content: string;
   tags?: string[];
-  image_url: string;
+  image_url: string[];
   createdAt?: Date;
   updatedAt?: Date;
   comments: mongoose.Schema.Types.ObjectId[];
+  start_date: Date; // 상영 시작일
+  end_date: Date; // 상영 종료일
+  likes: number; // 추천수
+  views: number; // 조회수
+  likedUsers: string[]; // 추천한 사용자의 ID 목록
 }
 
 const promotionSchema = new Schema<IPromotion>(
@@ -39,8 +44,32 @@ const promotionSchema = new Schema<IPromotion>(
       required: false,
     },
     image_url: {
-      type: String,
+      type: [String],
       required: false,
+    },
+    start_date: {
+      type: Date,
+      required: true,
+    },
+    end_date: {
+      type: Date,
+      required: true,
+    },
+    likes: {
+      type: Number,
+      required: true,
+      default: 0, // 기본값을 0으로 설정
+    },
+    views: {
+      type: Number,
+      required: true,
+      default: 0, // 기본값을 0으로 설정
+    },
+    likedUsers: {
+      type: [String],
+      ref: "User",
+      required: true,
+      default: [],
     },
   },
   {

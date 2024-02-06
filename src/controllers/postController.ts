@@ -32,7 +32,7 @@ class PostController {
   async getAllPosts(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const posts = await PostService.findAll(page, limit);
+    const posts = await PostService.findAllWithCommentsCount(page, limit);
     res.status(200).json(posts);
   }
 
@@ -94,6 +94,7 @@ class PostController {
     }
   }
 
+  // 게시글 일괄 삭제
   async deleteMultiplePosts(req: AuthRequest, res: Response): Promise<void> {
     if (!req.user) {
       res.status(401).json({ message: "사용자 인증이 필요합니다." });
@@ -105,6 +106,25 @@ class PostController {
       req.user._id,
     );
     res.status(200).json(deletedPosts);
+  }
+
+  // 게시글 추천
+  async likePost(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res
+        .status(401)
+        .json({ message: "로그인한 사용자만 추천할 수 있습니다." });
+      return;
+    }
+
+    const postNumber = Number(req.params.postNumber);
+
+    try {
+      const updatedPost = await PostService.likePost(postNumber, req.user._id);
+      res.status(200).json(updatedPost);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 }
 

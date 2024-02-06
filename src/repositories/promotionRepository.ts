@@ -35,14 +35,48 @@ class promotionRepository {
     );
   }
 
-  // 게시글 전체 조회 & 페이징
-  async findAll(skip: number, limit: number): Promise<IPromotion[]> {
-    return await PromotionModel.find()
-      .sort({ promotion_number: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("user_id", "nickname profile_url")
-      .exec();
+  // 게시글 전체 조회 & 페이징 + 게시글 댓글
+  async findAllWithCommentsCount(
+    skip: number,
+    limit: number,
+  ): Promise<{
+    promotions: Array<IPromotion & { commentsCount: number }>;
+    totalCount: number;
+  }> {
+    const totalCount = await PromotionModel.countDocuments();
+
+    const aggregationResult = await PromotionModel.aggregate([
+      {
+        $lookup: {
+          from: "comments", // `comments` 컬렉션과 조인
+          localField: "_id", // `PromotionModel`의 참조 필드
+          foreignField: "promotion", // `comments` 컬렉션의 게시글 참조 필드
+          as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
+        },
+      },
+      {
+        $addFields: {
+          commentsCount: { $size: "$comments" }, // 각 게시글에 대한 댓글 수 계산
+        },
+      },
+      {
+        $project: {
+          comments: 0, // 댓글 데이터는 결과에서 제외, 댓글 수만 포함
+        },
+      },
+      { $sort: { promotion_number: -1 } }, // 게시글 번호 내림차순 정렬
+      { $skip: skip }, // 페이지네이션을 위한 스킵
+      { $limit: limit }, // 페이지네이션을 위한 제한
+    ]).exec();
+
+    // MongoDB 집계 결과를 명시적으로 타입 변환
+    const promotions: Array<IPromotion & { commentsCount: number }> =
+      aggregationResult.map((promotion) => ({
+        ...promotion,
+        commentsCount: promotion.commentsCount,
+      }));
+
+    return { promotions, totalCount };
   }
 
   // 게시글 번호로 조회
@@ -85,16 +119,26 @@ class promotionRepository {
     return promotionToDelete;
   }
 
+  // 게시글 제목으로 검색
   async findByTitle(
     title: string,
     skip: number,
     limit: number,
-  ): Promise<IPromotion[]> {
-    return await PromotionModel.find({ title: new RegExp(title, "i") })
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    const promotions = await PromotionModel.find({
+      title: new RegExp(title, "i"),
+    })
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PromotionModel.countDocuments({
+      title: new RegExp(title, "i"),
+    });
+
+    return { promotions, totalCount };
   }
 
   async findMultipleByPromotionNumbers(

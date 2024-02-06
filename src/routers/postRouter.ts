@@ -49,6 +49,13 @@ router.delete(
   asyncHandler(postController.deletePostByNumber),
 );
 
+// 게시글 추천
+router.post(
+  "/:postNumber/like",
+  authenticateUser,
+  asyncHandler(postController.likePost),
+);
+
 export default router;
 
 /**
@@ -377,6 +384,43 @@ export default router;
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
  *         description: 검색 결과를 찾을 수 없음
+ *
+ * /posts/{postNumber}/like:
+ *   post:
+ *     tags:
+ *       - Post
+ *     summary: 게시글 추천
+ *     description: 지정된 게시글에 대한 추천을 추가합니다.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: postNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 추천할 게시글의 고유 식별자
+ *     responses:
+ *       200:
+ *         description: 게시글 추천 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: 성공 메시지
+ *                 post_number:
+ *                   type: integer
+ *                   description: 게시글 고유 식별자
+ *                 likes:
+ *                   type: integer
+ *                   description: 현재 추천 수
+ *               example:
+ *                 message: 게시글이 성공적으로 추천되었습니다.
+ *                 post_number: 37
+ *                 likes: 10
  *
  * components:
  *   schemas:

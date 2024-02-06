@@ -75,18 +75,30 @@ class PromotionService {
   }
 
   // 게시글 전체 조회 & 페이징
-  async findAll(page: number, limit: number): Promise<IPromotion[]> {
+  async findAllWithCommentsCountAll(
+    page: number,
+    limit: number,
+  ): Promise<{
+    promotions: Array<IPromotion & { commentsCount: number }>;
+    totalCount: number;
+  }> {
     const skip = (page - 1) * limit;
-    return await PromotionRepository.findAll(skip, limit);
+
+    return await PromotionRepository.findAllWithCommentsCount(skip, limit);
   }
 
-  // 게시글 번호로 조회
+  // 게시글 번호로 조회하며 조회수 증가
   async findByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
     if (!promotion) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
+
+    // 조회수 증가 로직 추가
+    promotion.views = (promotion.views || 0) + 1;
+    await promotion.save(); // 변경된 조회수 저장
+
     return promotion;
   }
 
@@ -135,10 +147,8 @@ class PromotionService {
     title: string,
     page: number,
     limit: number,
-  ): Promise<IPromotion[]> {
-    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
-    const skip = (page - 1) * limit;
-    return await PromotionRepository.findByTitle(encodedTitle, skip, limit);
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    return await PromotionRepository.findByTitle(title, page, limit);
   }
 
   // 게시글 일괄 삭제
@@ -161,6 +171,32 @@ class PromotionService {
     await PromotionRepository.deleteMultipleByPromotionNumbers(
       promotionNumbers,
     );
+  }
+
+  // 게시글 추천
+  async likePromotion(
+    promotionNumber: number,
+    userId: string,
+  ): Promise<IPromotion> {
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    // 사용자가 이미 추천했는지 확인
+    if (promotion.likedUsers.includes(userId)) {
+      throw new Error("이미 추천한 게시글입니다.");
+    }
+
+    // 중복 추천이 아닌 경우, 사용자 ID를 배열에 추가
+    promotion.likedUsers.push(userId);
+
+    // 클라이언트에는 추천 수를 배열의 크기로 제공
+
+    promotion.likes = promotion.likedUsers.length;
+    await promotion.save();
+    return promotion;
   }
 }
 

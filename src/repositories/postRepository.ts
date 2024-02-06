@@ -31,17 +31,48 @@ class PostRepository {
     );
   }
 
-  // 게시글 전체 조회 & 페이징
-  async findAll(skip: number, limit: number): Promise<IPost[]> {
-    return await PostModel.find()
-      .sort({ post_number: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate({
-        path: "user_id",
-        select: "nickname profile_url _id",
-      })
-      .exec();
+  // 게시글 전체 조회 & 페이징 + 게시글 댓글
+  async findAllWithCommentsCount(
+    skip: number,
+    limit: number,
+  ): Promise<{
+    posts: Array<IPost & { commentsCount: number }>;
+    totalCount: number;
+  }> {
+    const totalCount = await PostModel.countDocuments();
+
+    const aggregationResult = await PostModel.aggregate([
+      {
+        $lookup: {
+          from: "comments", // `CommentModel`의 컬렉션 이름
+          localField: "_id", // `PostModel`의 참조 필드
+          foreignField: "post", // `CommentModel`의 게시글 참조 필드
+          as: "comments", // 조인된 댓글 데이터를 저장할 필드 이름
+        },
+      },
+      {
+        $addFields: {
+          commentsCount: { $size: "$comments" }, // 각 게시글에 대한 댓글 수 계산
+        },
+      },
+      {
+        $project: {
+          comments: 0, // 댓글 데이터는 결과에서 제외, 댓글 수만 포함
+        },
+      },
+      { $sort: { post_number: -1 } }, // 게시글 번호 내림차순 정렬
+      { $skip: skip }, // 페이지네이션을 위한 스킵
+      { $limit: limit }, // 페이지네이션을 위한 제한
+    ]).exec();
+
+    // MongoDB 집계 결과를 명시적으로 타입 변환
+    const posts: Array<IPost & { commentsCount: number }> =
+      aggregationResult.map((post) => ({
+        ...post,
+        commentsCount: post.commentsCount,
+      }));
+
+    return { posts, totalCount };
   }
 
   // 게시글 번호로 조회
@@ -87,16 +118,24 @@ class PostRepository {
     return postToDelete;
   }
 
+  // 게시글 제목으로 검색
   async findByTitle(
     title: string,
     skip: number,
     limit: number,
-  ): Promise<IPost[]> {
-    return await PostModel.find({ title: new RegExp(title, "i") })
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const posts = await PostModel.find({ title: new RegExp(title, "i") })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PostModel.countDocuments({
+      title: new RegExp(title, "i"),
+    });
+
+    return { posts, totalCount };
   }
 
   async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {

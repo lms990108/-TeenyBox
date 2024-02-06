@@ -3,6 +3,7 @@ import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import PromotionService from "../services/promotionService";
 
 class PromotionController {
+  // 게시글 생성
   async createPromotion(req: AuthRequest, res: Response): Promise<void> {
     // 인증된 사용자의 정보가 있는지 확인합니다.
     if (!req.user) {
@@ -18,6 +19,7 @@ class PromotionController {
     }
   }
 
+  // 게시글 수정
   async updatePromotion(req: AuthRequest, res: Response): Promise<void> {
     if (!req.user) {
       res.status(401).json({ message: "사용자 인증이 필요합니다." });
@@ -33,10 +35,14 @@ class PromotionController {
     res.status(200).json(promotion);
   }
 
+  // 게시글 전체 조회
   async getAllPromotions(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const promotions = await PromotionService.findAll(page, limit);
+    const promotions = await PromotionService.findAllWithCommentsCountAll(
+      page,
+      limit,
+    );
     res.status(200).json(promotions);
   }
 
@@ -47,6 +53,7 @@ class PromotionController {
     res.status(200).json(promotion);
   }
 
+  // 유저 id로 게시글 검색 (리스트반환)
   async getPromotionsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
@@ -60,6 +67,7 @@ class PromotionController {
     res.status(200).json({ promotions, totalCount });
   }
 
+  // 게시글 삭제
   async deletePromotionByNumber(
     req: AuthRequest,
     res: Response,
@@ -77,22 +85,16 @@ class PromotionController {
   }
 
   async searchPromotions(req: Request, res: Response): Promise<void> {
-    console.log("0번");
-
     try {
       const title = req.query.title as string;
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 10);
-
-      console.log("1번" + title);
 
       // 검색어가 없는 경우, 빈 리스트 반환
       if (!title) {
         res.status(200).json([]);
         return;
       }
-
-      console.log("2번" + title);
 
       // 검색어가 있는 경우, 검색 결과 반환
       const searchResults = await PromotionService.findByTitle(
@@ -106,6 +108,7 @@ class PromotionController {
     }
   }
 
+  // 게시글 일괄 삭제
   async deleteMultiplePromotions(
     req: AuthRequest,
     res: Response,
@@ -121,6 +124,28 @@ class PromotionController {
         req.user._id,
       );
     res.status(200).json(deletedPromotions);
+  }
+
+  // 게시글 추천
+  async likePromotion(req: AuthRequest, res: Response): Promise<void> {
+    if (!req.user) {
+      res
+        .status(401)
+        .json({ message: "로그인한 사용자만 추천할 수 있습니다." });
+      return;
+    }
+
+    const promotionNumber = Number(req.params.promotionNumber);
+
+    try {
+      const updatedPromotion = await PromotionService.likePromotion(
+        promotionNumber,
+        req.user._id,
+      );
+      res.status(200).json(updatedPromotion);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 }
 
