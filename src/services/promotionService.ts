@@ -152,6 +152,16 @@ class PromotionService {
     return await PromotionRepository.findByTitle(title, skip, limit);
   }
 
+  // 게시글 태그 검색
+  async findByTag(
+    tag: string,
+    page: number,
+    limit: number,
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    return await PromotionRepository.findByTitle(tag, skip, limit);
+  }
+
   // 게시글 일괄 삭제
   async deleteMultipleByPromotionNumbers(
     promotionNumbers: number[],

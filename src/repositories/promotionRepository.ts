@@ -141,6 +141,28 @@ class promotionRepository {
     return { promotions, totalCount };
   }
 
+  // 게시글 태그로 검색
+  async findByTag(
+    tag: string,
+    skip: number,
+    limit: number,
+  ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
+    const query = {
+      tags: { $regex: tag, $options: "i" },
+    };
+
+    const promotions = await PromotionModel.find(query)
+      .sort({ promotion_number: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // 총 게시글 개수 조회
+    const totalCount = await PromotionModel.countDocuments(query);
+
+    return { promotions, totalCount };
+  }
+
   async findMultipleByPromotionNumbers(
     promotionNumbers: number[],
   ): Promise<IPromotion[]> {
