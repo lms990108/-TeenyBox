@@ -114,6 +114,22 @@ export default router;
  *                 type: string
  *                 format: date-time
  *                 description: 상영 종료일
+ *               category:
+ *                 type: string
+ *                 enum: ["연극", "기타"]
+ *                 description: 홍보게시글의 카테고리 ("연극" 또는 "기타")
+ *               play_title:
+ *                 type: string
+ *                 description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
+ *               runtime:
+ *                 type: string
+ *                 description: 연극의 런타임 (예: "2시간 30분")
+ *               location:
+ *                 type: string
+ *                 description: 연극의 장소
+ *               host:
+ *                 type: string
+ *                 description: 연극의 주최자
  *     responses:
  *       201:
  *         description: 홍보게시글이 성공적으로 추가됨
@@ -159,6 +175,22 @@ export default router;
  *                 views:
  *                   type: integer
  *                   description: 게시글의 조회수
+ *                 category:
+ *                   type: string
+ *                   enum: ["연극", "기타"]
+ *                   description: 홍보게시글의 카테고리 ("연극" 또는 "기타")
+ *                 play_title:
+ *                   type: string
+ *                   description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
+ *                 runtime:
+ *                   type: string
+ *                   description: 연극의 런타임 (예: "2시간 30분")
+ *                 location:
+ *                   type: string
+ *                   description: 연극의 장소
+ *                 host:
+ *                   type: string
+ *                   description: 연극의 주최자
  *                 _id:
  *                   type: string
  *                   description: 게시물의 고유 MongoDB ID
@@ -193,6 +225,15 @@ export default router;
  *                     content: "홍보게시글 내용"
  *                     image_url: "/path/to/image.jpg"
  *                     tags: ["태그1", "태그2"]
+ *                     category: "연극"
+ *                     play_title: "신비한 동물사전"
+ *                     runtime: "2시간 30분"
+ *                     location: "국립극장 대극장"
+ *                     host: "국립극장"
+ *                     start_date: "2023-01-10T00:00:00.000Z"
+ *                     end_date: "2023-01-10T00:00:00.000Z"
+ *                     likes: 3
+ *                     views: 500
  *                     createdAt: "2023-01-01T00:00:00.000Z"
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
@@ -246,6 +287,22 @@ export default router;
  *                 type: string
  *                 format: date-time
  *                 description: 상영 종료일
+ *               category:
+ *                 type: string
+ *                 enum: ["연극", "기타"]
+ *                 description: 홍보게시글의 카테고리 ("연극" 또는 "기타")
+ *               play_title:
+ *                 type: string
+ *                 description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
+ *               runtime:
+ *                 type: string
+ *                 description: 연극의 런타임 (예: "2시간 30분")
+ *               location:
+ *                 type: string
+ *                 description: 연극의 장소
+ *               host:
+ *                 type: string
+ *                 description: 연극의 주최자
  *     responses:
  *       200:
  *         description: 홍보게시글이 성공적으로 업데이트됨
@@ -278,6 +335,15 @@ export default router;
  *                   content: "특정 홍보게시글 내용"
  *                   image_url: "/path/to/image2.jpg"
  *                   tags: ["태그A", "태그B"]
+ *                   category: "연극"
+ *                   play_title: "신비한 동물사전"
+ *                   runtime: "2시간 30분"
+ *                   location: "국립극장 대극장"
+ *                   host: "국립극장"
+ *                   start_date: "2023-01-10T00:00:00.000Z"
+ *                   end_date: "2023-01-10T00:00:00.000Z"
+ *                   likes: 3
+ *                   views: 500
  *                   createdAt: "2023-02-01T00:00:00.000Z"
  *                   updatedAt: "2023-02-01T00:00:00.000Z"
  *       404:
@@ -355,6 +421,15 @@ export default router;
  *                     content: "사용자 관련 홍보게시글 내용"
  *                     image_url: "/path/to/user_image.jpg"
  *                     tags: ["태그X", "태그Y"]
+ *                     category: "연극"
+ *                     play_title: "신비한 동물사전"
+ *                     runtime: "2시간 30분"
+ *                     location: "국립극장 대극장"
+ *                     host: "국립극장"
+ *                     start_date: "2023-01-10T00:00:00.000Z"
+ *                     end_date: "2023-01-10T00:00:00.000Z"
+ *                     likes: 3
+ *                     views: 500
  *                     createdAt: "2023-03-01T00:00:00.000Z"
  *                     updatedAt: "2023-03-01T00:00:00.000Z"
  *       404:
@@ -397,6 +472,15 @@ export default router;
  *                     content: "검색된 홍보게시글 내용"
  *                     image_url: "/path/to/image.jpg"
  *                     tags: ["태그1", "태그2"]
+ *                     category: "연극"
+ *                     play_title: "신비한 동물사전"
+ *                     runtime: "2시간 30분"
+ *                     location: "국립극장 대극장"
+ *                     host: "국립극장"
+ *                     start_date: "2023-01-10T00:00:00.000Z"
+ *                     end_date: "2023-01-10T00:00:00.000Z"
+ *                     likes: 3
+ *                     views: 500
  *                     createdAt: "2023-01-01T00:00:00.000Z"
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
