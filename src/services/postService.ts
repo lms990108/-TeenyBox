@@ -131,9 +131,8 @@ class PostService {
     page: number,
     limit: number,
   ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
     const skip = (page - 1) * limit;
-    return await PostRepository.findByTitle(encodedTitle, skip, limit);
+    return await PostRepository.findByTitle(title, skip, limit);
   }
 
   // 게시글 일괄 삭제

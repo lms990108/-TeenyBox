@@ -144,16 +144,18 @@ class PostRepository {
     skip: number,
     limit: number,
   ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const posts = await PostModel.find({ title: new RegExp(title, "i") })
+    const query = {
+      title: { $regex: title, $options: "i" },
+    };
+
+    const posts = await PostModel.find(query)
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
     // 총 게시글 개수 조회
-    const totalCount = await PostModel.countDocuments({
-      title: new RegExp(title, "i"),
-    });
+    const totalCount = await PostModel.countDocuments(query);
 
     return { posts, totalCount };
   }

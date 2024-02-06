@@ -125,18 +125,18 @@ class promotionRepository {
     skip: number,
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
-    const promotions = await PromotionModel.find({
-      title: new RegExp(title, "i"),
-    })
+    const query = {
+      title: { $regex: title, $options: "i" },
+    };
+
+    const promotions = await PromotionModel.find(query)
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
     // 총 게시글 개수 조회
-    const totalCount = await PromotionModel.countDocuments({
-      title: new RegExp(title, "i"),
-    });
+    const totalCount = await PromotionModel.countDocuments(query);
 
     return { promotions, totalCount };
   }

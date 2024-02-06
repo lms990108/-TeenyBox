@@ -148,7 +148,8 @@ class PromotionService {
     page: number,
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
-    return await PromotionRepository.findByTitle(title, page, limit);
+    const skip = (page - 1) * limit;
+    return await PromotionRepository.findByTitle(title, skip, limit);
   }
 
   // 게시글 일괄 삭제
