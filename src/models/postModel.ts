@@ -5,6 +5,7 @@ export interface IPost extends Document {
   user_id: mongoose.Schema.Types.ObjectId;
   title: string;
   content: string;
+  tags?: string[];
   createdAt?: Date;
   updatedAt?: Date;
   comments: (typeof mongoose.Schema.Types.ObjectId)[];
@@ -34,6 +35,9 @@ const postSchema = new Schema<IPost>(
     content: {
       type: String,
       required: true,
+    },
+    tags: {
+      type: [String],
     },
     likes: {
       type: Number,

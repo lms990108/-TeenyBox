@@ -96,6 +96,11 @@ export default router;
  *                 content:
  *                   type: string
  *                   description: 게시물 내용
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: 게시글에 사용될 태그 배열
  *                 _id:
  *                   type: string
  *                   description: 게시물의 고유 MongoDB ID
@@ -210,6 +215,7 @@ export default router;
  *                 user_id: "654a4cfc2a8ed874281b68b1"
  *                 title: "업데이트된 게시물 제목"
  *                 content: "업데이트된 게시물 내용"
+ *                 tags: ["태그1", "태그2"]
  *                 _id: "65a89e82c3180cd22b2fdf2c"
  *                 createdAt: "2024-01-18T03:44:02.952Z"
  *                 updatedAt: "2024-01-18T04:00:00.000Z"
@@ -268,6 +274,7 @@ export default router;
  *                 user_id: "654a4cfc2a8ed874281b68b1"
  *                 title: "업데이트된 게시물 제목"
  *                 content: "업데이트된 게시물 내용"
+ *                 tags: ["태그1", "태그2"]
  *                 _id: "65a89e82c3180cd22b2fdf2c"
  *                 createdAt: "2024-01-18T03:44:02.952Z"
  *                 updatedAt: "2024-01-18T04:00:00.000Z"
@@ -380,6 +387,7 @@ export default router;
  *                   - promotion_number: 1
  *                     title: "검색된 게시글 제목"
  *                     content: "검색된 게시글 내용"
+ *                     tags: ["태그1", "태그2"]
  *                     createdAt: "2023-01-01T00:00:00.000Z"
  *                     updatedAt: "2023-01-01T00:00:00.000Z"
  *       404:
@@ -436,6 +444,11 @@ export default router;
  *         content:
  *           type: string
  *           description: 게시물 내용
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 게시글에 사용될 태그 배열
  *     UpdatePostRequest:
  *       type: object
  *       properties:
@@ -446,6 +459,11 @@ export default router;
  *         content:
  *           type: string
  *           description: 업데이트된 게시물 내용
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 게시글에 사용될 태그 배열
  *     PostResponse:
  *       type: object
  *       properties:
@@ -466,6 +484,11 @@ export default router;
  *           type: string
  *           format: date-time
  *           description: 최종 수정 일시
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 게시글에 사용될 태그 배열
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
