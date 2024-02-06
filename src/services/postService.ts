@@ -10,6 +10,16 @@ class PostService {
   // 게시글 생성
   async create(postData: CreatePostDTO, userId: string): Promise<IPost> {
     try {
+      // 태그가 문자열로 들어왔다면 배열로 변환
+      if (typeof postData.tags === "string") {
+        postData.tags = postData.tags.split(",").map((tag) => tag.trim());
+      } else if (Array.isArray(postData.tags)) {
+        // tags 필드가 이미 배열이라면, 각 요소를 trim 처리
+        postData.tags = postData.tags.map((tag) =>
+          typeof tag === "string" ? tag.trim() : tag,
+        );
+      }
+
       // 사용자 정보 조회
       const user = await UserModel.findOne({ _id: userId });
       if (!user) {

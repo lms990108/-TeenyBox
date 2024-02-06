@@ -66,361 +66,249 @@ export default router;
 
 /**
  * @swagger
- * tags:
- *   name: Promotion
+ * components:
+ *   schemas:
+ *     Promotion:
+ *       type: object
+ *       required:
+ *         - title
+ *         - content
+ *         - start_date
+ *         - end_date
+ *       properties:
+ *         title:
+ *           type: string
+ *           maxLength: 30
+ *           description: 홍보게시글의 제목
+ *         content:
+ *           type: string
+ *           description: 홍보게시글의 내용
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: 홍보게시글에 사용될 태그 배열
+ *         image_url:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: url
+ *           description: 홍보게시글의 포스터 이미지 주소 배열
+ *         start_date:
+ *           type: string
+ *           format: date-time
+ *           description: 상영 시작일
+ *         end_date:
+ *           type: string
+ *           format: date-time
+ *           description: 상영 종료일
+ *         category:
+ *           type: string
+ *           enum: ["연극", "기타"]
+ *           description: 홍보게시글의 카테고리 ("연극" 또는 "기타")
+ *         play_title:
+ *           type: string
+ *           description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
+ *         runtime:
+ *           type: string
+ *           description: 연극의 런타임
+ *         location:
+ *           type: string
+ *           description: 연극의 장소
+ *         host:
+ *           type: string
+ *           description: 연극의 주최자
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *
- * /promotions:
- *   post:
- *     tags:
- *       - Promotion
- *     summary: 새로운 홍보게시글 추가
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
+ * paths:
+ *   /promotions:
+ *     post:
+ *       tags:
+ *         - Promotion
+ *       summary: 새로운 홍보게시글 추가
+ *       security:
+ *         - bearerAuth: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Promotion'
+ *       responses:
+ *         '201':
+ *           description: 홍보게시글이 성공적으로 추가됨
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Promotion'
+ *     get:
+ *       tags:
+ *         - Promotion
+ *       summary: 모든 홍보게시글 조회
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글 목록 반환
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/Promotion'
+ *
+ *   /promotions/{promotionNumber}:
+ *     put:
+ *       tags:
+ *         - Promotion
+ *       summary: 주어진 번호의 홍보게시글 업데이트
+ *       parameters:
+ *         - in: path
+ *           name: promotionNumber
+ *           required: true
  *           schema:
- *             type: object
- *             required:
- *               - title
- *               - content
- *               - start_date
- *               - end_date
- *             properties:
- *               title:
- *                 type: string
- *                 maxLength: 30
- *                 description: 홍보게시글의 제목
- *               content:
- *                 type: string
- *                 description: 홍보게시글의 내용
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 description: 홍보게시글에 사용될 태그 배열
- *               image_url:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: url
- *                 description: 홍보게시글의 포스터 이미지 주소 배열
- *               start_date:
- *                 type: string
- *                 format: date-time
- *                 description: 상영 시작일
- *               end_date:
- *                 type: string
- *                 format: date-time
- *                 description: 상영 종료일
- *     responses:
- *       201:
- *         description: 홍보게시글이 성공적으로 추가됨
+ *             type: number
+ *             description: 업데이트할 홍보게시글의 번호
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Promotion'
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글이 성공적으로 업데이트됨
+ *     get:
+ *       tags:
+ *         - Promotion
+ *       summary: 특정 번호의 홍보게시글 조회
+ *       parameters:
+ *         - in: path
+ *           name: promotionNumber
+ *           required: true
+ *           schema:
+ *             type: number
+ *             description: 조회할 홍보게시글의 번호
+ *       responses:
+ *         '200':
+ *           description: 특정 홍보게시글 반환
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/Promotion'
+ *     delete:
+ *       tags:
+ *         - Promotion
+ *       summary: 특정 번호의 홍보게시글 삭제
+ *       parameters:
+ *         - in: path
+ *           name: promotionNumber
+ *           required: true
+ *           schema:
+ *             type: number
+ *             description: 삭제할 홍보게시글의 번호
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글이 성공적으로 삭제됨
+ *
+ *   /promotions/bulk:
+ *     delete:
+ *       tags:
+ *         - Promotion
+ *       summary: 여러 홍보게시글 일괄 삭제
+ *       security:
+ *         - bearerAuth: []
+ *       requestBody:
+ *         required: true
  *         content:
  *           application/json:
  *             schema:
  *               type: object
+ *               required:
+ *                 - promotionNumbers
  *               properties:
- *                 promotion_number:
- *                   type: integer
- *                   description: 게시물 고유 식별자
- *                 user_id:
- *                   type: string
- *                   description: 사용자 ID
- *                 title:
- *                   type: string
- *                   description: 게시물 제목
- *                 content:
- *                   type: string
- *                   description: 게시물 내용
- *                 tags:
+ *                 promotionNumbers:
  *                   type: array
  *                   items:
- *                     type: string
- *                   description: 홍보게시글에 사용될 태그 배열
- *                 image_url:
- *                   type: array
- *                   items:
- *                     type: string
- *                     format: url
- *                   description: 홍보게시글의 포스터 이미지 주소 배열
- *                 start_date:
- *                   type: string
- *                   format: date-time
- *                   description: 상영 시작일
- *                 end_date:
- *                   type: string
- *                   format: date-time
- *                   description: 상영 종료일
- *                 likes:
- *                   type: integer
- *                   description: 게시글의 추천수
- *                 views:
- *                   type: integer
- *                   description: 게시글의 조회수
- *                 _id:
- *                   type: string
- *                   description: 게시물의 고유 MongoDB ID
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                   description: 게시물 생성 시간
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *                   description: 게시물 마지막 수정 시간
- *                 __v:
- *                   type: integer
- *                   description: 버전
- *       400:
- *         description: 잘못된 요청 데이터
+ *                     type: integer
+ *                   description: 삭제할 홍보게시글 번호들
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글들이 성공적으로 삭제됨
  *
- *   get:
- *     tags:
- *       - Promotion
- *     summary: 모든 홍보게시글 조회
- *     responses:
- *       200:
- *         description: 홍보게시글 목록 반환
- *         content:
- *           application/json:
- *             examples:
- *               success:
- *                 value:
- *                   - promotion_number: 1
- *                     title: "홍보게시글 제목"
- *                     content: "홍보게시글 내용"
- *                     image_url: "/path/to/image.jpg"
- *                     tags: ["태그1", "태그2"]
- *                     createdAt: "2023-01-01T00:00:00.000Z"
- *                     updatedAt: "2023-01-01T00:00:00.000Z"
- *       404:
- *         description: 홍보게시글을 찾을 수 없음
- *
- * /promotions/{promotionNumber}:
- *   put:
- *     tags:
- *       - Promotion
- *     summary: 주어진 번호의 홍보게시글 업데이트
- *     parameters:
- *       - in: path
- *         name: promotionNumber
- *         required: true
- *         schema:
- *           type: number
- *           description: 업데이트할 홍보게시글의 번호
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
+ *   /promotions/user/{userId}:
+ *     get:
+ *       tags:
+ *         - Promotion
+ *       summary: 특정 사용자의 모든 홍보게시글 조회
+ *       parameters:
+ *         - in: path
+ *           name: userId
+ *           required: true
  *           schema:
- *             type: object
- *             required:
- *               - title
- *               - content
- *             properties:
- *               title:
- *                 type: string
- *                 maxLength: 30
- *                 description: 업데이트된 홍보게시글의 제목
- *               content:
- *                 type: string
- *                 description: 업데이트된 홍보게시글의 내용
- *               tags:
+ *             type: string
+ *             description: 조회할 사용자의 ID
+ *       responses:
+ *         '200':
+ *           description: 사용자의 홍보게시글 목록 반환
+ *           content:
+ *             application/json:
+ *               schema:
  *                 type: array
  *                 items:
- *                   type: string
- *                 description: 업데이트된 홍보게시글의 태그들
- *               image_url:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: url
- *                 description: 홍보게시글의 포스터 이미지 주소 배열
- *               start_date:
- *                 type: string
- *                 format: date-time
- *                 description: 상영 시작일
- *               end_date:
- *                 type: string
- *                 format: date-time
- *                 description: 상영 종료일
- *     responses:
- *       200:
- *         description: 홍보게시글이 성공적으로 업데이트됨
- *       400:
- *         description: 잘못된 요청 데이터
- *       404:
- *         description: 홍보게시글을 찾을 수 없음
+ *                   $ref: '#/components/schemas/Promotion'
  *
- *   get:
- *     tags:
- *       - Promotion
- *     summary: 특정 번호의 홍보게시글 조회
- *     parameters:
- *       - in: path
- *         name: promotionNumber
- *         required: true
- *         schema:
- *           type: number
- *           description: 조회할 홍보게시글의 번호
- *     responses:
- *       200:
- *         description: 특정 홍보게시글 반환
- *         content:
- *           application/json:
- *             examples:
- *               success:
- *                 value:
- *                   promotion_number: 2
- *                   title: "특정 홍보게시글 제목"
- *                   content: "특정 홍보게시글 내용"
- *                   image_url: "/path/to/image2.jpg"
- *                   tags: ["태그A", "태그B"]
- *                   createdAt: "2023-02-01T00:00:00.000Z"
- *                   updatedAt: "2023-02-01T00:00:00.000Z"
- *       404:
- *         description: 홍보게시글을 찾을 수 없음
- *
- *   delete:
- *     tags:
- *       - Promotion
- *     summary: 특정 번호의 홍보게시글 삭제
- *     parameters:
- *       - in: path
- *         name: promotionNumber
- *         required: true
- *         schema:
- *           type: number
- *           description: 삭제할 홍보게시글의 번호
- *     responses:
- *       200:
- *         description: 홍보게시글이 성공적으로 삭제됨
- *       404:
- *         description: 홍보게시글을 찾을 수 없음
- *
- * /promotions/bulk:
- *   delete:
- *     tags:
- *       - Promotion
- *     summary: 여러 홍보게시글 일괄 삭제
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
+ *   /promotions/search:
+ *     get:
+ *       tags:
+ *         - Promotion
+ *       summary: 홍보게시글을 제목으로 검색
+ *       parameters:
+ *         - in: query
+ *           name: title
+ *           required: false
  *           schema:
- *             type: object
- *             required:
- *               - promotionNumbers
- *             properties:
- *               promotionNumbers:
+ *             type: string
+ *             description: 검색할 홍보게시글의 제목
+ *         - in: query
+ *           name: page
+ *           schema:
+ *             type: integer
+ *             default: 1
+ *             description: 페이지 번호
+ *         - in: query
+ *           name: limit
+ *           schema:
+ *             type: integer
+ *             default: 10
+ *             description: 페이지당 게시글 수
+ *       responses:
+ *         '200':
+ *           description: 검색 결과 반환
+ *           content:
+ *             application/json:
+ *               schema:
  *                 type: array
  *                 items:
- *                   type: integer
- *                 description: 삭제할 홍보게시글 번호들
- *             example:
- *               promotionNumbers: [1, 2, 3]
- *     responses:
- *       '200':
- *         description: 홍보게시글들이 성공적으로 삭제됨
- *       '400':
- *         description: 잘못된 요청
- *       '401':
- *         description: 인증 실패
- * /promotions/user/{userId}:
- *   get:
- *     tags:
- *       - Promotion
- *     summary: 특정 사용자의 모든 홍보게시글 조회
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *           description: 조회할 사용자의 ID
- *     responses:
- *       200:
- *         description: 사용자의 홍보게시글 목록 반환
- *         content:
- *           application/json:
- *             examples:
- *               success:
- *                 value:
- *                   - promotion_number: 3
- *                     title: "사용자 관련 홍보게시글 제목"
- *                     content: "사용자 관련 홍보게시글 내용"
- *                     image_url: "/path/to/user_image.jpg"
- *                     tags: ["태그X", "태그Y"]
- *                     createdAt: "2023-03-01T00:00:00.000Z"
- *                     updatedAt: "2023-03-01T00:00:00.000Z"
- *       404:
- *         description: 사용자를 찾을 수 없음
+ *                   $ref: '#/components/schemas/Promotion'
  *
- * /promotions/search:
- *   get:
- *     tags:
- *       - Promotion
- *     summary: 홍보게시글을 제목으로 검색
- *     parameters:
- *       - in: query
- *         name: title
- *         required: false
- *         schema:
- *           type: string
- *         description: 검색할 홍보게시글의 제목
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: 페이지 번호
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: 페이지당 게시글 수
- *     responses:
- *       200:
- *         description: 검색 결과 반환
- *         content:
- *           application/json:
- *             examples:
- *               success:
- *                 value:
- *                   - promotion_number: 1
- *                     title: "검색된 홍보게시글 제목"
- *                     content: "검색된 홍보게시글 내용"
- *                     image_url: "/path/to/image.jpg"
- *                     tags: ["태그1", "태그2"]
- *                     createdAt: "2023-01-01T00:00:00.000Z"
- *                     updatedAt: "2023-01-01T00:00:00.000Z"
- *       404:
- *         description: 검색 결과를 찾을 수 없음
- *
- * /promotions/{promotionNumber}/like:
- *   post:
- *     tags:
- *       - Promotion
- *     summary: 특정 홍보게시글 추천
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: promotionNumber
- *         required: true
- *         schema:
- *           type: integer
- *           description: 추천할 홍보게시글의 번호
- *     responses:
- *       200:
- *         description: 홍보게시글이 성공적으로 추천됨
- *       400:
- *         description: 잘못된 요청
- *       404:
- *         description: 홍보게시글을 찾을 수 없음
+ *   /promotions/{promotionNumber}/like:
+ *     post:
+ *       tags:
+ *         - Promotion
+ *       summary: 특정 홍보게시글 추천
+ *       security:
+ *         - bearerAuth: []
+ *       parameters:
+ *         - in: path
+ *           name: promotionNumber
+ *           required: true
+ *           schema:
+ *             type: integer
+ *             description: 추천할 홍보게시글의 번호
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글이 성공적으로 추천됨
  */
