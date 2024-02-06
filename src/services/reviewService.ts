@@ -134,10 +134,11 @@ class reviewService {
     return review;
   }
 
-  async findReviews(match: object, page?: number, limit?: number) {
-    const { reviews, total } = limit
-      ? await reviewRepository.findReviews(match, page, limit)
-      : await reviewRepository.findReviewsWithoutPaging(match);
+  async findReviews(match: object, sort, page?: number, limit?: number) {
+    const { reviews, total } =
+      limit && page
+        ? await reviewRepository.findReviews(match, sort, page, limit)
+        : await reviewRepository.findReviewsWithoutPaging(match, sort);
 
     if (!reviews) {
       throw new NotFoundError(`검색 결과: 해당하는 리뷰를 찾을 수 없습니다.`);

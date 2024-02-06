@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import showService from "../services/showService";
 import { ShowResponseDto } from "../dtos/showDto";
-import { ShowOrder } from "../common/enum/showOrder.enum";
+import { ShowOrder } from "../common/enum/show-order.enum";
 import { IShow } from "../models/showModel";
 
 class ShowController {

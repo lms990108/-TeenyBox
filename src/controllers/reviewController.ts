@@ -3,6 +3,7 @@ import reviewService from "../services/reviewService";
 import { AuthRequest } from "../middlewares/authUserMiddlewares";
 import { ReviewResponseDto } from "../dtos/reviewDto";
 import { IReview } from "../models/reviewModel";
+import { ReviewOrder } from "../common/enum/review-order.enum";
 
 class ReviewController {
   async create(req: AuthRequest, res: Response): Promise<Response> {
@@ -68,14 +69,28 @@ class ReviewController {
     const limit = parseInt(req.query.limit as string) || undefined;
     const userId = req.query.userId as string;
     const showId = req.query.showId as string;
+    const order: ReviewOrder =
+      (req.query.order as ReviewOrder) || ReviewOrder.RECENT;
 
     const match = { deletedAt: null };
+    let sort;
 
     if (userId) match["userId"] = userId;
     if (showId) match["showId"] = showId;
+    if (order) {
+      switch (order) {
+        case ReviewOrder.RECENT:
+          sort = { createdAt: -1 };
+          break;
+        case ReviewOrder.HIGH_RATE:
+          sort = { rate: -1 };
+          break;
+      }
+    }
 
     const { reviews, total } = await reviewService.findReviews(
       match,
+      sort,
       page,
       limit,
     );
