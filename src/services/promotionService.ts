@@ -171,7 +171,7 @@ class PromotionService {
       );
     }
 
-    throw new Error("Invalid search type");
+    throw new Error("잘못된 타입입니다.");
   }
 
   // 게시글 일괄 삭제
