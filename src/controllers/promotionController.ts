@@ -41,7 +41,7 @@ class PromotionController {
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 10);
       const sortBy = String(req.query.sortBy) || "promotion_number";
-      const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+      const sortOrder = String(req.query.sortOrder) === "desc" ? "desc" : "asc";
 
       const promotions = await PromotionService.getAllPromotions(
         page,

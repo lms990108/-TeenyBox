@@ -66,7 +66,7 @@ class promotionRepository {
           comments: 0,
         },
       },
-      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 추가된 부분: 정렬 순서에 따라 오름차순 또는 내림차순 정렬
+      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 정렬기준 & 정렬방식
       { $skip: skip },
       { $limit: limit },
     ]).exec();

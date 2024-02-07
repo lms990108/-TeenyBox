@@ -144,6 +144,18 @@ export default router;
  *           type: integer
  *           default: 10
  *           description: 페이지당 게시물 수
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: post_number
+ *           description: 정렬 기준
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           default: desc
+ *           description: asc = 오름차순, desc = 내림차순
  *     responses:
  *       '200':
  *         description: 게시물 목록

@@ -64,20 +64,18 @@ class PostService {
   }
 
   // 게시글 전체 조회 & 페이징
-  async findAllWithCommentsCount(
+  async getAllPosts(
     page: number,
     limit: number,
+    sortBy: string, // 정렬 기준
+    sortOrder: "asc" | "desc", // 정렬 순서
   ): Promise<{
     posts: Array<IPost & { commentsCount: number }>;
     totalCount: number;
   }> {
     const skip = (page - 1) * limit;
-    const postsWithComments = await PostRepository.findAllWithCommentsCount(
-      skip,
-      limit,
-    );
 
-    return postsWithComments;
+    return await PostRepository.findAll(skip, limit, sortBy, sortOrder);
   }
 
   // 게시글 번호로 조회
@@ -123,26 +121,6 @@ class PostService {
     const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
 
     return deletedPost;
-  }
-
-  // 게시글 제목 검색
-  async findByTitle(
-    title: string,
-    page: number,
-    limit: number,
-  ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const skip = (page - 1) * limit;
-    return await PostRepository.findByTitle(title, skip, limit);
-  }
-
-  // 게시글 태그 검색
-  async findByTag(
-    tag: string,
-    page: number,
-    limit: number,
-  ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const skip = (page - 1) * limit;
-    return await PostRepository.findByTag(tag, skip, limit);
   }
 
   // 통합 검색
