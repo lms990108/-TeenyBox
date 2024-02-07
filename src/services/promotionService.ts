@@ -142,13 +142,36 @@ class PromotionService {
     return deletedPromotion;
   }
 
-  // 게시글 제목 검색
-  async findByTitle(
-    title: string,
+  // 통합 검색
+  async searchPromotions(
+    type: string,
+    query: string,
     page: number,
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
-    return await PromotionRepository.findByTitle(title, page, limit);
+    const skip = (page - 1) * limit;
+
+    if (type === "title") {
+      return await PromotionRepository.findByQuery(
+        { title: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    } else if (type === "tag") {
+      return await PromotionRepository.findByQuery(
+        { tags: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    } else if (type === "play_title") {
+      return await PromotionRepository.findByQuery(
+        { play_title: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    }
+
+    throw new Error("잘못된 타입입니다.");
   }
 
   // 게시글 일괄 삭제

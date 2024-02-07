@@ -26,7 +26,7 @@ router.put(
 // 글 리스트 조회
 router.get("/", asyncHandler(promotionController.getAllPromotions));
 
-// 글 제목으로 검색
+// 통합검색
 router.get("/search", asyncHandler(promotionController.searchPromotions));
 
 // 글 상세 조회
@@ -264,14 +264,20 @@ export default router;
  *     get:
  *       tags:
  *         - Promotion
- *       summary: 홍보게시글을 제목으로 검색
+ *       summary: 홍보게시글을 제목, 태그, 연극 제목중에 하나로 검색
  *       parameters:
  *         - in: query
- *           name: title
- *           required: false
+ *           name: type
+ *           required: true
  *           schema:
  *             type: string
- *             description: 검색할 홍보게시글의 제목
+ *             description: 검색할 유형
+ *         - in: query
+ *           name: query
+ *           required: true
+ *           schema:
+ *             type: string
+ *             description: 검색어
  *         - in: query
  *           name: page
  *           schema:

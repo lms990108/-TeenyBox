@@ -119,24 +119,19 @@ class promotionRepository {
     return promotionToDelete;
   }
 
-  // 게시글 제목으로 검색
-  async findByTitle(
-    title: string,
+  // 통합 검색
+  async findByQuery(
+    query: object,
     skip: number,
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
-    const promotions = await PromotionModel.find({
-      title: new RegExp(title, "i"),
-    })
+    const promotions = await PromotionModel.find(query)
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
-    // 총 게시글 개수 조회
-    const totalCount = await PromotionModel.countDocuments({
-      title: new RegExp(title, "i"),
-    });
+    const totalCount = await PromotionModel.countDocuments(query);
 
     return { promotions, totalCount };
   }

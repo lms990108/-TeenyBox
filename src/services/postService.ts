@@ -131,9 +131,44 @@ class PostService {
     page: number,
     limit: number,
   ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const encodedTitle = encodeURIComponent(title); // 한글을 URL 인코딩
     const skip = (page - 1) * limit;
-    return await PostRepository.findByTitle(encodedTitle, skip, limit);
+    return await PostRepository.findByTitle(title, skip, limit);
+  }
+
+  // 게시글 태그 검색
+  async findByTag(
+    tag: string,
+    page: number,
+    limit: number,
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    return await PostRepository.findByTag(tag, skip, limit);
+  }
+
+  // 통합 검색
+  async searchPosts(
+    type: string,
+    query: string,
+    page: number,
+    limit: number,
+  ): Promise<{ posts: IPost[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+
+    if (type === "title") {
+      return await PostRepository.findByQuery(
+        { title: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    } else if (type === "tag") {
+      return await PostRepository.findByQuery(
+        { tags: { $regex: query, $options: "i" } },
+        skip,
+        limit,
+      );
+    }
+
+    throw new Error("잘못된 타입입니다.");
   }
 
   // 게시글 일괄 삭제

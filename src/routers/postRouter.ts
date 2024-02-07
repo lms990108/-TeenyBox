@@ -26,7 +26,7 @@ router.put(
 // 모든 게시글 조회
 router.get("/", asyncHandler(postController.getAllPosts));
 
-// 글 제목으로 검색
+// 통합검색
 router.get("/search", asyncHandler(postController.searchPosts));
 
 // 게시글 상세 조회
@@ -356,14 +356,20 @@ export default router;
  *   get:
  *     tags:
  *       - Post
- *     summary: 게시글을 제목으로 검색
+ *     summary: 게시글을 제목또는 태그로 검색
  *     parameters:
  *       - in: query
- *         name: title
- *         required: false
+ *         name: type
+ *         required: true
  *         schema:
  *           type: string
- *         description: 검색할 게시글의 제목
+ *         description: 검색할 유형
+ *       - in: query
+ *         name: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 검색어
  *       - in: query
  *         name: page
  *         schema:
