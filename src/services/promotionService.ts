@@ -78,14 +78,15 @@ class PromotionService {
   async getAllPromotions(
     page: number,
     limit: number,
-    sortBy: string, // 추가된 부분: 정렬 기준
+    sortBy: string, // 정렬 기준
+    sortOrder: "asc" | "desc", // 정렬 순서
   ): Promise<{
     promotions: Array<IPromotion & { commentsCount: number }>;
     totalCount: number;
   }> {
     const skip = (page - 1) * limit;
 
-    return await PromotionRepository.findAll(skip, limit, sortBy); // 수정된 부분: findAll 메서드 호출 시 sortBy 파라미터 전달
+    return await PromotionRepository.findAll(skip, limit, sortBy, sortOrder);
   }
 
   // 게시글 번호로 조회하며 조회수 증가

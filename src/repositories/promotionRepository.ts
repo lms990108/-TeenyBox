@@ -40,6 +40,7 @@ class promotionRepository {
     skip: number,
     limit: number,
     sortBy: string,
+    sortOrder: "asc" | "desc", // 추가된 부분: 정렬 순서
   ): Promise<{
     promotions: Array<IPromotion & { commentsCount: number }>;
     totalCount: number;
@@ -65,7 +66,7 @@ class promotionRepository {
           comments: 0,
         },
       },
-      { $sort: { [sortBy]: -1 } }, // 추가된 부분: 정렬 기준에 따라 내림차순 정렬
+      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 추가된 부분: 정렬 순서에 따라 오름차순 또는 내림차순 정렬
       { $skip: skip },
       { $limit: limit },
     ]).exec();

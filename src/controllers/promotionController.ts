@@ -40,12 +40,14 @@ class PromotionController {
     try {
       const page = Number(req.query.page || 1);
       const limit = Number(req.query.limit || 10);
-      const sortBy = String(req.query.sortBy) || "promotion_number"; // 추가된 부분: 기본 정렬 기준은 게시글 번호
+      const sortBy = String(req.query.sortBy) || "promotion_number";
+      const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
 
       const promotions = await PromotionService.getAllPromotions(
         page,
         limit,
-        sortBy, // 추가된 부분: 정렬 기준을 서비스 메서드에 전달
+        sortBy,
+        sortOrder,
       );
       res.status(200).json(promotions);
     } catch (error) {

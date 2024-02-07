@@ -168,6 +168,12 @@ export default router;
  *             type: string
  *             default: promotion_number
  *             description: 정렬 기준
+ *         - in: query
+ *           name: sortOrder
+ *           schema:
+ *             type: string
+ *             default: desc
+ *             description: asc = 오름차순, desc = 내림차순
  *       responses:
  *         '200':
  *           description: 홍보게시글 목록 반환
