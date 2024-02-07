@@ -53,6 +53,7 @@ class PromotionController {
     }
   }
 
+  // 게시글 번호로 상세조회
   async getPromotionByNumber(req: Request, res: Response): Promise<void> {
     const promotion = await PromotionService.findByPromotionNumber(
       Number(req.params.promotionNumber),
