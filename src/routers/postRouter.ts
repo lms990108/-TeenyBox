@@ -26,12 +26,6 @@ router.put(
 // 모든 게시글 조회
 router.get("/", asyncHandler(postController.getAllPosts));
 
-// 글 제목으로 검색
-router.get("/searchByTitle", asyncHandler(postController.searchPostsByTitle));
-
-// 글 태그로 검색
-router.get("/searchByTag", asyncHandler(postController.searchPostsByTag));
-
 // 통합검색
 router.get("/search", asyncHandler(postController.searchPosts));
 
