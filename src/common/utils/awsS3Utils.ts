@@ -27,8 +27,10 @@ export async function uploadImageToS3(
     ContentType: file.mimetype,
   };
 
+  const encodedKey = encodeURIComponent(key);
+
   await s3Client.send(new PutObjectCommand(uploadParams));
-  return `https://${bucketName}.s3.amazonaws.com/${key}`;
+  return `https://${bucketName}.s3.amazonaws.com/${encodedKey}`;
 }
 
 // S3에서 이미지를 삭제하는 함수
