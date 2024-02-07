@@ -78,7 +78,7 @@ export default router;
  *       properties:
  *         title:
  *           type: string
- *           maxLength: 30
+ *           maxLength: 40
  *           description: 홍보게시글의 제목
  *         content:
  *           type: string
@@ -110,7 +110,7 @@ export default router;
  *           type: string
  *           description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
  *         runtime:
- *           type: string
+ *           type: integer
  *           description: 연극의 런타임
  *         location:
  *           type: string

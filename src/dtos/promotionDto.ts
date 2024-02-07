@@ -6,6 +6,7 @@ import {
   IsArray,
   IsDate,
   IsEnum,
+  IsInt,
 } from "class-validator";
 import { Type } from "class-transformer";
 
@@ -50,8 +51,8 @@ export class CreatePromotionDTO {
   play_title?: string;
 
   @IsOptional()
-  @IsString({ message: "런타임은 문자열이어야 합니다." })
-  runtime?: string;
+  @IsInt({ message: "런타임은 정수형이어야 합니다." })
+  runtime?: number;
 
   @IsOptional()
   @IsString({ message: "장소는 문자열이어야 합니다." })
@@ -101,8 +102,8 @@ export class UpdatePromotionDTO {
   play_title?: string;
 
   @IsOptional()
-  @IsString({ message: "런타임은 문자열이어야 합니다." })
-  runtime?: string;
+  @IsInt({ message: "런타임은 정수형이어야 합니다." })
+  runtime?: number;
 
   @IsOptional()
   @IsString({ message: "장소는 문자열이어야 합니다." })
