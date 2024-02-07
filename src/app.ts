@@ -19,6 +19,7 @@ import { errorMiddleware } from "./middlewares/errorMiddleware";
 import path from "path";
 import cors from "cors";
 import reviewRouter from "./routers/reviewRouter";
+import presignedUrlRouter from "./routers/presignedUrlRouter";
 
 dotenv.config();
 
@@ -64,6 +65,7 @@ app.use("/api/shows", showRouter);
 app.use("/api/users", userRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/images", imageRouter);
+app.use("/api/presigned-urls", presignedUrlRouter);
 
 app.use(errorMiddleware);
 
