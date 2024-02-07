@@ -149,6 +149,25 @@ export default router;
  *       tags:
  *         - Promotion
  *       summary: 모든 홍보게시글 조회
+ *       parameters:
+ *         - in: query
+ *           name: page
+ *           schema:
+ *             type: integer
+ *             default: 1
+ *             description: 페이지 번호
+ *         - in: query
+ *           name: limit
+ *           schema:
+ *             type: integer
+ *             default: 10
+ *             description: 페이지당 게시물 수
+ *         - in: query
+ *           name: sortBy
+ *           schema:
+ *             type: string
+ *             default: promotion_number
+ *             description: 정렬 기준
  *       responses:
  *         '200':
  *           description: 홍보게시글 목록 반환
