@@ -41,6 +41,12 @@ import multer from "multer";
  *              example:
  *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
  *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A47.217Z_tea.JPG"
+ *             imageUrlsToDelete:
+ *              type: array
+ *              description: 삭제할 이미지 urls
+ *              example:
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A47.217Z_tea.JPG"
  *     responses:
  *       201:
  *         description: 등록 성공

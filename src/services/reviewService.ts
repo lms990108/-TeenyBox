@@ -27,6 +27,9 @@ class reviewService {
     const userNickname = user.nickname;
     const showTitle = show.title;
 
+    const { imageUrlsToDelete } = reviewData;
+    if (imageUrlsToDelete) await deleteImagesFromS3(imageUrlsToDelete);
+
     const review = {
       ...reviewData,
       userNickname,
@@ -70,8 +73,7 @@ class reviewService {
       throw new ForbiddenError("리뷰 수정은 작성자만 가능합니다.");
 
     const { imageUrlsToDelete } = reviewData;
-
-    await deleteImagesFromS3(imageUrlsToDelete);
+    if (imageUrlsToDelete) await deleteImagesFromS3(imageUrlsToDelete);
 
     const updatedReview = await reviewRepository.update(reviewId, reviewData);
     const updatedRating = updatedReview.rate;
