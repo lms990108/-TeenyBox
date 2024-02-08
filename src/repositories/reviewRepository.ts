@@ -6,27 +6,21 @@ class reviewRepository {
     userId: string,
     showId: string,
     reviewData: CreateReviewDto,
-    imageUrls: string[],
   ): Promise<IReview> {
     const review = new ReviewModel({
       userId,
       showId,
       ...reviewData,
-      imageUrls,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
     return await review.save();
   }
 
-  async update(
-    reviewId: string,
-    reviewData: UpdateReviewDto,
-    imageUrls: string[],
-  ) {
+  async update(reviewId: string, reviewData: UpdateReviewDto) {
     return ReviewModel.findOneAndUpdate(
       { _id: reviewId },
-      { ...reviewData, updatedAt: new Date(), imageUrls },
+      { ...reviewData, updatedAt: new Date() },
       {
         new: true,
       },

@@ -5,7 +5,7 @@ import { IUser } from "../models/userModel";
 import reviewRepository from "../repositories/reviewRepository";
 import showService from "./showService";
 import userService from "./userService";
-import { uploadImageToS3 } from "../common/utils/awsS3Utils";
+import { deleteImagesFromS3 } from "../common/utils/awsS3Utils";
 import NotFoundError from "../common/error/NotFoundError";
 import { IShow } from "../models/showModel";
 import ConflictError from "../common/error/ConflictError";
@@ -17,7 +17,6 @@ class reviewService {
     userId: string,
     showId: string,
     reviewData: CreateReviewDto,
-    detailImages: Express.Multer.File[],
   ): Promise<IReview> {
     if (await reviewRepository.existByUserIdAndShowId(userId, showId))
       throw new ConflictError("이미 리뷰를 작성한 공연입니다.");
@@ -28,31 +27,20 @@ class reviewService {
     const userNickname = user.nickname;
     const showTitle = show.title;
 
+    const { imageUrlsToDelete } = reviewData;
+    if (imageUrlsToDelete) await deleteImagesFromS3(imageUrlsToDelete);
+
     const review = {
       ...reviewData,
       userNickname,
       showTitle,
-      detailImages: null,
     };
 
-    const imageUrls = await this.uploadImages(detailImages);
-    const createdReview = await reviewRepository.create(
-      userId,
-      showId,
-      review,
-      imageUrls,
-    );
+    const createdReview = await reviewRepository.create(userId, showId, review);
 
     await this.updateShowAndUser(show, user, createdReview);
 
     return createdReview;
-  }
-
-  private async uploadImages(detailImages: Express.Multer.File[]) {
-    const imagePromises = detailImages.map((image) =>
-      uploadImageToS3(image, `reviews/${Date.now()}_${image.originalname}`),
-    );
-    return Promise.all(imagePromises);
   }
 
   private async updateShowAndUser(
@@ -77,28 +65,17 @@ class reviewService {
     await show.save();
   }
 
-  async update(
-    userId: string,
-    reviewId: string,
-    reviewData: UpdateReviewDto,
-    detailImages: Express.Multer.File[],
-  ) {
+  async update(userId: string, reviewId: string, reviewData: UpdateReviewDto) {
     const review = await this.findOne(reviewId);
     const originalRating = review.rate;
 
     if (userId !== review.userId)
       throw new ForbiddenError("리뷰 수정은 작성자만 가능합니다.");
 
-    const imagePromises = detailImages.map((image) =>
-      uploadImageToS3(image, `reviews/${Date.now()}_${image.originalname}`),
-    );
-    const imageUrls = await Promise.all(imagePromises);
+    const { imageUrlsToDelete } = reviewData;
+    if (imageUrlsToDelete) await deleteImagesFromS3(imageUrlsToDelete);
 
-    const updatedReview = await reviewRepository.update(
-      reviewId,
-      reviewData,
-      imageUrls,
-    );
+    const updatedReview = await reviewRepository.update(reviewId, reviewData);
     const updatedRating = updatedReview.rate;
 
     if (originalRating !== updatedRating) {
@@ -153,12 +130,19 @@ class reviewService {
     if (user.user_id !== review.userId && user.role !== ROLE.ADMIN)
       throw new ForbiddenError("리뷰 삭제는 작성자 또는 관리자만 가능합니다.");
 
-    // 리뷰를 삭제하기 전, 총 평점 기록
     const showId = review.showId;
     const show = await showService.findShowByShowId(showId);
 
+    /**
+     * 공연 평점 업데이트
+     */
     const { totalRating, notExcludedReviewIds } =
       await this.calculateTotalRating(show.reviews, reviewId);
+
+    /**
+     * S3에 있는 이미지 삭제
+     */
+    await deleteImagesFromS3(review.imageUrls);
 
     await reviewRepository.deleteOne(reviewId);
     await this.updateRating(show, totalRating, notExcludedReviewIds);
@@ -177,6 +161,8 @@ class reviewService {
 
       const { totalRating, notExcludedReviewIds } =
         await this.calculateTotalRating(show.reviews, reviewId);
+
+      await deleteImagesFromS3(review.imageUrls);
 
       await reviewRepository.deleteOne(reviewId);
       await this.updateRating(show, totalRating, notExcludedReviewIds);

@@ -1,7 +1,39 @@
 import { IReview } from "../models/reviewModel";
-import { IsIn, IsNumber, IsString, Length } from "class-validator";
+import {
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Length,
+} from "class-validator";
 
 export class CreateReviewDto {
+  @IsString()
+  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이여야 합니다." })
+  @IsNotEmpty({ message: "제목을 입력해주세요" })
+  title: string;
+
+  @IsString()
+  @Length(1, 500, { message: "리뷰 내용은 1~500자 사이여야 합니다." })
+  @IsNotEmpty({ message: "내용을 입력해주세요" })
+  content: string;
+
+  @IsNumber()
+  @IsIn([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], {
+    message: "Invalid Rate",
+  })
+  @IsNotEmpty({ message: "평점을 입력해주세요" })
+  rate: number;
+
+  @IsArray()
+  imageUrls?: string[];
+
+  @IsArray()
+  imageUrlsToDelete?: string[];
+}
+
+export class UpdateReviewDto {
   @IsString()
   @Length(1, 30, { message: "리뷰 제목은 1~30자 사이여야 합니다." })
   title: string;
@@ -15,21 +47,12 @@ export class CreateReviewDto {
     message: "Invalid Rate",
   })
   rate: number;
-}
 
-export class UpdateReviewDto {
-  @IsString()
-  @Length(1, 30, { message: "리뷰 제목은 1~30자 사이여야 합니다." })
-  title: string;
+  @IsArray()
+  imageUrls?: string[];
 
-  @IsString()
-  content: string;
-
-  @IsNumber()
-  @IsIn([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], {
-    message: "Invalid Rate",
-  })
-  rate: number;
+  @IsArray()
+  imageUrlsToDelete?: string[];
 }
 
 export class ReviewResponseDto {

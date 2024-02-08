@@ -10,14 +10,8 @@ class ReviewController {
     const userId = req.user.user_id;
     const showId = req.params.showId;
     const createReviewDto = req.body;
-    const detailImages = req.files as Express.Multer.File[];
 
-    const review = await reviewService.create(
-      userId,
-      showId,
-      createReviewDto,
-      detailImages,
-    );
+    const review = await reviewService.create(userId, showId, createReviewDto);
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
 
@@ -25,13 +19,11 @@ class ReviewController {
     const reviewId = req.params.id as string;
     const userId = req.user.user_id;
     const updateReviewDto = req.body;
-    const detailImages = req.files as Express.Multer.File[];
 
     const review = await reviewService.update(
       userId,
       reviewId,
       updateReviewDto,
-      detailImages,
     );
     return res.status(201).json({ review: new ReviewResponseDto(review) });
   }
