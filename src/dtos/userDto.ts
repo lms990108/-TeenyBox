@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsEnum, IsOptional } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsArray,
+} from "class-validator";
 import { SOCIAL } from "../common/enum/enum";
 import { Union } from "../common/enum/CustomUnion";
 
@@ -26,6 +32,10 @@ export class UserRequestDTO {
   @IsOptional()
   @IsString({ message: "프로필 URL은 문자열이어야 합니다." })
   profile_url?: string;
+
+  @IsOptional()
+  @IsArray()
+  imageUrlsToDelete?: string[];
 }
 
 export class UserResponseDTO {
