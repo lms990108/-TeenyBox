@@ -89,7 +89,7 @@ class PromotionService {
     totalCount: number;
   }> {
     const skip = (page - 1) * limit;
-    let filter: FilterQuery<IPromotion> = {}; // 필터 타입 지정
+    const filter: FilterQuery<IPromotion> = {}; // 필터 타입 지정
     // 카테고리 값에 따라 필터 설정
     if (category && (category === "연극" || category === "기타")) {
       filter.category = category;
