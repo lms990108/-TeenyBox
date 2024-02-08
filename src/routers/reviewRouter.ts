@@ -20,7 +20,7 @@ import multer from "multer";
  *         example: "PF227440"
  *     requestBody:
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *            properties:
  *             title:
@@ -33,13 +33,14 @@ import multer from "multer";
  *              example: "재미있는 공연이에요!"
  *             rate:
  *              type: number
- *              description: 평점 (0~5)
+ *              description: 평점 [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
  *              example: 5
- *             review_images:
+ *             imageUrls:
  *              type: array
- *              items:
- *               type: string
- *               format: binary
+ *              description: 이미지 urls
+ *              example:
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A47.217Z_tea.JPG"
  *     responses:
  *       201:
  *         description: 등록 성공
@@ -55,9 +56,15 @@ import multer from "multer";
  *                   - _id: "65a39e03a0f46b46abc87a32"
  *                     user_nickname: "동현123"
  *                     show_title: "'굿'바이 햄릿"
+ *                     show_id: "PF230517"
+ *                     user_id: "3246926995"
  *                     title: "미쳤다!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 5
+ *                     image_urls: [
+ *                       "https://elice-5th.s3.ap-northeast-2.amazonaws.com/%ED%85%8C%EC%8A%A4%ED%8A%B81.jpg",
+ *                       "https://elice-5th.s3.ap-northeast-2.amazonaws.com/%ED%9A%8C.jpg"
+ *                     ]
  *                     created_at: "2024-01-14T08:40:35.440Z"
  *                     updated_at: "2024-01-14T08:40:35.440Z"
  *                     deleted_at: null
@@ -79,7 +86,7 @@ import multer from "multer";
  *         example: "65a39e03a0f46b46abc87a32"
  *     requestBody:
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *            properties:
  *             title:
@@ -94,11 +101,18 @@ import multer from "multer";
  *              type: number
  *              description: 평점 (0~5)
  *              example: 5
- *             review_images:
+ *             imageUrls:
  *              type: array
- *              items:
- *               type: string
- *               format: binary
+ *              description: 이미지 urls
+ *              example:
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A47.217Z_tea.JPG"
+ *             imageUrlsToDelete:
+ *              type: array
+ *              description: 삭제할 이미지 urls
+ *              example:
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
+ *                - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A47.217Z_tea.JPG"
  *     responses:
  *       201:
  *         description: 등록 성공
@@ -117,6 +131,10 @@ import multer from "multer";
  *                     title: "역시 라이어!"
  *                     content: "재미있는 공연이에요!"
  *                     rate: 4
+ *                     image_urls: [
+ *                       "https://elice-5th.s3.ap-northeast-2.amazonaws.com/%ED%85%8C%EC%8A%A4%ED%8A%B81.jpg",
+ *                       "https://elice-5th.s3.ap-northeast-2.amazonaws.com/%ED%9A%8C.jpg"
+ *                     ]
  *                     created_at: "2024-01-14T08:40:35.440Z"
  *                     updated_at: "2024-01-14T08:40:35.440Z"
  *                     deleted_at: null

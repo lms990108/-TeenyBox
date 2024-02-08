@@ -45,3 +45,15 @@ export async function deleteImageFromS3(
 
   await s3Client.send(new DeleteObjectCommand(deleteParams));
 }
+
+export async function deleteImagesFromS3(urlsToDelete: string[]) {
+  const bucketName = process.env.S3_BUCKET_NAME;
+  const urlInFrontOfKey = `https://${bucketName}.s3.ap-northeast-2.amazonaws.com/`;
+  await Promise.all(
+    urlsToDelete.map(async (url) => {
+      const filenameEncoded = url.replace(urlInFrontOfKey, "");
+      const filenameDecoded = decodeURIComponent(filenameEncoded);
+      await deleteImageFromS3(bucketName, filenameDecoded);
+    }),
+  );
+}

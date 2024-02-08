@@ -1,5 +1,5 @@
 import { IReview } from "../models/reviewModel";
-import { IsIn, IsNumber, IsString, Length } from "class-validator";
+import { IsArray, IsIn, IsNumber, IsString, Length } from "class-validator";
 
 export class CreateReviewDto {
   @IsString()
@@ -15,6 +15,9 @@ export class CreateReviewDto {
     message: "Invalid Rate",
   })
   rate: number;
+
+  @IsArray()
+  imageUrls: string[];
 }
 
 export class UpdateReviewDto {
@@ -23,6 +26,7 @@ export class UpdateReviewDto {
   title: string;
 
   @IsString()
+  @Length(1, 500, { message: "리뷰 내용은 1~500자 사이여야 합니다." })
   content: string;
 
   @IsNumber()
@@ -30,6 +34,12 @@ export class UpdateReviewDto {
     message: "Invalid Rate",
   })
   rate: number;
+
+  @IsArray()
+  imageUrls: string[];
+
+  @IsArray()
+  imageUrlsToDelete: string[];
 }
 
 export class ReviewResponseDto {

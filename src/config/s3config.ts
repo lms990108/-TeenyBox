@@ -1,10 +1,10 @@
 // s3config.ts
-import { S3 } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const s3Client = new S3({
+const s3Client = new S3Client({
   region: "ap-northeast-2",
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
