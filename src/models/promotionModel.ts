@@ -17,7 +17,7 @@ export interface IPromotion extends Document {
   likedUsers: string[];
   category: "연극" | "기타"; // 카테고리 필드 추가
   play_title?: string; // 연극제목 필드 추가
-  runtime?: string; // 런타임 필드 추가
+  runtime?: number; // 런타임 필드 추가
   location?: string; // 장소 필드 추가
   host?: string; // 주최 필드 추가
 }
@@ -80,7 +80,7 @@ const promotionSchema = new Schema<IPromotion>(
       type: String,
     },
     runtime: {
-      type: String,
+      type: Number,
     },
     location: {
       type: String,

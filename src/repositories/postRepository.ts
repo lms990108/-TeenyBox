@@ -32,9 +32,11 @@ class PostRepository {
   }
 
   // 게시글 전체 조회 & 페이징 + 게시글 댓글
-  async findAllWithCommentsCount(
+  async findAll(
     skip: number,
     limit: number,
+    sortBy: string,
+    sortOrder: "asc" | "desc", // 추가된 부분: 정렬 순서
   ): Promise<{
     posts: Array<
       IPost & {
@@ -80,7 +82,7 @@ class PostRepository {
           comments: 0,
         },
       },
-      { $sort: { post_number: -1 } },
+      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 정렬기준 & 정렬방식
       { $skip: skip },
       { $limit: limit },
     ]).exec();
@@ -136,50 +138,6 @@ class PostRepository {
       post_number: postNumber,
     });
     return postToDelete;
-  }
-
-  // 게시글 제목으로 검색
-  async findByTitle(
-    title: string,
-    skip: number,
-    limit: number,
-  ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const query = {
-      title: { $regex: title, $options: "i" },
-    };
-
-    const posts = await PostModel.find(query)
-      .sort({ post_number: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
-
-    // 총 게시글 개수 조회
-    const totalCount = await PostModel.countDocuments(query);
-
-    return { posts, totalCount };
-  }
-
-  // 게시글 태그로 검색
-  async findByTag(
-    tag: string,
-    skip: number,
-    limit: number,
-  ): Promise<{ posts: IPost[]; totalCount: number }> {
-    const query = {
-      tags: { $regex: tag, $options: "i" },
-    };
-
-    const posts = await PostModel.find(query)
-      .sort({ post_number: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
-
-    // 총 게시글 개수 조회
-    const totalCount = await PostModel.countDocuments(query);
-
-    return { posts, totalCount };
   }
 
   // 통합 검색

@@ -78,7 +78,7 @@ export default router;
  *       properties:
  *         title:
  *           type: string
- *           maxLength: 30
+ *           maxLength: 40
  *           description: 홍보게시글의 제목
  *         content:
  *           type: string
@@ -110,7 +110,7 @@ export default router;
  *           type: string
  *           description: 연극의 제목 (카테고리가 "연극"인 경우 필요)
  *         runtime:
- *           type: string
+ *           type: integer
  *           description: 연극의 런타임
  *         location:
  *           type: string
@@ -149,6 +149,31 @@ export default router;
  *       tags:
  *         - Promotion
  *       summary: 모든 홍보게시글 조회
+ *       parameters:
+ *         - in: query
+ *           name: page
+ *           schema:
+ *             type: integer
+ *             default: 1
+ *             description: 페이지 번호
+ *         - in: query
+ *           name: limit
+ *           schema:
+ *             type: integer
+ *             default: 10
+ *             description: 페이지당 게시물 수
+ *         - in: query
+ *           name: sortBy
+ *           schema:
+ *             type: string
+ *             default: promotion_number
+ *             description: 정렬 기준
+ *         - in: query
+ *           name: sortOrder
+ *           schema:
+ *             type: string
+ *             default: desc
+ *             description: asc = 오름차순, desc = 내림차순
  *       responses:
  *         '200':
  *           description: 홍보게시글 목록 반환

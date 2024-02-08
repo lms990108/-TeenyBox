@@ -37,15 +37,25 @@ class PromotionController {
 
   // 게시글 전체 조회
   async getAllPromotions(req: Request, res: Response): Promise<void> {
-    const page = Number(req.query.page || 1);
-    const limit = Number(req.query.limit || 10);
-    const promotions = await PromotionService.findAllWithCommentsCountAll(
-      page,
-      limit,
-    );
-    res.status(200).json(promotions);
+    try {
+      const page = Number(req.query.page || 1);
+      const limit = Number(req.query.limit || 10);
+      const sortBy = String(req.query.sortBy) || "promotion_number";
+      const sortOrder = String(req.query.sortOrder) === "desc" ? "desc" : "asc";
+
+      const promotions = await PromotionService.getAllPromotions(
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+      );
+      res.status(200).json(promotions);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 
+  // 게시글 번호로 상세조회
   async getPromotionByNumber(req: Request, res: Response): Promise<void> {
     const promotion = await PromotionService.findByPromotionNumber(
       Number(req.params.promotionNumber),
