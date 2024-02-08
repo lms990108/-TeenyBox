@@ -76,6 +76,10 @@ const showRouter = Router();
  *        name: order
  *        schema:
  *         type: string
+ *         enum:
+ *           - recent
+ *           - price
+ *           - rate
  *         description: 순서 enum
  *         example: "recent"
  *     responses:

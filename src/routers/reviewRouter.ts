@@ -167,6 +167,17 @@ import multer from "multer";
  *        schema:
  *         type: string
  *         description: 공연 아이디
+ *      - in: query
+ *        name: order
+ *        schema:
+ *         type: string
+ *         enum:
+ *           - recent
+ *           - rate
+ *         description: |
+ *           정렬 순서를 지정합니다.
+ *           - 'recent': 최신순으로 정렬합니다.
+ *           - 'rate': 높은 평점순으로 정렬합니다.
  *     responses:
  *       200:
  *         description: 조회 성공
