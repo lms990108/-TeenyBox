@@ -5,6 +5,7 @@ import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
 import UnauthorizedError from "../common/error/UnauthorizedError";
 import { UserModel } from "../models/userModel";
+import { FilterQuery } from "mongoose";
 
 class PromotionService {
   // 게시글 생성
@@ -80,13 +81,25 @@ class PromotionService {
     limit: number,
     sortBy: string, // 정렬 기준
     sortOrder: "asc" | "desc", // 정렬 순서
+    category: string,
   ): Promise<{
     promotions: Array<IPromotion & { commentsCount: number }>;
     totalCount: number;
   }> {
     const skip = (page - 1) * limit;
+    let filter: FilterQuery<IPromotion> = {}; // 필터 타입 지정
+    // 카테고리 값에 따라 필터 설정
+    if (category && (category === "연극" || category === "기타")) {
+      filter.category = category;
+    }
 
-    return await PromotionRepository.findAll(skip, limit, sortBy, sortOrder);
+    return await PromotionRepository.findAll(
+      skip,
+      limit,
+      sortBy,
+      sortOrder,
+      filter,
+    );
   }
 
   // 게시글 번호로 조회하며 조회수 증가

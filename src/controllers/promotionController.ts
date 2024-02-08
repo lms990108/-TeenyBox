@@ -42,12 +42,14 @@ class PromotionController {
       const limit = Number(req.query.limit || 10);
       const sortBy = String(req.query.sortBy) || "promotion_number";
       const sortOrder = String(req.query.sortOrder) === "desc" ? "desc" : "asc";
+      const category = String(req.query.category);
 
       const promotions = await PromotionService.getAllPromotions(
         page,
         limit,
         sortBy,
         sortOrder,
+        category,
       );
       res.status(200).json(promotions);
     } catch (error) {
