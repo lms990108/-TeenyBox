@@ -84,14 +84,11 @@ class PromotionController {
     req: AuthRequest,
     res: Response,
   ): Promise<void> {
-    // 인증된 사용자의 정보가 있는지 확인합니다.
-    if (!req.user) {
-      res.status(401).json({ message: "사용자 인증이 필요합니다." });
-      return;
-    }
+    const user = req.user;
+
     const promotion = await PromotionService.deleteByPromotionNumber(
       Number(req.params.promotionNumber),
-      req.user._id,
+      user,
     );
     res.status(200).json(promotion);
   }
@@ -131,15 +128,12 @@ class PromotionController {
     req: AuthRequest,
     res: Response,
   ): Promise<void> {
-    if (!req.user) {
-      res.status(401).json({ message: "사용자 인증이 필요합니다." });
-      return;
-    }
-    const promotionNumbers = req.body.promotionNumbers; // 게시글 번호 배열
+    const user = req.user;
+    const promotionNumbers = req.body.promotionNumbers;
     const deletedPromotions =
       await PromotionService.deleteMultipleByPromotionNumbers(
         promotionNumbers,
-        req.user._id,
+        user,
       );
     res.status(200).json(deletedPromotions);
   }
