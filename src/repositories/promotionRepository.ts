@@ -49,6 +49,15 @@ class promotionRepository {
   }> {
     const totalCount = await PromotionModel.countDocuments(filter);
 
+    let sortStage;
+    if (sortBy !== "promotion_number") {
+      sortStage = {
+        $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, promotion_number: -1 },
+      };
+    } else {
+      sortStage = { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } };
+    }
+
     const aggregationResult = await PromotionModel.aggregate([
       {
         $lookup: {
@@ -68,10 +77,8 @@ class promotionRepository {
           comments: 0,
         },
       },
-      { $match: filter }, // 필터 적용
-      {
-        $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, promotion_number: -1 },
-      },
+      { $match: filter },
+      sortStage,
       { $skip: skip },
       { $limit: limit },
     ]).exec();
