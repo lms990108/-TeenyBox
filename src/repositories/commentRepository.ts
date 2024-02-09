@@ -54,6 +54,12 @@ export class CommentRepository {
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       await CommentModel.find({ user_id: userId })
+        .populate({
+          path: "post",
+        })
+        .populate({
+          path: "promotion",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
@@ -109,6 +115,10 @@ export class CommentRepository {
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ post: { $exists: true } })
+        .populate({
+          path: "post",
+          select: "post_number",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
@@ -126,6 +136,10 @@ export class CommentRepository {
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ promotion: { $exists: true } })
+        .populate({
+          path: "promotion",
+          select: "promotion_number category",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
