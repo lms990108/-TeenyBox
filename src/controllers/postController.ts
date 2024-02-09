@@ -116,17 +116,25 @@ class PostController {
 
   // 게시글 추천
   async likePost(req: AuthRequest, res: Response): Promise<void> {
-    if (!req.user) {
-      res
-        .status(401)
-        .json({ message: "로그인한 사용자만 추천할 수 있습니다." });
-      return;
-    }
-
     const postNumber = Number(req.params.postNumber);
 
     try {
       const updatedPost = await PostService.likePost(postNumber, req.user._id);
+      res.status(200).json(updatedPost);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // 게시글 추천 취소
+  async cancelLikePost(req: AuthRequest, res: Response): Promise<void> {
+    const postNumber = Number(req.params.postNumber);
+
+    try {
+      const updatedPost = await PostService.cancelLikePost(
+        postNumber,
+        req.user._id,
+      );
       res.status(200).json(updatedPost);
     } catch (error) {
       res.status(500).json({ message: error.message });

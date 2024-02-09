@@ -48,6 +48,15 @@ class PostRepository {
   }> {
     const totalCount = await PostModel.countDocuments();
 
+    let sortStage;
+    if (sortBy !== "post_number") {
+      sortStage = {
+        $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, post_number: -1 },
+      };
+    } else {
+      sortStage = { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } };
+    }
+
     const aggregationResult = await PostModel.aggregate([
       {
         $lookup: {
@@ -82,7 +91,7 @@ class PostRepository {
           comments: 0,
         },
       },
-      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, post_number: -1 } },
+      sortStage,
       { $skip: skip },
       { $limit: limit },
     ]).exec();

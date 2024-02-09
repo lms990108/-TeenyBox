@@ -140,17 +140,25 @@ class PromotionController {
 
   // 게시글 추천
   async likePromotion(req: AuthRequest, res: Response): Promise<void> {
-    if (!req.user) {
-      res
-        .status(401)
-        .json({ message: "로그인한 사용자만 추천할 수 있습니다." });
-      return;
-    }
-
     const promotionNumber = Number(req.params.promotionNumber);
 
     try {
       const updatedPromotion = await PromotionService.likePromotion(
+        promotionNumber,
+        req.user._id,
+      );
+      res.status(200).json(updatedPromotion);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // 게시글 추천 취소
+  async cancelLikePromotion(req: AuthRequest, res: Response): Promise<void> {
+    const promotionNumber = Number(req.params.promotionNumber);
+
+    try {
+      const updatedPromotion = await PromotionService.cancelLikePromotion(
         promotionNumber,
         req.user._id,
       );

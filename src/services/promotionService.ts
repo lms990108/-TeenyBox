@@ -245,6 +245,33 @@ class PromotionService {
     await promotion.save();
     return promotion;
   }
+
+  // 게시글 추천 취소
+  async cancelLikePromotion(
+    promotionNumber: number,
+    userId: string,
+  ): Promise<IPromotion> {
+    const promotion =
+      await PromotionRepository.findByPromotionNumber(promotionNumber);
+    if (!promotion) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    // 사용자가 이미 추천했는지 확인
+    if (!promotion.likedUsers.includes(userId)) {
+      throw new Error("아직 추천하지 않은 게시글입니다.");
+    }
+
+    // 추천했다면, 삭제해서 새로운 배열 추가
+    promotion.likedUsers = promotion.likedUsers.filter(
+      (user) => user !== userId.toString(),
+    );
+
+    // 클라이언트에는 추천 수를 배열의 크기로 제공
+    promotion.likes = promotion.likedUsers.length;
+    await promotion.save();
+    return promotion;
+  }
 }
 
 export default new PromotionService();
