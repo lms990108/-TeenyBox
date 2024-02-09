@@ -5,6 +5,9 @@ import NotFoundError from "../common/error/NotFoundError";
 import InternalServerError from "../common/error/InternalServerError";
 import UnauthorizedError from "../common/error/UnauthorizedError";
 import { UserModel } from "../models/userModel";
+import { IUser } from "../models/userModel";
+import { FilterQuery } from "mongoose";
+import { ROLE } from "../common/enum/enum";
 
 class PromotionService {
   // 게시글 생성
@@ -80,13 +83,25 @@ class PromotionService {
     limit: number,
     sortBy: string, // 정렬 기준
     sortOrder: "asc" | "desc", // 정렬 순서
+    category: string,
   ): Promise<{
     promotions: Array<IPromotion & { commentsCount: number }>;
     totalCount: number;
   }> {
     const skip = (page - 1) * limit;
+    const filter: FilterQuery<IPromotion> = {}; // 필터 타입 지정
+    // 카테고리 값에 따라 필터 설정
+    if (category && (category === "연극" || category === "기타")) {
+      filter.category = category;
+    }
 
-    return await PromotionRepository.findAll(skip, limit, sortBy, sortOrder);
+    return await PromotionRepository.findAll(
+      skip,
+      limit,
+      sortBy,
+      sortOrder,
+      filter,
+    );
   }
 
   // 게시글 번호로 조회하며 조회수 증가
@@ -121,7 +136,7 @@ class PromotionService {
   // 게시글 삭제 (PromotionNumber를 기반으로)
   async deleteByPromotionNumber(
     promotionNumber: number,
-    userId: string,
+    user: IUser,
   ): Promise<IPromotion> {
     // 게시글 조회 -> 권한 확인 -> 삭제
 
@@ -133,7 +148,10 @@ class PromotionService {
     }
 
     // 2. 권한체크
-    if (promotion.user_id["_id"].toString() !== userId.toString()) {
+    if (
+      promotion.user_id["_id"].toString() !== user._id.toString() &&
+      user.role !== ROLE.ADMIN
+    ) {
       throw new UnauthorizedError("게시글 삭제 권한이 없습니다.");
     }
 
@@ -179,18 +197,22 @@ class PromotionService {
   // 게시글 일괄 삭제
   async deleteMultipleByPromotionNumbers(
     promotionNumbers: number[],
-    userId: string,
+    user: IUser,
   ): Promise<void> {
     const posts =
       await PromotionRepository.findMultipleByPromotionNumbers(
         promotionNumbers,
       );
-    const authorizedPosts = posts.filter(
-      (post) => post.user_id["_id"].toString() === userId.toString(),
-    );
 
-    if (authorizedPosts.length !== promotionNumbers.length) {
-      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    if (user.role !== ROLE.ADMIN) {
+      // 사용자가 관리자가 아닌 경우에만 권한 확인
+      const authorizedPosts = posts.filter(
+        (post) => post.user_id["_id"].toString() === user._id.toString(),
+      );
+
+      if (authorizedPosts.length !== promotionNumbers.length) {
+        throw new UnauthorizedError("삭제 권한이 없습니다.");
+      }
     }
 
     await PromotionRepository.deleteMultipleByPromotionNumbers(

@@ -5,6 +5,8 @@ import NotFoundError from "../common/error/NotFoundError";
 import UnauthorizedError from "../common/error/UnauthorizedError";
 import InternalServerError from "../common/error/InternalServerError";
 import { UserModel } from "../models/userModel";
+import { IUser } from "../models/userModel";
+import { ROLE } from "../common/enum/enum";
 
 class PostService {
   // 게시글 생성
@@ -103,7 +105,7 @@ class PostService {
   }
 
   // 게시글 삭제 (postNumber를 기반으로)
-  async deleteByPostNumber(postNumber: number, userId: string): Promise<IPost> {
+  async deleteByPostNumber(postNumber: number, user: IUser): Promise<IPost> {
     // 게시글 조회 -> 권한 확인 -> 삭제
 
     // 1. 게시글 조회
@@ -113,8 +115,11 @@ class PostService {
     }
 
     // 2. 권한체크
-    if (post.user_id["_id"].toString() !== userId.toString()) {
-      throw new UnauthorizedError("게시글 수정 권한이 없습니다.");
+    if (
+      post.user_id["_id"].toString() !== user._id.toString() &&
+      user.role !== ROLE.ADMIN
+    ) {
+      throw new UnauthorizedError("게시글 삭제 권한이 없습니다.");
     }
 
     // 3. 삭제
@@ -152,15 +157,19 @@ class PostService {
   // 게시글 일괄 삭제
   async deleteMultipleByPostNumbers(
     postNumbers: number[],
-    userId: string,
+    user: IUser,
   ): Promise<void> {
     const posts = await PostRepository.findMultipleByPostNumbers(postNumbers);
-    const authorizedPosts = posts.filter(
-      (post) => post.user_id["_id"].toString() === userId.toString(),
-    );
 
-    if (authorizedPosts.length !== postNumbers.length) {
-      throw new UnauthorizedError("삭제 권한이 없습니다.");
+    if (user.role !== ROLE.ADMIN) {
+      // 사용자가 관리자가 아닌 경우에만 권한 확인
+      const authorizedPosts = posts.filter(
+        (post) => post.user_id["_id"].toString() === user._id.toString(),
+      );
+
+      if (authorizedPosts.length !== postNumbers.length) {
+        throw new UnauthorizedError("삭제 권한이 없습니다.");
+      }
     }
 
     await PostRepository.deleteMultipleByPostNumbers(postNumbers);

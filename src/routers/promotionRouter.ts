@@ -174,6 +174,12 @@ export default router;
  *             type: string
  *             default: desc
  *             description: asc = 오름차순, desc = 내림차순
+ *         - in: query
+ *           name: category
+ *           schema:
+ *             type: string
+ *             default: 필터없음
+ *             description: 연극또는 기타 입력
  *       responses:
  *         '200':
  *           description: 홍보게시글 목록 반환

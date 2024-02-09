@@ -1,5 +1,6 @@
 import PromotionModel, { IPromotion } from "../models/promotionModel";
 import { CreatePromotionDTO, UpdatePromotionDTO } from "../dtos/promotionDto";
+import { FilterQuery } from "mongoose";
 
 class promotionRepository {
   // 게시글 생성
@@ -40,12 +41,13 @@ class promotionRepository {
     skip: number,
     limit: number,
     sortBy: string,
-    sortOrder: "asc" | "desc", // 추가된 부분: 정렬 순서
+    sortOrder: "asc" | "desc",
+    filter: FilterQuery<IPromotion>,
   ): Promise<{
     promotions: Array<IPromotion & { commentsCount: number }>;
     totalCount: number;
   }> {
-    const totalCount = await PromotionModel.countDocuments();
+    const totalCount = await PromotionModel.countDocuments(filter);
 
     const aggregationResult = await PromotionModel.aggregate([
       {
@@ -66,6 +68,7 @@ class promotionRepository {
           comments: 0,
         },
       },
+      { $match: filter }, // 필터 적용
       { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 정렬기준 & 정렬방식
       { $skip: skip },
       { $limit: limit },
