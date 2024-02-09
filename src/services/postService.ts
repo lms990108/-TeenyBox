@@ -196,6 +196,30 @@ class PostService {
     await post.save();
     return post;
   }
+
+  // 게시글 추천 취소
+  async cancelLikePost(postNumber: number, userId: string): Promise<IPost> {
+    const post = await PostRepository.findByPostNumber(postNumber);
+    if (!post) {
+      throw new NotFoundError("게시글을 찾을 수 없습니다.");
+    }
+
+    // 사용자가 추천했는지 확인
+    if (!post.likedUsers.includes(userId)) {
+      throw new Error("아직 추천하지 않은 게시글 입니다.");
+    }
+
+    // 추천했다면, 삭제해서 새로운 배열 추가
+    post.likedUsers = post.likedUsers.filter(
+      (user) => user !== userId.toString(),
+    );
+
+    // 클라이언트에는 추천 수를 배열의 크기로 제공
+    post.likes = post.likedUsers.length;
+
+    await post.save();
+    return post;
+  }
 }
 
 export default new PostService();

@@ -62,6 +62,13 @@ router.post(
   asyncHandler(promotionController.likePromotion),
 );
 
+// 게시글 추천 취소
+router.post(
+  "/:promotionNumber/cancel-like",
+  authenticateUser,
+  asyncHandler(promotionController.cancelLikePromotion),
+);
+
 export default router;
 
 /**
@@ -348,4 +355,22 @@ export default router;
  *       responses:
  *         '200':
  *           description: 홍보게시글이 성공적으로 추천됨
+ *
+ *   /promotions/{promotionNumber}/cancel-like:
+ *     post:
+ *       tags:
+ *         - Promotion
+ *       summary: 특정 홍보게시글 추천 취소
+ *       security:
+ *         - bearerAuth: []
+ *       parameters:
+ *         - in: path
+ *           name: promotionNumber
+ *           required: true
+ *           schema:
+ *             type: integer
+ *             description: 추천을 취소할 홍보게시글의 번호
+ *       responses:
+ *         '200':
+ *           description: 홍보게시글 추천이 성공적으로 취소됨
  */
