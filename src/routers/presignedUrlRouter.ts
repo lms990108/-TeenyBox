@@ -1,7 +1,6 @@
 import { Router } from "express";
 import asyncHandler from "../common/utils/asyncHandler";
 import presignedUrlController from "../controllers/presignedUrlController";
-import { authenticateUser } from "../middlewares/authUserMiddlewares";
 
 const router = Router();
 
@@ -40,10 +39,6 @@ const router = Router();
  *                  "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-07T07%3A26%3A41.536Z_%ED%9A%8C.jpg"
  */
 
-router.post(
-  "/",
-  authenticateUser,
-  asyncHandler(presignedUrlController.getPresignedUrl),
-);
+router.post("/", asyncHandler(presignedUrlController.getPresignedUrl));
 
 export default router;
