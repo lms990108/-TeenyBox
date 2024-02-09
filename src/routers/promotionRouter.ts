@@ -63,8 +63,8 @@ router.post(
 );
 
 // 게시글 추천 취소
-router.post(
-  "/:promotionNumber/cancel-like",
+router.delete(
+  "/:promotionNumber/like",
   authenticateUser,
   asyncHandler(promotionController.cancelLikePromotion),
 );
@@ -355,9 +355,7 @@ export default router;
  *       responses:
  *         '200':
  *           description: 홍보게시글이 성공적으로 추천됨
- *
- *   /promotions/{promotionNumber}/cancel-like:
- *     post:
+ *     delete:
  *       tags:
  *         - Promotion
  *       summary: 특정 홍보게시글 추천 취소

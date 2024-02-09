@@ -56,9 +56,9 @@ router.post(
   asyncHandler(postController.likePost),
 );
 
-// 게시글 취소
-router.post(
-  "/:postNumber/cancel-like",
+// 게시글 추천 취소
+router.delete(
+  "/:postNumber/like",
   authenticateUser,
   asyncHandler(postController.cancelLikePost),
 );
@@ -454,9 +454,7 @@ export default router;
  *                 message: 게시글이 성공적으로 추천되었습니다.
  *                 post_number: 37
  *                 likes: 10
- *
- * /posts/{postNumber}/cancel-like:
- *   post:
+ *   delete:
  *     tags:
  *       - Post
  *     summary: 게시글 추천 취소
