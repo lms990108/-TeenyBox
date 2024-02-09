@@ -82,7 +82,7 @@ class PostRepository {
           comments: 0,
         },
       },
-      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 정렬기준 & 정렬방식
+      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, post_number: -1 } },
       { $skip: skip },
       { $limit: limit },
     ]).exec();

@@ -69,7 +69,9 @@ class promotionRepository {
         },
       },
       { $match: filter }, // 필터 적용
-      { $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 } }, // 정렬기준 & 정렬방식
+      {
+        $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, promotion_number: -1 },
+      },
       { $skip: skip },
       { $limit: limit },
     ]).exec();
