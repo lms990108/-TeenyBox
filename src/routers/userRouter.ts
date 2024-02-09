@@ -7,9 +7,7 @@ import {
 import { UserRequestDTO } from "../dtos/userDto";
 import { validationMiddleware } from "../middlewares/validationMiddleware";
 import asyncHandler from "../common/utils/asyncHandler";
-import multer from "multer";
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 /**
@@ -21,9 +19,8 @@ const router = express.Router();
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
- *             type: object
  *             properties:
  *               user_id:
  *                 type: string
@@ -37,14 +34,19 @@ const router = express.Router();
  *                 type: string
  *                 description: 닉네임
  *                 example: "아아아"
- *               profile_url:
- *                 type: string
- *                 format: binary
- *                 description: 프로필 이미지 파일 또는 이미지 URL
  *               interested_area:
  *                 type: string
  *                 description: 관심 지역
  *                 example: "제주"
+ *               profile_url:
+ *                 type: string
+ *                 description: 프로필 이미지 파일 또는 이미지 URL
+ *                 example: "https://elice-5th.s3.ap-northeast-2.amazonaws.com/ead34553_5fdc_4dce_8fef_038fe019a008_488f9638-800c-4bac-ad65-82877fbff79b.jpg"
+ *               imageUrlsToDelete:
+ *                type: array
+ *                description: 삭제할 이미지 urls
+ *                example:
+ *                  - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
  *     responses:
  *       201:
  *         description: 회원가입 성공
@@ -372,9 +374,8 @@ const router = express.Router();
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
- *             type: object
  *             properties:
  *               user_id:
  *                 type: string
@@ -388,14 +389,19 @@ const router = express.Router();
  *                 type: string
  *                 description: 닉네임
  *                 example: "햄거버"
- *               profile_url:
- *                 type: string
- *                 format: binary
- *                 description: 프로필 이미지 파일 또는 이미지 URL
  *               interested_area:
  *                 type: string
  *                 description: 관심 지역
  *                 example: "서울"
+ *               profile_url:
+ *                 type: string
+ *                 description: 프로필 이미지 파일 또는 이미지 URL
+ *                 example: "https://elice-5th.s3.ap-northeast-2.amazonaws.com/ead34553_5fdc_4dce_8fef_038fe019a008_488f9638-800c-4bac-ad65-82877fbff79b.jpg"
+ *               imageUrlsToDelete:
+ *                type: array
+ *                description: 삭제할 이미지 urls
+ *                example:
+ *                  - "https://elice-5th.s3.ap-northeast-2.amazonaws.com/2024-02-08T01%3A42%3A34.127Z_steak.JPG"
  *     responses:
  *       200:
  *         description: 사용자 정보 수정 성공
@@ -685,7 +691,6 @@ const router = express.Router();
 
 router.post(
   "/",
-  upload.single("profile_url"),
   validationMiddleware(UserRequestDTO),
   asyncHandler(UserController.RegisterUser),
 );
@@ -695,12 +700,7 @@ router.post("/login/naver", asyncHandler(UserController.naverLogin));
 router.post("/login/google", asyncHandler(UserController.googleLogin));
 router.post("/logout", asyncHandler(UserController.logout));
 router.get("/", authenticateUser, asyncHandler(UserController.getUser));
-router.put(
-  "/",
-  authenticateUser,
-  upload.single("profile_url"),
-  asyncHandler(UserController.updateUser),
-);
+router.put("/", authenticateUser, asyncHandler(UserController.updateUser));
 router.delete("/", authenticateUser, asyncHandler(UserController.deleteUser));
 router.get(
   "/bookmarks",

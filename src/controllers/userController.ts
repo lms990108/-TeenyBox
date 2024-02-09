@@ -1,17 +1,12 @@
 import { Request, Response } from "express";
-import * as UserDto from "./../dtos/userDto";
+import { UserRequestDTO, UserResponseDTO } from "./../dtos/userDto";
 import UserService from "../services/userService";
 import { AuthRequest } from "../middlewares/authUserMiddlewares";
 
 class UserController {
   async RegisterUser(req: Request, res: Response) {
-    const createUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    if (req.file) {
-      const image: Express.Multer.File = req.file;
-      await UserService.register(createUserRequestDTO, image);
-    } else {
-      await UserService.register(createUserRequestDTO);
-    }
+    const createUserRequestDTO: UserRequestDTO = req.body;
+    await UserService.register(createUserRequestDTO);
     return res.status(201).json({ message: "회원가입이 완료되었습니다." });
   }
 
@@ -106,7 +101,7 @@ class UserController {
     const userId: string = req.user.user_id;
     const user = await UserService.getUserById(userId);
 
-    const userData: UserDto.UserResponseDTO = {
+    const userData: UserResponseDTO = {
       _id: user._id,
       user_id: user.user_id,
       social_provider: user.social_provider,
@@ -120,13 +115,8 @@ class UserController {
 
   async updateUser(req: AuthRequest, res: Response) {
     const userId = req.user._id;
-    const updateUserRequestDTO: UserDto.UserRequestDTO = req.body;
-    if (req.file) {
-      const image: Express.Multer.File = req.file;
-      await UserService.updateUser(userId, updateUserRequestDTO, image);
-    } else {
-      await UserService.updateUser(userId, updateUserRequestDTO);
-    }
+    const updateUserRequestDTO: UserRequestDTO = req.body;
+    await UserService.updateUser(userId, updateUserRequestDTO);
     return res.status(200).json({ message: "회원 정보가 수정되었습니다." });
   }
 

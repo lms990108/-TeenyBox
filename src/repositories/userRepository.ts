@@ -4,21 +4,19 @@ import { UserRequestDTO } from "../dtos/userDto";
 
 class UserRepository {
   // 사용자 생성
-  async createUser(userData: {
-    user_id: string;
-    social_provider: string;
-    nickname: string;
-    profile_url?: string;
-    interested_area: string;
-    role: string;
-    state: string;
-  }): Promise<void> {
+  async createUser(userData: UserRequestDTO): Promise<void> {
+    const createUserData = {
+      ...userData,
+      role: "user",
+      state: "가입",
+    };
+
     const existingUser = await UserModel.findOne({ user_id: userData.user_id });
     if (existingUser) {
-      Object.assign(existingUser, userData);
+      Object.assign(existingUser, createUserData);
       await existingUser.save();
     } else {
-      const user = new UserModel(userData);
+      const user = new UserModel(createUserData);
       await user.save();
     }
   }
@@ -38,9 +36,7 @@ class UserRepository {
     userId: string,
     updateUserData: UserRequestDTO,
   ): Promise<void> {
-    return await UserModel.findByIdAndUpdate(userId, updateUserData, {
-      new: true,
-    });
+    return await UserModel.findByIdAndUpdate(userId, updateUserData);
   }
 
   // 회원정보 삭제 (state '탈퇴'로 변경, 탈퇴일 추가)
