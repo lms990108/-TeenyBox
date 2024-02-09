@@ -813,16 +813,11 @@ router.delete(
 /* 관리자페이지 */
 
 // 자유게시판 모든 댓글 조회 (페이징 처리)
-router.get(
-  "/admins/posts",
-  authenticateAdmin,
-  asyncHandler(commentController.getAllComments),
-);
+router.get("/admins/posts", asyncHandler(commentController.getAllComments));
 
 // 홍보게시판 모든 댓글 조회 (페이징 처리)
 router.get(
   "/admins/promotions",
-  authenticateAdmin,
   asyncHandler(commentController.getAllPromotionComments),
 );
 
