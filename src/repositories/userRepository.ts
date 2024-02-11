@@ -14,6 +14,7 @@ class UserRepository {
     const existingUser = await UserModel.findOne({ user_id: userData.user_id });
     if (existingUser) {
       Object.assign(existingUser, createUserData);
+      existingUser.deletedAt === null;
       await existingUser.save();
     } else {
       const user = new UserModel(createUserData);
