@@ -80,11 +80,7 @@ class CommentService {
   }
 
   // 사용자 ID에 따른 댓글 조회 (페이징 처리 추가)
-  async getCommentsByUserId(
-    userId: string,
-    page: number = 1,
-    pageSize: number = 20,
-  ) {
+  async getCommentsByUserId(userId: string, page: number, pageSize: number) {
     try {
       const skip = (page - 1) * pageSize;
       return await CommentRepository.findByUserId(userId, skip, pageSize);

@@ -50,7 +50,7 @@ export class CommentRepository {
   async findByUserId(
     userId: string,
     skip: number,
-    limit: number = 20,
+    limit: number,
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       await CommentModel.find({ user_id: userId })
