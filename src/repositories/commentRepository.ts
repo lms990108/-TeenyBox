@@ -108,6 +108,16 @@ export class CommentRepository {
     await CommentModel.deleteMany({ _id: { $in: commentIds } });
   }
 
+  // 커뮤니티 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPostId(postId: string): Promise<void> {
+    await CommentModel.deleteMany({ post: postId });
+  }
+
+  // 홍보 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPromotionId(promotionId: string): Promise<void> {
+    await CommentModel.deleteMany({ promotion: promotionId });
+  }
+
   // 게시글 아이디로 모든 댓글 조회 (페이징 추가)
   async getPostComments(
     skip: number,

@@ -137,7 +137,29 @@ class CommentService {
     await CommentRepository.deleteComments(userId, commentIds);
   }
 
-  // 자유게시판 모든 댓글 조회 (페이징 처리)
+  // 커뮤니티 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPostId(postId: string) {
+    try {
+      await CommentRepository.deleteCommentsByPostId(postId);
+    } catch (error) {
+      throw new InternalServerError(
+        `게시글 ${postId}에 해당하는 댓글 삭제에 실패했습니다: ${error.message}`,
+      );
+    }
+  }
+
+  // 홍보 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPromotionId(promotionId: string) {
+    try {
+      await CommentRepository.deleteCommentsByPromotionId(promotionId);
+    } catch (error) {
+      throw new InternalServerError(
+        `홍보 게시글 ${promotionId}에 해당하는 댓글 삭제에 실패했습니다: ${error.message}`,
+      );
+    }
+  }
+
+  // 커뮤니티 모든 댓글 조회 (페이징 처리)
   async getAllComments(page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
     return await CommentRepository.getPostComments(skip, limit);
