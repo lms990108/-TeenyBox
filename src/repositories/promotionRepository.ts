@@ -60,6 +60,11 @@ class promotionRepository {
 
     const aggregationResult = await PromotionModel.aggregate([
       {
+        $match: {
+          deletedAt: { $eq: null },
+        },
+      },
+      {
         $lookup: {
           from: "comments",
           localField: "_id",
@@ -73,6 +78,20 @@ class promotionRepository {
         },
       },
       {
+        $lookup: {
+          from: "users", // `users` 컬렉션의 이름을 정확히 맞춰야 합니다.
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      // 배열로 반환된 사용자 정보를 단일 객체로 변환
+      {
+        $unwind: {
+          path: "$user",
+        },
+      },
+      {
         $project: {
           comments: 0,
         },
@@ -83,12 +102,14 @@ class promotionRepository {
       { $limit: limit },
     ]).exec();
 
-    // MongoDB 집계 결과를 명시적으로 타입 변환
-    const promotions: Array<IPromotion & { commentsCount: number }> =
-      aggregationResult.map((promotion) => ({
-        ...promotion,
-        commentsCount: promotion.commentsCount,
-      }));
+    const promotions = aggregationResult.map((promotion) => ({
+      ...promotion,
+      user: {
+        nickname: promotion.user.nickname,
+        profile_url: promotion.user.profile_url,
+      },
+      commentsCount: promotion.commentsCount,
+    }));
 
     return { promotions, totalCount };
   }
