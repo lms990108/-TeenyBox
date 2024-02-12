@@ -96,6 +96,7 @@ class PromotionService {
     if (category && (category === "연극" || category === "기타")) {
       filter.category = category;
     }
+    filter.deletedAt = null;
 
     return await PromotionRepository.findAll(
       skip,
