@@ -20,6 +20,7 @@ export interface IPromotion extends Document {
   runtime?: number; // 런타임 필드 추가
   location?: string; // 장소 필드 추가
   host?: string; // 주최 필드 추가
+  deletedAt?: Date | null; // 삭제로직 변경을 위한 필드 추가
 }
 
 const promotionSchema = new Schema<IPromotion>(
@@ -87,6 +88,10 @@ const promotionSchema = new Schema<IPromotion>(
     },
     host: {
       type: String,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
     },
   },
   {

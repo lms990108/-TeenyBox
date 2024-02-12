@@ -8,6 +8,7 @@ import { UserModel } from "../models/userModel";
 import { IUser } from "../models/userModel";
 import { FilterQuery } from "mongoose";
 import { ROLE } from "../common/enum/enum";
+import commentService from "./commentService";
 
 class PromotionService {
   // 게시글 생성
@@ -61,7 +62,7 @@ class PromotionService {
     // 게시글 조회
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
-    if (!promotion) {
+    if (!promotion || promotion.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -90,6 +91,7 @@ class PromotionService {
   }> {
     const skip = (page - 1) * limit;
     const filter: FilterQuery<IPromotion> = {}; // 필터 타입 지정
+
     // 카테고리 값에 따라 필터 설정
     if (category && (category === "연극" || category === "기타")) {
       filter.category = category;
@@ -104,11 +106,11 @@ class PromotionService {
     );
   }
 
-  // 게시글 번호로 조회하며 조회수 증가
+  // 게시글 번호로 조회
   async findByPromotionNumber(promotionNumber: number): Promise<IPromotion> {
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
-    if (!promotion) {
+    if (!promotion || promotion.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -138,8 +140,6 @@ class PromotionService {
     promotionNumber: number,
     user: IUser,
   ): Promise<IPromotion> {
-    // 게시글 조회 -> 권한 확인 -> 삭제
-
     // 1. 게시글 조회
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
@@ -158,6 +158,7 @@ class PromotionService {
     // 3. 삭제
     const deletedPromotion =
       await PromotionRepository.deleteByPromotionNumber(promotionNumber);
+    commentService.deleteCommentsByPromotionId(promotion._id);
 
     return deletedPromotion;
   }
@@ -171,53 +172,53 @@ class PromotionService {
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
     const skip = (page - 1) * limit;
 
+    let searchQuery;
     if (type === "title") {
-      return await PromotionRepository.findByQuery(
-        { title: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        title: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
     } else if (type === "tag") {
-      return await PromotionRepository.findByQuery(
-        { tags: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        tags: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
     } else if (type === "play_title") {
-      return await PromotionRepository.findByQuery(
-        { play_title: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        play_title: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
+    } else {
+      throw new Error("잘못된 타입입니다.");
     }
 
-    throw new Error("잘못된 타입입니다.");
+    return await PromotionRepository.findByQuery(searchQuery, skip, limit);
   }
 
   // 게시글 일괄 삭제
-  async deleteMultipleByPromotionNumbers(
-    promotionNumbers: number[],
-    user: IUser,
-  ): Promise<void> {
-    const posts =
-      await PromotionRepository.findMultipleByPromotionNumbers(
-        promotionNumbers,
-      );
+  async deleteMany(promotionNumbers: number[], user: IUser): Promise<void> {
+    const promotions = await PromotionRepository.findMany(promotionNumbers);
 
     if (user.role !== ROLE.ADMIN) {
       // 사용자가 관리자가 아닌 경우에만 권한 확인
-      const authorizedPosts = posts.filter(
-        (post) => post.user_id["_id"].toString() === user._id.toString(),
+      const authorizedpromotions = promotions.filter(
+        (promotion) =>
+          promotion.user_id["_id"].toString() === user._id.toString(),
       );
 
-      if (authorizedPosts.length !== promotionNumbers.length) {
+      if (authorizedpromotions.length !== promotionNumbers.length) {
         throw new UnauthorizedError("삭제 권한이 없습니다.");
       }
     }
 
-    await PromotionRepository.deleteMultipleByPromotionNumbers(
-      promotionNumbers,
-    );
+    await PromotionRepository.deleteMany(promotionNumbers);
+
+    // 댓글 삭제용 반복문
+    for (const promotionNumber of promotionNumbers) {
+      const promotion =
+        await PromotionRepository.findByPromotionNumber(promotionNumber);
+      commentService.deleteCommentsByPromotionId(promotion._id);
+    }
   }
 
   // 게시글 추천
@@ -227,7 +228,7 @@ class PromotionService {
   ): Promise<IPromotion> {
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
-    if (!promotion) {
+    if (!promotion || promotion.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -253,7 +254,7 @@ class PromotionService {
   ): Promise<IPromotion> {
     const promotion =
       await PromotionRepository.findByPromotionNumber(promotionNumber);
-    if (!promotion) {
+    if (!promotion || promotion.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 

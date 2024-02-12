@@ -59,6 +59,11 @@ class PostRepository {
 
     const aggregationResult = await PostModel.aggregate([
       {
+        $match: {
+          deletedAt: { $eq: null },
+        },
+      },
+      {
         $lookup: {
           from: "comments",
           localField: "_id",
@@ -102,6 +107,7 @@ class PostRepository {
       user: {
         nickname: post.user.nickname,
         profile_url: post.user.profile_url,
+        state: post.user.state,
       },
       commentsCount: post.commentsCount,
     }));
@@ -111,9 +117,8 @@ class PostRepository {
 
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
     return await PostModel.findOne({ post_number: postNumber })
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
   }
 
@@ -126,26 +131,26 @@ class PostRepository {
     // 게시글 총 갯수를 가져오는 쿼리
     const totalCount = await PostModel.countDocuments({ user_id: userId });
 
-    const posts = await PostModel.find({ user_id: userId })
+    const posts = await PostModel.find({ user_id: userId, deletedAt: null })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname profile_url _id",
+        select: "nickname profile_url _id state",
       })
       .exec();
 
     return { posts, totalCount };
   }
 
-  // 게시글 삭제 (postNumber를 기반으로)
+  // 게시글 삭제
   async deleteByPostNumber(postNumber: number): Promise<IPost | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    // 게시글 조회 및 삭제 (조회 결과 리턴 = 삭제된 게시글)
-    const postToDelete = await PostModel.findOneAndDelete({
-      post_number: postNumber,
-    });
+    const postToDelete = await PostModel.findOneAndUpdate(
+      { post_number: postNumber },
+      { deletedAt: new Date() },
+      { new: true },
+    );
     return postToDelete;
   }
 
@@ -159,6 +164,10 @@ class PostRepository {
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)
+      .populate({
+        path: "user_id",
+        select: "nickname profile_url _id state",
+      })
       .exec();
 
     const totalCount = await PostModel.countDocuments(query);
@@ -166,16 +175,25 @@ class PostRepository {
     return { posts, totalCount };
   }
 
-  async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
+  // 게시글 삭제 전 게시글 일괄 찾기
+  async findMany(postNumbers: number[]): Promise<IPost[]> {
     return await PostModel.find({ post_number: { $in: postNumbers } })
-      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .populate({ path: "user_id", select: "nickname profile_url _id state" })
       .exec();
   }
 
-  async deleteMultipleByPostNumbers(postNumbers: number[]): Promise<void> {
-    await PostModel.deleteMany({
-      post_number: { $in: postNumbers },
-    }).exec();
+  // 게시글 일괄 삭제
+  async deleteMany(postNumbers: number[]): Promise<void> {
+    const updateQuery = {
+      $set: {
+        deletedAt: new Date(),
+      },
+    };
+
+    await PostModel.updateMany(
+      { post_number: { $in: postNumbers } },
+      updateQuery,
+    ).exec();
   }
 }
 

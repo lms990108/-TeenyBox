@@ -60,6 +60,11 @@ class promotionRepository {
 
     const aggregationResult = await PromotionModel.aggregate([
       {
+        $match: {
+          deletedAt: { $eq: null },
+        },
+      },
+      {
         $lookup: {
           from: "comments",
           localField: "_id",
@@ -73,6 +78,20 @@ class promotionRepository {
         },
       },
       {
+        $lookup: {
+          from: "users", // `users` 컬렉션의 이름을 정확히 맞춰야 합니다.
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      // 배열로 반환된 사용자 정보를 단일 객체로 변환
+      {
+        $unwind: {
+          path: "$user",
+        },
+      },
+      {
         $project: {
           comments: 0,
         },
@@ -83,12 +102,15 @@ class promotionRepository {
       { $limit: limit },
     ]).exec();
 
-    // MongoDB 집계 결과를 명시적으로 타입 변환
-    const promotions: Array<IPromotion & { commentsCount: number }> =
-      aggregationResult.map((promotion) => ({
-        ...promotion,
-        commentsCount: promotion.commentsCount,
-      }));
+    const promotions = aggregationResult.map((promotion) => ({
+      ...promotion,
+      user: {
+        nickname: promotion.user.nickname,
+        profile_url: promotion.user.profile_url,
+        state: promotion.user.state,
+      },
+      commentsCount: promotion.commentsCount,
+    }));
 
     return { promotions, totalCount };
   }
@@ -98,7 +120,7 @@ class promotionRepository {
     promotionNumber: number,
   ): Promise<IPromotion | null> {
     return await PromotionModel.findOne({ promotion_number: promotionNumber })
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
   }
 
@@ -111,25 +133,28 @@ class promotionRepository {
     // 게시글 총 갯수를 가져오는 쿼리
     const totalCount = await PromotionModel.countDocuments({ user_id: userId });
 
-    const promotions = await PromotionModel.find({ user_id: userId })
+    const promotions = await PromotionModel.find({
+      user_id: userId,
+      deletedAt: null,
+    })
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
 
     return { promotions, totalCount };
   }
 
-  // 게시글 삭제 (promotionNumber를 기반으로)
+  // 게시글 삭제
   async deleteByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    // 게시글 조회 및 삭제 (조회 결과 리턴 = 삭제된 게시글)
-    const promotionToDelete = await PromotionModel.findOneAndDelete({
-      promotion_number: promotionNumber,
-    });
+    const promotionToDelete = await PromotionModel.findOneAndUpdate(
+      { promotion_number: promotionNumber },
+      { deletedAt: new Date() },
+      { new: true },
+    );
     return promotionToDelete;
   }
 
@@ -143,6 +168,10 @@ class promotionRepository {
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
+      .populate({
+        path: "user_id",
+        select: "nickname profile_url _id state",
+      })
       .exec();
 
     const totalCount = await PromotionModel.countDocuments(query);
@@ -150,22 +179,26 @@ class promotionRepository {
     return { promotions, totalCount };
   }
 
-  async findMultipleByPromotionNumbers(
-    promotionNumbers: number[],
-  ): Promise<IPromotion[]> {
+  // 게시글 삭제 전 게시글 일괄 찾기
+  async findMany(promotionNumbers: number[]): Promise<IPromotion[]> {
     return await PromotionModel.find({
       promotion_number: { $in: promotionNumbers },
     })
-      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .populate({ path: "user_id", select: "nickname profile_url _id state" })
       .exec();
   }
 
-  async deleteMultipleByPromotionNumbers(
-    promotionNumbers: number[],
-  ): Promise<void> {
-    await PromotionModel.deleteMany({
-      promotion_number: { $in: promotionNumbers },
-    }).exec();
+  // 게시글 일괄 삭제
+  async deleteMany(promotionNumbers: number[]): Promise<void> {
+    const updateQuery = {
+      $set: {
+        deletedAt: new Date(),
+      },
+    };
+    await PromotionModel.updateMany(
+      { promotion_number: { $in: promotionNumbers } },
+      updateQuery,
+    ).exec();
   }
 }
 

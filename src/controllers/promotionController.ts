@@ -68,7 +68,7 @@ class PromotionController {
   // 유저 id로 게시글 검색 (리스트반환)
   async getPromotionsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
-    const limit = Number(req.query.limit || 10);
+    const limit = Number(req.query.limit || 0);
     const { promotions, totalCount } =
       await PromotionService.findPromotionsByUserId(
         req.params.userId,
@@ -130,11 +130,10 @@ class PromotionController {
   ): Promise<void> {
     const user = req.user;
     const promotionNumbers = req.body.promotionNumbers;
-    const deletedPromotions =
-      await PromotionService.deleteMultipleByPromotionNumbers(
-        promotionNumbers,
-        user,
-      );
+    const deletedPromotions = await PromotionService.deleteMany(
+      promotionNumbers,
+      user,
+    );
     res.status(200).json(deletedPromotions);
   }
 

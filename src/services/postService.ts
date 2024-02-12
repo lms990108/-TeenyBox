@@ -7,6 +7,7 @@ import InternalServerError from "../common/error/InternalServerError";
 import { UserModel } from "../models/userModel";
 import { IUser } from "../models/userModel";
 import { ROLE } from "../common/enum/enum";
+import commentService from "./commentService";
 
 class PostService {
   // 게시글 생성
@@ -52,7 +53,7 @@ class PostService {
   ): Promise<IPost | null> {
     // 게시글 조회
     const post = await PostRepository.findByPostNumber(post_number);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -83,7 +84,7 @@ class PostService {
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -106,11 +107,9 @@ class PostService {
 
   // 게시글 삭제 (postNumber를 기반으로)
   async deleteByPostNumber(postNumber: number, user: IUser): Promise<IPost> {
-    // 게시글 조회 -> 권한 확인 -> 삭제
-
     // 1. 게시글 조회
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -124,6 +123,7 @@ class PostService {
 
     // 3. 삭제
     const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
+    commentService.deleteCommentsByPostId(post._id);
 
     return deletedPost;
   }
@@ -137,29 +137,27 @@ class PostService {
   ): Promise<{ posts: IPost[]; totalCount: number }> {
     const skip = (page - 1) * limit;
 
+    let searchQuery;
     if (type === "title") {
-      return await PostRepository.findByQuery(
-        { title: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        title: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
     } else if (type === "tag") {
-      return await PostRepository.findByQuery(
-        { tags: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        tags: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
+    } else {
+      throw new Error("잘못된 타입입니다.");
     }
 
-    throw new Error("잘못된 타입입니다.");
+    return await PostRepository.findByQuery(searchQuery, skip, limit);
   }
 
   // 게시글 일괄 삭제
-  async deleteMultipleByPostNumbers(
-    postNumbers: number[],
-    user: IUser,
-  ): Promise<void> {
-    const posts = await PostRepository.findMultipleByPostNumbers(postNumbers);
+  async deleteMany(postNumbers: number[], user: IUser): Promise<void> {
+    const posts = await PostRepository.findMany(postNumbers);
 
     if (user.role !== ROLE.ADMIN) {
       // 사용자가 관리자가 아닌 경우에만 권한 확인
@@ -172,13 +170,19 @@ class PostService {
       }
     }
 
-    await PostRepository.deleteMultipleByPostNumbers(postNumbers);
+    await PostRepository.deleteMany(postNumbers);
+
+    // 댓글 삭제용 반복문
+    for (const postNumber of postNumbers) {
+      const post = await PostRepository.findByPostNumber(postNumber);
+      commentService.deleteCommentsByPostId(post._id);
+    }
   }
 
   // 게시글 추천
   async likePost(postNumber: number, userId: string): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -200,7 +204,7 @@ class PostService {
   // 게시글 추천 취소
   async cancelLikePost(postNumber: number, userId: string): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
