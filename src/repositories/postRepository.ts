@@ -181,9 +181,16 @@ class PostRepository {
   }
 
   async deleteMultipleByPostNumbers(postNumbers: number[]): Promise<void> {
-    await PostModel.deleteMany({
-      post_number: { $in: postNumbers },
-    }).exec();
+    const updateQuery = {
+      $set: {
+        deletedAt: new Date(),
+      },
+    };
+
+    await PostModel.updateMany(
+      { post_number: { $in: postNumbers } },
+      updateQuery,
+    ).exec();
   }
 }
 
