@@ -132,7 +132,10 @@ class promotionRepository {
     // 게시글 총 갯수를 가져오는 쿼리
     const totalCount = await PromotionModel.countDocuments({ user_id: userId });
 
-    const promotions = await PromotionModel.find({ user_id: userId })
+    const promotions = await PromotionModel.find({
+      user_id: userId,
+      deletedAt: null,
+    })
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
@@ -142,7 +145,7 @@ class promotionRepository {
     return { promotions, totalCount };
   }
 
-  // 게시글 삭제 (promotionNumber를 기반으로)
+  // 게시글 삭제
   async deleteByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
@@ -175,9 +178,8 @@ class promotionRepository {
     return { promotions, totalCount };
   }
 
-  async findMultipleByPromotionNumbers(
-    promotionNumbers: number[],
-  ): Promise<IPromotion[]> {
+  // 게시글 삭제 전 게시글 일괄 찾기
+  async findMany(promotionNumbers: number[]): Promise<IPromotion[]> {
     return await PromotionModel.find({
       promotion_number: { $in: promotionNumbers },
     })
@@ -185,12 +187,17 @@ class promotionRepository {
       .exec();
   }
 
-  async deleteMultipleByPromotionNumbers(
-    promotionNumbers: number[],
-  ): Promise<void> {
-    await PromotionModel.deleteMany({
-      promotion_number: { $in: promotionNumbers },
-    }).exec();
+  // 게시글 일괄 삭제
+  async deleteMany(promotionNumbers: number[]): Promise<void> {
+    const updateQuery = {
+      $set: {
+        deletedAt: new Date(),
+      },
+    };
+    await PromotionModel.updateMany(
+      { promotion_number: { $in: promotionNumbers } },
+      updateQuery,
+    ).exec();
   }
 }
 

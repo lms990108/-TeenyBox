@@ -130,11 +130,10 @@ class PromotionController {
   ): Promise<void> {
     const user = req.user;
     const promotionNumbers = req.body.promotionNumbers;
-    const deletedPromotions =
-      await PromotionService.deleteMultipleByPromotionNumbers(
-        promotionNumbers,
-        user,
-      );
+    const deletedPromotions = await PromotionService.deleteMany(
+      promotionNumbers,
+      user,
+    );
     res.status(200).json(deletedPromotions);
   }
 
