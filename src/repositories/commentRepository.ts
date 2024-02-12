@@ -50,7 +50,7 @@ export class CommentRepository {
   async findByUserId(
     userId: string,
     skip: number,
-    limit: number = 20,
+    limit: number,
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       await CommentModel.find({ user_id: userId })
@@ -106,6 +106,16 @@ export class CommentRepository {
   // 선택 댓글 삭제 (관리자페이지)
   async deleteCommentsByAdmin(commentIds: string[]): Promise<void> {
     await CommentModel.deleteMany({ _id: { $in: commentIds } });
+  }
+
+  // 커뮤니티 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPostId(postId: string): Promise<void> {
+    await CommentModel.deleteMany({ post: postId });
+  }
+
+  // 홍보 게시글 id에 해당하는 모든 댓글 삭제
+  async deleteCommentsByPromotionId(promotionId: string): Promise<void> {
+    await CommentModel.deleteMany({ promotion: promotionId });
   }
 
   // 게시글 아이디로 모든 댓글 조회 (페이징 추가)
