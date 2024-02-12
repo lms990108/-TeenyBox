@@ -52,7 +52,7 @@ class PostController {
   // 유저 id로 게시글 검색 (리스트반환)
   async getPostsByUserId(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
-    const limit = Number(req.query.limit || 10);
+    const limit = Number(req.query.limit || 0);
     const { posts, totalCount } = await PostService.findPostsByUserId(
       req.params.userId,
       page,
