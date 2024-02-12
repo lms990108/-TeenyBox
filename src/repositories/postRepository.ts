@@ -141,11 +141,11 @@ class PostRepository {
 
   // 게시글 삭제 (postNumber를 기반으로)
   async deleteByPostNumber(postNumber: number): Promise<IPost | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    // 게시글 조회 및 삭제 (조회 결과 리턴 = 삭제된 게시글)
-    const postToDelete = await PostModel.findOneAndDelete({
-      post_number: postNumber,
-    });
+    const postToDelete = await PostModel.findOneAndUpdate(
+      { post_number: postNumber },
+      { deletedAt: new Date() },
+      { new: true },
+    );
     return postToDelete;
   }
 

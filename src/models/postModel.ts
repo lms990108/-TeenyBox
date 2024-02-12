@@ -12,6 +12,7 @@ export interface IPost extends Document {
   likes: number; // 추천수
   views: number; // 조회수
   likedUsers: string[]; // 추천한 사용자의 ID 목록
+  deletedAt?: Date | null; // 삭제로직 변경을 위한 필드 추가
 }
 
 const postSchema = new Schema<IPost>(
@@ -54,6 +55,10 @@ const postSchema = new Schema<IPost>(
       ref: "User",
       required: true,
       default: [],
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
     },
   },
   {

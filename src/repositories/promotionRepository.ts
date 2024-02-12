@@ -125,11 +125,11 @@ class promotionRepository {
   async deleteByPromotionNumber(
     promotionNumber: number,
   ): Promise<IPromotion | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
-    // 게시글 조회 및 삭제 (조회 결과 리턴 = 삭제된 게시글)
-    const promotionToDelete = await PromotionModel.findOneAndDelete({
-      promotion_number: promotionNumber,
-    });
+    const promotionToDelete = await PromotionModel.findOneAndUpdate(
+      { promotion_number: promotionNumber },
+      { deletedAt: new Date() },
+      { new: true },
+    );
     return promotionToDelete;
   }
 
