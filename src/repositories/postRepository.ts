@@ -143,7 +143,7 @@ class PostRepository {
     return { posts, totalCount };
   }
 
-  // 게시글 삭제 (postNumber를 기반으로)
+  // 게시글 삭제
   async deleteByPostNumber(postNumber: number): Promise<IPost | null> {
     const postToDelete = await PostModel.findOneAndUpdate(
       { post_number: postNumber },
@@ -174,13 +174,15 @@ class PostRepository {
     return { posts, totalCount };
   }
 
-  async findMultipleByPostNumbers(postNumbers: number[]): Promise<IPost[]> {
+  // 게시글 삭제 전 게시글 일괄 찾기
+  async findMany(postNumbers: number[]): Promise<IPost[]> {
     return await PostModel.find({ post_number: { $in: postNumbers } })
       .populate({ path: "user_id", select: "nickname profile_url _id" })
       .exec();
   }
 
-  async deleteMultipleByPostNumbers(postNumbers: number[]): Promise<void> {
+  // 게시글 일괄 삭제
+  async deleteMany(postNumbers: number[]): Promise<void> {
     const updateQuery = {
       $set: {
         deletedAt: new Date(),

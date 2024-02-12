@@ -107,10 +107,7 @@ class PostController {
   async deleteMultiplePosts(req: AuthRequest, res: Response): Promise<void> {
     const user = req.user;
     const postNumbers = req.body.postNumbers;
-    const deletedPosts = await PostService.deleteMultipleByPostNumbers(
-      postNumbers,
-      user,
-    );
+    const deletedPosts = await PostService.deleteMany(postNumbers, user);
     res.status(200).json(deletedPosts);
   }
 

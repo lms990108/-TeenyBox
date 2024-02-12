@@ -107,8 +107,6 @@ class PostService {
 
   // 게시글 삭제 (postNumber를 기반으로)
   async deleteByPostNumber(postNumber: number, user: IUser): Promise<IPost> {
-    // 게시글 조회 -> 권한 확인 -> 삭제
-
     // 1. 게시글 조회
     const post = await PostRepository.findByPostNumber(postNumber);
     if (!post || post.deletedAt != null) {
@@ -158,11 +156,8 @@ class PostService {
   }
 
   // 게시글 일괄 삭제
-  async deleteMultipleByPostNumbers(
-    postNumbers: number[],
-    user: IUser,
-  ): Promise<void> {
-    const posts = await PostRepository.findMultipleByPostNumbers(postNumbers);
+  async deleteMany(postNumbers: number[], user: IUser): Promise<void> {
+    const posts = await PostRepository.findMany(postNumbers);
 
     if (user.role !== ROLE.ADMIN) {
       // 사용자가 관리자가 아닌 경우에만 권한 확인
@@ -175,7 +170,7 @@ class PostService {
       }
     }
 
-    await PostRepository.deleteMultipleByPostNumbers(postNumbers);
+    await PostRepository.deleteMany(postNumbers);
 
     // 댓글 삭제용 반복문
     for (const postNumber of postNumbers) {
