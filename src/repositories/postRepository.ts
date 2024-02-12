@@ -111,7 +111,6 @@ class PostRepository {
 
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost | null> {
-    // 게시글이 없다면 null을 반환, 대신 이에 대한 에러 처리는 서비스에서 반드시 이루어져야 할 것
     return await PostModel.findOne({ post_number: postNumber })
       .populate("user_id", "nickname profile_url")
       .exec();

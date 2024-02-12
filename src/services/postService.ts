@@ -53,7 +53,7 @@ class PostService {
   ): Promise<IPost | null> {
     // 게시글 조회
     const post = await PostRepository.findByPostNumber(post_number);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -84,7 +84,7 @@ class PostService {
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -111,7 +111,7 @@ class PostService {
 
     // 1. 게시글 조회
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -186,7 +186,7 @@ class PostService {
   // 게시글 추천
   async likePost(postNumber: number, userId: string): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
@@ -208,7 +208,7 @@ class PostService {
   // 게시글 추천 취소
   async cancelLikePost(postNumber: number, userId: string): Promise<IPost> {
     const post = await PostRepository.findByPostNumber(postNumber);
-    if (!post) {
+    if (!post || post.deletedAt != null) {
       throw new NotFoundError("게시글을 찾을 수 없습니다.");
     }
 
