@@ -59,6 +59,11 @@ class PostRepository {
 
     const aggregationResult = await PostModel.aggregate([
       {
+        $match: {
+          deletedAt: { $eq: null },
+        },
+      },
+      {
         $lookup: {
           from: "comments",
           localField: "_id",
@@ -125,7 +130,7 @@ class PostRepository {
     // 게시글 총 갯수를 가져오는 쿼리
     const totalCount = await PostModel.countDocuments({ user_id: userId });
 
-    const posts = await PostModel.find({ user_id: userId })
+    const posts = await PostModel.find({ user_id: userId, deletedAt: null })
       .sort({ post_number: -1 })
       .skip(skip)
       .limit(limit)

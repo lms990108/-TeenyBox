@@ -139,21 +139,22 @@ class PostService {
   ): Promise<{ posts: IPost[]; totalCount: number }> {
     const skip = (page - 1) * limit;
 
+    let searchQuery;
     if (type === "title") {
-      return await PostRepository.findByQuery(
-        { title: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        title: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
     } else if (type === "tag") {
-      return await PostRepository.findByQuery(
-        { tags: { $regex: query, $options: "i" } },
-        skip,
-        limit,
-      );
+      searchQuery = {
+        tags: { $regex: query, $options: "i" },
+        deletedAt: null,
+      };
+    } else {
+      throw new Error("잘못된 타입입니다.");
     }
 
-    throw new Error("잘못된 타입입니다.");
+    return await PostRepository.findByQuery(searchQuery, skip, limit);
   }
 
   // 게시글 일괄 삭제
