@@ -201,18 +201,19 @@ class PromotionService {
     promotionNumbers: number[],
     user: IUser,
   ): Promise<void> {
-    const posts =
+    const promotions =
       await PromotionRepository.findMultipleByPromotionNumbers(
         promotionNumbers,
       );
 
     if (user.role !== ROLE.ADMIN) {
       // 사용자가 관리자가 아닌 경우에만 권한 확인
-      const authorizedPosts = posts.filter(
-        (post) => post.user_id["_id"].toString() === user._id.toString(),
+      const authorizedpromotions = promotions.filter(
+        (promotion) =>
+          promotion.user_id["_id"].toString() === user._id.toString(),
       );
 
-      if (authorizedPosts.length !== promotionNumbers.length) {
+      if (authorizedpromotions.length !== promotionNumbers.length) {
         throw new UnauthorizedError("삭제 권한이 없습니다.");
       }
     }
@@ -220,6 +221,13 @@ class PromotionService {
     await PromotionRepository.deleteMultipleByPromotionNumbers(
       promotionNumbers,
     );
+
+    // 댓글 삭제용 반복문
+    for (const promotionNumber of promotionNumbers) {
+      const promotion =
+        await PromotionRepository.findByPromotionNumber(promotionNumber);
+      commentService.deleteCommentsByPromotionId(promotion._id);
+    }
   }
 
   // 게시글 추천

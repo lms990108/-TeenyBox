@@ -175,6 +175,12 @@ class PostService {
     }
 
     await PostRepository.deleteMultipleByPostNumbers(postNumbers);
+
+    // 댓글 삭제용 반복문
+    for (const postNumber of postNumbers) {
+      const post = await PostRepository.findByPostNumber(postNumber);
+      commentService.deleteCommentsByPostId(post._id);
+    }
   }
 
   // 게시글 추천
