@@ -143,6 +143,10 @@ class promotionRepository {
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
+      .populate({
+        path: "user_id",
+        select: "nickname profile_url _id",
+      })
       .exec();
 
     const totalCount = await PromotionModel.countDocuments(query);
