@@ -8,6 +8,7 @@ import { UserModel } from "../models/userModel";
 import { IUser } from "../models/userModel";
 import { FilterQuery } from "mongoose";
 import { ROLE } from "../common/enum/enum";
+import commentService from "./commentService";
 
 class PromotionService {
   // 게시글 생성
@@ -159,6 +160,7 @@ class PromotionService {
     const deletedPromotion =
       await PromotionRepository.deleteByPromotionNumber(promotionNumber);
 
+    commentService.deleteCommentsByPromotionId(promotion._id);
     return deletedPromotion;
   }
 

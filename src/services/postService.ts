@@ -7,6 +7,7 @@ import InternalServerError from "../common/error/InternalServerError";
 import { UserModel } from "../models/userModel";
 import { IUser } from "../models/userModel";
 import { ROLE } from "../common/enum/enum";
+import commentService from "./commentService";
 
 class PostService {
   // 게시글 생성
@@ -124,6 +125,7 @@ class PostService {
 
     // 3. 삭제
     const deletedPost = await PostRepository.deleteByPostNumber(postNumber);
+    commentService.deleteCommentsByPostId(post._id);
 
     return deletedPost;
   }
