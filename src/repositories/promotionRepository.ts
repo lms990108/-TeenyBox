@@ -131,7 +131,10 @@ class promotionRepository {
     limit: number,
   ): Promise<{ promotions: IPromotion[]; totalCount: number }> {
     // 게시글 총 갯수를 가져오는 쿼리
-    const totalCount = await PromotionModel.countDocuments({ user_id: userId });
+    const totalCount = await PromotionModel.countDocuments({
+      user_id: userId,
+      deletedAt: null,
+    });
 
     const promotions = await PromotionModel.find({
       user_id: userId,

@@ -46,7 +46,7 @@ class PostRepository {
     >;
     totalCount: number;
   }> {
-    const totalCount = await PostModel.countDocuments();
+    const totalCount = await PostModel.countDocuments({ deletedAt: null });
 
     let sortStage;
     if (sortBy !== "post_number") {
@@ -129,7 +129,10 @@ class PostRepository {
     limit: number,
   ): Promise<{ posts: IPost[]; totalCount: number }> {
     // 게시글 총 갯수를 가져오는 쿼리
-    const totalCount = await PostModel.countDocuments({ user_id: userId });
+    const totalCount = await PostModel.countDocuments({
+      user_id: userId,
+      deletedAt: null,
+    });
 
     const posts = await PostModel.find({ user_id: userId, deletedAt: null })
       .sort({ post_number: -1 })
