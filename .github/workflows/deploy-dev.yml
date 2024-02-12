@@ -1,16 +1,16 @@
-name: Deploy
+name: Deploy-dev
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: teenybox-prod
-  ECS_SERVICE: teenybox-prod-service
+  ECR_REPOSITORY: teenybox-dev
+  ECS_SERVICE: teenybox-dev-service
   ECS_CLUSTER: teenybox-cluster
-  ECS_TASK_DEFINITION: task-definition-prod.json
-  CONTAINER_NAME: teenybox-prod
+  ECS_TASK_DEFINITION: task-definition.json
+  CONTAINER_NAME: teenybox-dev
 
 permissions:
   contents: read

@@ -1,0 +1,50 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "teenybox-prod",
+      "image": "068222036345.dkr.ecr.ap-northeast-2.amazonaws.com/teenybox-prod:096f0cf2f146296cd1e858b0a80d8de4e54c78d6",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "name": "8081",
+          "containerPort": 8081,
+          "hostPort": 8081,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/teenybox-task-prod",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      }
+    }
+  ],
+  "family": "teenybox-task-prod",
+  "taskRoleArn": "arn:aws:iam::068222036345:role/ecs_role",
+  "executionRoleArn": "arn:aws:iam::068222036345:role/ecs_role",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "2048",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "tags": []
+}
