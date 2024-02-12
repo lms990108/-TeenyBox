@@ -107,6 +107,7 @@ class PostRepository {
       user: {
         nickname: post.user.nickname,
         profile_url: post.user.profile_url,
+        state: post.user.state,
       },
       commentsCount: post.commentsCount,
     }));
@@ -117,7 +118,7 @@ class PostRepository {
   // 게시글 번호로 조회
   async findByPostNumber(postNumber: number): Promise<IPost | null> {
     return await PostModel.findOne({ post_number: postNumber })
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
   }
 
@@ -136,7 +137,7 @@ class PostRepository {
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname profile_url _id",
+        select: "nickname profile_url _id state",
       })
       .exec();
 
@@ -165,7 +166,7 @@ class PostRepository {
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname profile_url _id",
+        select: "nickname profile_url _id state",
       })
       .exec();
 
@@ -177,7 +178,7 @@ class PostRepository {
   // 게시글 삭제 전 게시글 일괄 찾기
   async findMany(postNumbers: number[]): Promise<IPost[]> {
     return await PostModel.find({ post_number: { $in: postNumbers } })
-      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .populate({ path: "user_id", select: "nickname profile_url _id state" })
       .exec();
   }
 

@@ -107,6 +107,7 @@ class promotionRepository {
       user: {
         nickname: promotion.user.nickname,
         profile_url: promotion.user.profile_url,
+        state: promotion.user.state,
       },
       commentsCount: promotion.commentsCount,
     }));
@@ -119,7 +120,7 @@ class promotionRepository {
     promotionNumber: number,
   ): Promise<IPromotion | null> {
     return await PromotionModel.findOne({ promotion_number: promotionNumber })
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
   }
 
@@ -139,7 +140,7 @@ class promotionRepository {
       .sort({ promotion_number: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("user_id", "nickname profile_url")
+      .populate("user_id", "nickname profile_url state")
       .exec();
 
     return { promotions, totalCount };
@@ -169,7 +170,7 @@ class promotionRepository {
       .limit(limit)
       .populate({
         path: "user_id",
-        select: "nickname profile_url _id",
+        select: "nickname profile_url _id state",
       })
       .exec();
 
@@ -183,7 +184,7 @@ class promotionRepository {
     return await PromotionModel.find({
       promotion_number: { $in: promotionNumbers },
     })
-      .populate({ path: "user_id", select: "nickname profile_url _id" })
+      .populate({ path: "user_id", select: "nickname profile_url _id state" })
       .exec();
   }
 
