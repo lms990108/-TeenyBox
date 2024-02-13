@@ -15,9 +15,7 @@ class CommentService {
 
       const commentData = {
         ...dto,
-        user_id: userId,
-        user_nickname: user.nickname,
-        user_profile_url: user.profile_url,
+        user: user._id,
       };
 
       const newComment = await CommentRepository.create(commentData);
@@ -95,7 +93,7 @@ class CommentService {
   async updateComment(userId: string, id: string, dto: UpdateCommentDTO) {
     try {
       const comment = await CommentRepository.findOne(id);
-      if (comment.user_id.toString() !== userId.toString()) {
+      if (comment.user._id.toString() !== userId.toString()) {
         throw new BadRequestError(
           "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
         );
@@ -118,7 +116,7 @@ class CommentService {
   async deleteComment(userId: string, id: string) {
     try {
       const comment = await CommentRepository.findOne(id);
-      if (comment.user_id.toString() !== userId.toString()) {
+      if (comment.user._id.toString() !== userId.toString()) {
         throw new BadRequestError(
           "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
         );
