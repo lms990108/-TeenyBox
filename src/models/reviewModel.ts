@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, {Schema, Document} from "mongoose";
 
 export interface IReview extends Document {
   title: string;
@@ -6,8 +6,8 @@ export interface IReview extends Document {
   rate: number;
   imageUrls?: string[] | null;
   userId: string;
-  showId: string;
   userNickname: string;
+  showId: string;
   showTitle: string;
   createdAt: Date;
   updatedAt: Date;
@@ -43,7 +43,6 @@ const ReviewSchema = new Schema<IReview>({
   imageUrls: [{ type: String }],
   userId: { type: String, required: true },
   showId: { type: String, required: true },
-  userNickname: { type: String, required: true },
   showTitle: { type: String, required: true },
   createdAt: { type: Date, index: true },
   updatedAt: Date,

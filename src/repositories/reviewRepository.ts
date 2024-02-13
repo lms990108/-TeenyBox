@@ -21,9 +21,7 @@ class reviewRepository {
     return ReviewModel.findOneAndUpdate(
       { _id: reviewId },
       { ...reviewData, updatedAt: new Date() },
-      {
-        new: true,
-      },
+      { new: true },
     );
   }
 
@@ -44,6 +42,32 @@ class reviewRepository {
       { $sort: sort },
       { $skip: (page - 1) * limit },
       { $limit: limit },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'user_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          rate: 1,
+          imageUrls: 1,
+          userId: 1,
+          userNickname: "$user.nickname",
+          showId: 1,
+          showTitle: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          deletedAt: 1,
+        }
+      }
     ]);
     const total = await ReviewModel.countDocuments(match);
 
@@ -54,6 +78,32 @@ class reviewRepository {
     const reviews = await ReviewModel.aggregate([
       { $match: match },
       { $sort: sort },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'user_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          rate: 1,
+          imageUrls: 1,
+          userId: 1,
+          userNickname: "$user.nickname",
+          showId: 1,
+          showTitle: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          deletedAt: 1,
+        }
+      }
     ]);
     const total = await ReviewModel.countDocuments(match);
 
@@ -69,13 +119,10 @@ class reviewRepository {
   }
 
   async deleteMany(reviewIds: string[]) {
-    const updateQuery = {
-      $set: {
-        deletedAt: new Date(),
-      },
-    };
-
-    return ReviewModel.updateMany({ _id: { $in: reviewIds } }, updateQuery);
+    return ReviewModel.updateMany(
+        { _id: { $in: reviewIds } },
+        { $set: { deletedAt: new Date() } }
+    );
   }
 }
 
