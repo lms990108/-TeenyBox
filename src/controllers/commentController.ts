@@ -46,7 +46,7 @@ class CommentController {
 
   // 특정 사용자가 작성한 모든 댓글 조회 (페이징 처리 추가)
   async getCommentsByUserId(req: AuthRequest, res: Response): Promise<void> {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     const page = parseInt(req.query.page as string) || undefined;
     const limit = parseInt(req.query.limit as string) || undefined;
 
@@ -72,7 +72,7 @@ class CommentController {
 
   // 댓글 삭제
   async deleteComment(req: AuthRequest, res: Response): Promise<void> {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     const { commentId } = req.params;
     await CommentService.deleteComment(userId, commentId);
     res.status(200).json({ message: "댓글이 삭제되었습니다." });
@@ -80,7 +80,7 @@ class CommentController {
 
   // 선택 댓글 삭제 (마이페이지)
   async deleteComments(req: AuthRequest, res: Response) {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     const { commentIds } = req.body;
     await CommentService.deleteComments(userId, commentIds);
     res.status(200).json({ message: "댓글이 삭제되었습니다." });

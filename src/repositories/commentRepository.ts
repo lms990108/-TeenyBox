@@ -2,6 +2,7 @@ import CommentModel, { IComment } from "../models/commentModel";
 import { CreateCommentDTO, UpdateCommentDTO } from "../dtos/commentDto";
 import NotFoundError from "../common/error/NotFoundError";
 import BadRequestError from "../common/error/BadRequestError";
+import { STATE } from "../common/enum/enum";
 
 export class CommentRepository {
   // 댓글 생성
@@ -18,12 +19,23 @@ export class CommentRepository {
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ post: postId })
+        .populate({
+          path: "user",
+          select: "_id nickname profile_url state",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
         .exec(),
       CommentModel.countDocuments({ post: postId }),
     ]);
+
+    comments.forEach((comment) => {
+      if (comment.user && comment.user.state === STATE.WITHDRAWN) {
+        comment.user.nickname = null;
+        comment.user.profile_url = null;
+      }
+    });
 
     return { comments, totalComments };
   }
@@ -36,12 +48,23 @@ export class CommentRepository {
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ promotion: promotionId })
+        .populate({
+          path: "user",
+          select: "_id nickname profile_url state",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdAt: -1 })
         .exec(),
       CommentModel.countDocuments({ promotion: promotionId }),
     ]);
+
+    comments.forEach((comment) => {
+      if (comment.user && comment.user.state === STATE.WITHDRAWN) {
+        comment.user.nickname = null;
+        comment.user.profile_url = null;
+      }
+    });
 
     return { comments, totalComments };
   }
@@ -53,7 +76,11 @@ export class CommentRepository {
     limit: number,
   ): Promise<{ comments: IComment[]; totalComments: number }> {
     const [comments, totalComments] = await Promise.all([
-      await CommentModel.find({ user_id: userId })
+      await CommentModel.find({ user: userId })
+        .populate({
+          path: "user",
+          select: "_id nickname profile_url state",
+        })
         .populate({
           path: "post",
         })
@@ -94,7 +121,7 @@ export class CommentRepository {
     const comments = await CommentModel.find({ _id: { $in: commentIds } });
 
     for (const comment of comments) {
-      if (comment.user_id.toString() !== userId.toString()) {
+      if (comment.user._id.toString() !== userId.toString()) {
         throw new BadRequestError(
           "사용자 ID와 댓글 소유자 ID가 일치하지 않습니다.",
         );
@@ -126,6 +153,10 @@ export class CommentRepository {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ post: { $exists: true } })
         .populate({
+          path: "user",
+          select: "_id nickname profile_url state",
+        })
+        .populate({
           path: "post",
           select: "post_number",
         })
@@ -135,6 +166,13 @@ export class CommentRepository {
         .exec(),
       CommentModel.countDocuments({ post: { $exists: true } }),
     ]);
+
+    comments.forEach((comment) => {
+      if (comment.user && comment.user.state === STATE.WITHDRAWN) {
+        comment.user.nickname = null;
+        comment.user.profile_url = null;
+      }
+    });
 
     return { comments, totalComments };
   }
@@ -147,6 +185,10 @@ export class CommentRepository {
     const [comments, totalComments] = await Promise.all([
       CommentModel.find({ promotion: { $exists: true } })
         .populate({
+          path: "user",
+          select: "_id nickname profile_url state",
+        })
+        .populate({
           path: "promotion",
           select: "promotion_number category",
         })
@@ -156,6 +198,13 @@ export class CommentRepository {
         .exec(),
       CommentModel.countDocuments({ promotion: { $exists: true } }),
     ]);
+
+    comments.forEach((comment) => {
+      if (comment.user && comment.user.state === STATE.WITHDRAWN) {
+        comment.user.nickname = null;
+        comment.user.profile_url = null;
+      }
+    });
 
     return { comments, totalComments };
   }
