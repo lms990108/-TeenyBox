@@ -9,19 +9,20 @@ function convertToDate(dateStr: string) {
 }
 
 function parsePrice(priceStr: string) {
-  if (priceStr === "전석무료" || priceStr === "" || !priceStr) return 0;
+  if (priceStr === "전석무료" || priceStr === "" || !priceStr) return { minPrice: 0, maxPrice: 0 };
   const priceStrWithoutString = priceStr.replace(/\D/g, "");
 
   const priceChunks = priceStrWithoutString.match(/.{1,5}/g) || [];
   const parsedPrices = priceChunks.map((chunk: string) => parseInt(chunk));
 
   if (parsedPrices && parsedPrices.length < 2) {
-    return parsedPrices[0];
+    const price = parsedPrices[0]
+    return { minPrice: price, maxPrice: price };
   } else if (parsedPrices && parsedPrices.length > 1) {
-    return Math.min(...parsedPrices);
+    const maxPrice = Math.max(...parsedPrices)
+    const minPrice = Math.min(...parsedPrices)
+    return { minPrice, maxPrice };
   }
-
-  return 0;
 }
 
 function parseShowData(
@@ -39,11 +40,18 @@ function parseShowData(
   const end_date = convertToDate(show["prfpdto"]);
   const detail_images = show["styurls"] ? show["styurls"]["styurl"] : [];
 
-  const priceStr = show["pcseguidance"];
-  const priceNum = parsePrice(priceStr);
+  let priceStr = show["pcseguidance"];
+
+  // 오마이갓 예외 처리
+  const showId = show["mt20id"]
+  if (showId === "PF216355") {
+    priceStr = "전석 45,000원"
+  }
+
+  const { minPrice, maxPrice} = parsePrice(priceStr);
 
   return {
-    showId: show["mt20id"],
+    showId,
     title: show["prfnm"],
     start_date: start_date,
     end_date: end_date,
@@ -58,7 +66,8 @@ function parseShowData(
     age: show["prfage"],
     company: show["entrpsnm"],
     price: priceStr,
-    price_number: priceNum,
+    min_price: minPrice,
+    max_price: maxPrice,
     description: show["sty"],
     state: show["prfstate"],
     schedule: show["dtguidance"],

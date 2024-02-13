@@ -37,9 +37,10 @@ class ShowController {
     }
 
     if (lowPrice || highPrice) {
-      match["price_number"] = {};
-      if (lowPrice) match["price_number"].$gte = +lowPrice;
-      if (highPrice) match["price_number"].$lte = +highPrice;
+      match["max_price"] = {};
+      match["min_price"] = {};
+      if (lowPrice) match["min_price"].$gte = +lowPrice;
+      if (highPrice) match["max_price"].$lte = +highPrice;
     }
 
     if (date) {

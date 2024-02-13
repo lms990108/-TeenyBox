@@ -23,6 +23,8 @@ export class CreateShowDTO {
   age?: string;
   company?: string;
   price?: string;
+  min_price?: number;
+  max_price?: number;
   description?: string;
   state?: string;
   schedule?: string;
