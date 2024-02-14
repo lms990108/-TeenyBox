@@ -60,7 +60,7 @@ class CommentController {
 
   // 댓글 수정
   async updateComment(req: AuthRequest, res: Response): Promise<void> {
-    const userId = req.user.user_id;
+    const userId = req.user._id;
     const { commentId } = req.params;
     const comment = await CommentService.updateComment(
       userId,
