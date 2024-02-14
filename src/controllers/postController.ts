@@ -33,7 +33,7 @@ class PostController {
   // 게시글 전체 조회
   async getAllPosts(req: Request, res: Response): Promise<void> {
     const page = Number(req.query.page || 1);
-    const limit = Number(req.query.limit || 10);
+    const limit = Number(req.query.limit || -1);
     const sortBy = String(req.query.sortBy) || "post_number";
     const sortOrder = String(req.query.sortOrder) === "desc" ? "desc" : "asc";
 

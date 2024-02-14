@@ -140,18 +140,6 @@ export default router;
  *     summary: 모든 게시물 조회
  *     parameters:
  *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *           description: 페이지 번호
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *           description: 페이지당 게시물 수
- *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string

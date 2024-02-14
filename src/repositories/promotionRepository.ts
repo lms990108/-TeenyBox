@@ -99,7 +99,7 @@ class promotionRepository {
       { $match: filter },
       sortStage,
       { $skip: skip },
-      { $limit: limit },
+      { $limit: limit === -1 ? Number.MAX_SAFE_INTEGER : limit }, // limit이 -1이면 모든 문서를 반환하도록 설정
     ]).exec();
 
     const promotions = aggregationResult.map((promotion) => ({
